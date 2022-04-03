@@ -1,4 +1,3 @@
-import { Button } from "@mantine/core";
 import type { NextPage } from "next";
 import Head from "next/head";
 
@@ -12,7 +11,6 @@ const Home: NextPage = () => {
       </Head>
 
       <main>Test text</main>
-      <Button>Test</Button>
     </div>
   );
 };
