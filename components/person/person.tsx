@@ -1,7 +1,13 @@
-import { Group, Input, Textarea } from "@mantine/core";
+import { Group, Input, Select, Textarea } from "@mantine/core";
+import { Calendar } from "@mantine/dates";
 import { IconBadge, IconCalendar, IconCoin, IconHash, IconId } from "@tabler/icons";
 
-function Person() {
+interface selectDataType {
+  value: string;
+  label: string;
+}
+
+function Person(genderData: Array<selectDataType>, membershipFeeData: Array<selectDataType>) {
   return (
     <>
       <Group>
@@ -10,15 +16,15 @@ function Person() {
       </Group>
       <Group>
         <Input placeholder="Név" />
-        <Input icon={<IconCalendar />} placeholder="Születési dátum" />
+        <Calendar placeholder="Születési dátum" />
       </Group>
       <Group>
         <Input placeholder="Anyja neve" />
-        <Input placeholder="Nem" />
+        <Select placeholder="Nem" data={genderData} />
       </Group>
       <Group>
         <Input icon={IconBadge} placeholder="Személyi igazolvány szám" />
-        <Input icon={IconCoin} placeholder="Tagdíj kategória" />
+        <Select icon={IconCoin} placeholder="Tagdíj kategória" data={membershipFeeData} />
       </Group>
       <Group>
         <Textarea placeholder="Megyjegyzés" />
