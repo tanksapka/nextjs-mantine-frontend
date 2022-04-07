@@ -1,6 +1,18 @@
-import { Group, Input, Select, Textarea } from "@mantine/core";
-import { Calendar } from "@mantine/dates";
-import { IconBadge, IconCalendar, IconCoin, IconHash, IconId } from "@tabler/icons";
+import * as Yup from "yup";
+import { useForm, yupResolver } from "@mantine/form";
+import { Group, TextInput, Select, Textarea } from "@mantine/core";
+import { DatePicker } from "@mantine/dates";
+import {
+  IconCalendar,
+  IconCoin,
+  IconHash,
+  IconId,
+  IconIdBadge2,
+  IconNote,
+  IconUser,
+  IconVenus,
+  IconWoman,
+} from "@tabler/icons";
 
 interface SelectDataType {
   value: string;
@@ -75,6 +87,20 @@ interface PersonDataType {
   membership: Array<MembershipDetailType>;
 }
 
+const schema = Yup.object().shape({
+  // person: Yup.object().shape({
+  registration_number: Yup.number(),
+  membership_id: Yup.string(),
+  person_name: Yup.string().required("Név kitöltése kötelező"),
+  birthdate: Yup.date().required("Születési dátum kitöltése kötelező"),
+  mother_name: Yup.string().required("Anyja neve kitöltése kötelező"),
+  gender_id: Yup.string(),
+  identity_card_number: Yup.string(),
+  memberhip_fee_category_id: Yup.string().required("Tagdíj kategória kitöltése kötelező"),
+  notes: Yup.string(),
+  // }),
+});
+
 function Person({
   personData,
   genderData,
@@ -84,35 +110,97 @@ function Person({
   genderData: Array<SelectDataType>;
   membershipFeeData: Array<SelectDataType>;
 }): JSX.Element {
+  const form = useForm({
+    schema: yupResolver(schema),
+    initialValues: {
+      registration_number: undefined,
+      membership_id: undefined,
+      person_name: undefined,
+      birthdate: undefined,
+      mother_name: undefined,
+      gender_id: undefined,
+      identity_card_number: undefined,
+      memberhip_fee_category_id: undefined,
+      notes: undefined,
+    },
+  });
+
   return (
     <>
       <Group>
-        <Input icon={<IconHash />} placeholder="Regisztrációs szám" value={personData.person.registration_number} />
-        <Input icon={<IconId />} placeholder="Tagsági szám" value={personData.person.membership_id} />
+        <TextInput
+          icon={<IconHash />}
+          label="Regisztrációs szám"
+          placeholder="Regisztrációs szám..."
+          title="Regisztrációs szám"
+          value={personData.person.registration_number}
+        />
+        <TextInput
+          icon={<IconIdBadge2 />}
+          label="Tagsági szám"
+          placeholder="Tagsági szám..."
+          title="Tagsági szám"
+          value={personData.person.membership_id}
+        />
       </Group>
       <Group>
-        <Input placeholder="Név" value={personData.person.person_name} />
-        <Calendar placeholder="Születési dátum" value={new Date(personData.person.birthdate)} />
+        <TextInput
+          icon={<IconUser />}
+          label="Név"
+          placeholder="Név..."
+          title="Név"
+          value={personData.person.person_name}
+        />
+        <DatePicker
+          icon={<IconCalendar />}
+          label="Születési dátum"
+          placeholder="Születési dátum..."
+          title="Születési dátum"
+          value={new Date(personData.person.birthdate)}
+        />
       </Group>
       <Group>
-        <Input placeholder="Anyja neve" value={personData.person.mother_name} />
-        <Select placeholder="Nem" data={genderData} value={personData.person.gender_id} />
+        <TextInput
+          icon={<IconWoman />}
+          label="Anyja neve"
+          placeholder="Anyja neve..."
+          title="Anyja neve"
+          value={personData.person.mother_name}
+        />
+        <Select
+          icon={<IconVenus />}
+          label="Nem"
+          placeholder="Nem..."
+          title="Nem"
+          data={genderData}
+          value={personData.person.gender_id}
+        />
       </Group>
       <Group>
-        <Input
-          icon={<IconBadge />}
-          placeholder="Személyi igazolvány szám"
+        <TextInput
+          icon={<IconId />}
+          label="Személyi igazolvány szám"
+          placeholder="Személyi igazolvány szám..."
+          title="Személyi igazolvány szám"
           value={personData.person.identity_card_number}
         />
         <Select
           icon={<IconCoin />}
-          placeholder="Tagdíj kategória"
+          label="Tagdíj kategória"
+          placeholder="Tagdíj kategória..."
+          title="Tagdíj kategória"
           data={membershipFeeData}
           value={personData.person.memberhip_fee_category_id}
         />
       </Group>
       <Group>
-        <Textarea placeholder="Megyjegyzés" value={personData.person.notes && ""} />
+        <Textarea
+          icon={<IconNote />}
+          label="Megjegyzés"
+          placeholder="Megyjegyzés..."
+          title="Megjegyzés"
+          value={personData.person.notes && ""}
+        />
       </Group>
     </>
   );
