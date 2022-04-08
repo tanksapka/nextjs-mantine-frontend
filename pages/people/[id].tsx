@@ -6,12 +6,21 @@ function PersonPage({
   personData,
   genderData,
   membershipFeeData,
+  addressTypeData,
 }: {
   personData: PersonDataType;
   genderData: Array<SelectDataType>;
   membershipFeeData: Array<SelectDataType>;
+  addressTypeData: Array<SelectDataType>;
 }) {
-  return <Person personData={personData} genderData={genderData} membershipFeeData={membershipFeeData} />;
+  return (
+    <Person
+      personData={personData}
+      genderData={genderData}
+      membershipFeeData={membershipFeeData}
+      addressTypeData={addressTypeData}
+    />
+  );
 }
 
 export default PersonPage;
@@ -37,7 +46,17 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     .json()
     .then((data) => data.map((item: any) => ({ value: item.id, label: item.name })));
 
+  const resAddressType = await fetch(`${process.env.REACT_APP_API_URL}/address-types`);
+  const addressTypeData = await resAddressType
+    .json()
+    .then((data) => data.map((item: any) => ({ value: item.id, label: item.name })));
+
   return {
-    props: { personData: personData, genderData: genderData, membershipFeeData: membershipFeeData },
+    props: {
+      personData: personData,
+      genderData: genderData,
+      membershipFeeData: membershipFeeData,
+      addressTypeData: addressTypeData,
+    },
   };
 };
