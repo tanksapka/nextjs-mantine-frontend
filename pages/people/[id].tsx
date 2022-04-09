@@ -7,11 +7,15 @@ function PersonPage({
   genderData,
   membershipFeeData,
   addressTypeData,
+  emailTypeData,
+  phoneTypeData,
 }: {
   personData: PersonDataType;
   genderData: Array<SelectDataType>;
   membershipFeeData: Array<SelectDataType>;
   addressTypeData: Array<SelectDataType>;
+  emailTypeData: Array<SelectDataType>;
+  phoneTypeData: Array<SelectDataType>;
 }) {
   return (
     <Person
@@ -19,6 +23,8 @@ function PersonPage({
       genderData={genderData}
       membershipFeeData={membershipFeeData}
       addressTypeData={addressTypeData}
+      emailTypeData={emailTypeData}
+      phoneTypeData={phoneTypeData}
     />
   );
 }
@@ -51,12 +57,24 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     .json()
     .then((data) => data.map((item: any) => ({ value: item.id, label: item.name })));
 
+  const resEmailType = await fetch(`${process.env.REACT_APP_API_URL}/email-types`);
+  const emailTypeData = await resEmailType
+    .json()
+    .then((data) => data.map((item: any) => ({ value: item.id, label: item.name })));
+
+  const resPhoneType = await fetch(`${process.env.REACT_APP_API_URL}/phone-types`);
+  const phoneTypeData = await resPhoneType
+    .json()
+    .then((data) => data.map((item: any) => ({ value: item.id, label: item.name })));
+
   return {
     props: {
       personData: personData,
       genderData: genderData,
       membershipFeeData: membershipFeeData,
       addressTypeData: addressTypeData,
+      emailTypeData: emailTypeData,
+      phoneTypeData: phoneTypeData,
     },
   };
 };

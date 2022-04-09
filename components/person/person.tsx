@@ -1,15 +1,39 @@
 import * as Yup from "yup";
 import "dayjs/locale/hu";
-import { useForm, yupResolver } from "@mantine/form";
-import { Group, TextInput, Select, Textarea, Container, Button, Title } from "@mantine/core";
+import { formList, useForm, yupResolver } from "@mantine/form";
+import {
+  Group,
+  TextInput,
+  Select,
+  Textarea,
+  Container,
+  Button,
+  Title,
+  Paper,
+  Checkbox,
+  Divider,
+  Text,
+  ActionIcon,
+} from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
+  IconAt,
+  IconBuildingCommunity,
   IconCake,
   IconCoin,
+  IconDeviceMobile,
+  IconDirections,
   IconHash,
+  IconHome,
   IconId,
   IconIdBadge2,
+  IconMail,
+  IconMailbox,
   IconNote,
+  IconNumbers,
+  IconPhone,
+  IconPlus,
+  IconTrash,
   IconUser,
   IconVenus,
   IconWoman,
@@ -98,23 +122,54 @@ const schema = Yup.object().shape({
   identity_card_number: Yup.string(),
   membership_fee_category_id: Yup.string().required("Tagdíj kategória kitöltése kötelező"),
   notes: Yup.string(),
-  address_type_id: Yup.string().required("Cím típus kitöltése kötelező"),
-  zip: Yup.string().required("Irányítószám kitöltése kötelező"),
-  city: Yup.string().required("Helység kitöltése kötelező"),
-  address_1: Yup.string().required("Cím kitöltése kötelező"),
-  address_2: Yup.string(),
+  addresses: Yup.array().of(
+    Yup.object().shape({
+      address_type_id: Yup.string().required("Cím típus kitöltése kötelező"),
+      zip: Yup.string().required("Irányítószám kitöltése kötelező"),
+      city: Yup.string().required("Helység kitöltése kötelező"),
+      address_1: Yup.string().required("Cím kitöltése kötelező"),
+      address_2: Yup.string(),
+    })
+  ),
+  emails: Yup.array().of(
+    Yup.object().shape({
+      email_type_id: Yup.string().required("Email típus kitöltése kötelező"),
+      email: Yup.string().email("Valós email címet ajd meg").required("Email kitöltése kötelező"),
+      messenger: Yup.bool().default(false),
+      skype: Yup.bool().default(false),
+    })
+  ),
+  phones: Yup.array().of(
+    Yup.object().shape({
+      phone_type_id: Yup.string().required("Telefonszám típus kitöltése kötelező"),
+      phone_number: Yup.string().required("Telefonszám kitöltése kötelező"),
+      phone_extension: Yup.string(),
+      messenger: Yup.bool().default(false),
+      skype: Yup.bool().default(false),
+      viber: Yup.bool().default(false),
+      whatsapp: Yup.bool().default(false),
+    })
+  ),
 });
+
+function convertToBool(value: string): boolean {
+  return value === "Y" ? true : false;
+}
 
 function Person({
   personData,
   genderData,
   membershipFeeData,
   addressTypeData,
+  emailTypeData,
+  phoneTypeData,
 }: {
   personData: PersonDataType;
   genderData: Array<SelectDataType>;
   membershipFeeData: Array<SelectDataType>;
   addressTypeData: Array<SelectDataType>;
+  emailTypeData: Array<SelectDataType>;
+  phoneTypeData: Array<SelectDataType>;
 }): JSX.Element {
   const form = useForm({
     schema: yupResolver(schema),
@@ -128,13 +183,216 @@ function Person({
       identity_card_number: personData.person.identity_card_number,
       membership_fee_category_id: personData.person.membership_fee_category_id,
       notes: personData.person.notes || undefined,
-      address_type_id: personData.address[0].address_type_id,
-      zip: personData.address[0].zip,
-      city: personData.address[0].city,
-      address_1: personData.address[0].address_1,
-      address_2: personData.address[0].address_2 || undefined,
+      addresses: formList(personData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined }))),
+      emails: formList(
+        personData.email.map((data) => ({
+          ...data,
+          messenger: convertToBool(data.messenger),
+          skype: convertToBool(data.skype),
+        }))
+      ),
+      phones: formList(
+        personData.phone.map((data) => ({
+          ...data,
+          phone_extension: data.phone_extension || undefined,
+          messenger: convertToBool(data.messenger),
+          skype: convertToBool(data.skype),
+          viber: convertToBool(data.viber),
+          whatsapp: convertToBool(data.whatsapp),
+        }))
+      ),
     },
   });
+
+  const addressFields = form.values.addresses.map((_, idx) => (
+    <div key={idx}>
+      <Divider
+        mb="xs"
+        label={
+          <>
+            <IconHome />
+            <Text ml="xs">Cím #{idx + 1}</Text>
+            <ActionIcon color="red" ml="xs" title="Cím törlése">
+              <IconTrash size={16} />
+            </ActionIcon>
+          </>
+        }
+      />
+      <Group grow mb="lg">
+        <Select
+          data={addressTypeData}
+          icon={<IconDirections />}
+          label="Cím típusa"
+          name="address_type_id"
+          required
+          title="Cím típusa"
+          {...form.getListInputProps("addresses", idx, "address_type_id")}
+        ></Select>
+        <TextInput
+          icon={<IconMailbox />}
+          label="Irányítószám"
+          name="zip"
+          placeholder="Irányítószám..."
+          required
+          title="Irányítószám"
+          {...form.getListInputProps("addresses", idx, "zip")}
+        ></TextInput>
+        <TextInput
+          icon={<IconBuildingCommunity />}
+          label="Helység"
+          name="city"
+          placeholder="Helység..."
+          required
+          title="Helység"
+          {...form.getListInputProps("addresses", idx, "city")}
+        ></TextInput>
+      </Group>
+      <Group grow mb="lg">
+        <TextInput
+          icon={<IconHome />}
+          label="Cím 1"
+          name="address_1"
+          placeholder="Cím 1..."
+          required
+          title="Cím 1"
+          {...form.getListInputProps("addresses", idx, "address_1")}
+        ></TextInput>
+        <TextInput
+          icon={<IconHome />}
+          label="Cím 2"
+          name="address_2"
+          placeholder="Cím 2..."
+          title="Cím 2"
+          {...form.getListInputProps("addresses", idx, "address_2")}
+        ></TextInput>
+      </Group>
+    </div>
+  ));
+
+  const emailFields = form.values.emails.map((_, idx) => (
+    <div key={idx}>
+      <Divider
+        mb="xs"
+        label={
+          <>
+            <IconMail />
+            <Text ml="xs">Email #{idx + 1}</Text>
+            <ActionIcon color="red" ml="xs" title="Email cím törlése">
+              <IconTrash size={16} />
+            </ActionIcon>
+          </>
+        }
+      />
+      <Group grow mb="lg">
+        <Select
+          data={emailTypeData}
+          icon={<IconMail />}
+          label="Email cím típusa"
+          name="email_type_id"
+          placeholder="Email cím típusa..."
+          required
+          title="Email cím típusa"
+          {...form.getListInputProps("emails", idx, "email_type_id")}
+        ></Select>
+        <TextInput
+          icon={<IconAt />}
+          label="Email"
+          name="email"
+          placeholder="Email..."
+          required
+          title="Email"
+          type="email"
+          {...form.getListInputProps("emails", idx, "email")}
+        ></TextInput>
+      </Group>
+      <Group mb="lg">
+        <Checkbox
+          label="Messenger"
+          name="messenger"
+          title="Messenger"
+          {...form.getListInputProps("emails", idx, "messenger", { type: "checkbox" })}
+        ></Checkbox>
+        <Checkbox
+          label="Skype"
+          name="skype"
+          title="Skype"
+          {...form.getListInputProps("emails", idx, "skype", { type: "checkbox" })}
+        ></Checkbox>
+      </Group>
+    </div>
+  ));
+
+  const phoneFields = form.values.phones.map((_, idx) => (
+    <div key={idx}>
+      <Divider
+        mb="xs"
+        label={
+          <>
+            <IconPhone />
+            <Text ml="xs">Telefonszám #{idx + 1}</Text>
+            <ActionIcon color="red" ml="xs" title="Telefonszám törlése">
+              <IconTrash size={16} />
+            </ActionIcon>
+          </>
+        }
+      />
+      <Group grow mb="lg">
+        <Select
+          data={phoneTypeData}
+          icon={<IconDeviceMobile />}
+          label="Telefonszám típus"
+          name="phone_type_id"
+          placeholder="Telefonszám típus..."
+          required
+          title="Telefonszám típus"
+          {...form.getListInputProps("phones", idx, "phone_type_id")}
+        ></Select>
+        <TextInput
+          icon={<IconPhone />}
+          label="Telefonszám"
+          name="phone_number"
+          placeholder="Telefonszám..."
+          required
+          title="Telefonszám"
+          {...form.getListInputProps("phones", idx, "phone_number")}
+        ></TextInput>
+        <TextInput
+          icon={<IconNumbers />}
+          label="Mellék"
+          name="phone_extension"
+          placeholder="Mellék..."
+          title="Mellék"
+          {...form.getListInputProps("phones", idx, "phone_extension")}
+        ></TextInput>
+      </Group>
+      <Group mb="lg">
+        <Checkbox
+          label="Messenger"
+          name="messenger"
+          title="Messenger"
+          {...form.getListInputProps("phones", idx, "messenger", { type: "checkbox" })}
+        ></Checkbox>
+        <Checkbox
+          label="Skype"
+          name="skype"
+          title="Skype"
+          {...form.getListInputProps("phones", idx, "skype", { type: "checkbox" })}
+        ></Checkbox>
+        <Checkbox
+          label="Viber"
+          name="viber"
+          title="Viber"
+          {...form.getListInputProps("phones", idx, "viber", { type: "checkbox" })}
+        ></Checkbox>
+        <Checkbox
+          label="Whatsapp"
+          name="whatsapp"
+          title="Whatsapp"
+          {...form.getListInputProps("phones", idx, "whatsapp", { type: "checkbox" })}
+        ></Checkbox>
+      </Group>
+    </div>
+  ));
 
   return (
     <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -142,153 +400,145 @@ function Person({
         <Title order={1} mb="xl">
           Személyes adatok
         </Title>
-        <Group grow mb="lg">
-          <TextInput
-            icon={<IconHash />}
-            label="Regisztrációs szám"
-            name="registration_number"
-            placeholder="Regisztrációs szám..."
-            title="Regisztrációs szám"
-            readOnly
-            {...form.getInputProps("registration_number")}
-          />
-          <TextInput
-            icon={<IconIdBadge2 />}
-            label="Tagsági szám"
-            name="membership_id"
-            placeholder="Tagsági szám..."
-            readOnly
-            title="Tagsági szám"
-            {...form.getInputProps("membership_id")}
-          />
-        </Group>
-        <Group grow mb="lg">
-          <TextInput
-            icon={<IconUser />}
-            label="Név"
-            name="person_name"
-            placeholder="Név..."
-            required
-            title="Név"
-            {...form.getInputProps("person_name")}
-          />
-          <DatePicker
-            allowFreeInput
-            icon={<IconCake />}
-            inputFormat="YYYY.MM.DD"
-            label="Születési dátum"
-            labelFormat="YYYY MMMM"
-            locale="hu"
-            name="birthdate"
-            placeholder="Születési dátum..."
-            required
-            title="Születési dátum"
-            {...form.getInputProps("birthdate")}
-          />
-        </Group>
-        <Group grow mb="lg">
-          <TextInput
-            icon={<IconWoman />}
-            label="Anyja neve"
-            name="mother_name"
-            placeholder="Anyja neve..."
-            required
-            title="Anyja neve"
-            {...form.getInputProps("mother_name")}
-          />
-          <Select
-            allowDeselect
-            icon={<IconVenus />}
-            label="Nem"
-            name="gender_id"
-            placeholder="Nem..."
-            title="Nem"
-            data={genderData}
-            {...form.getInputProps("gender_id")}
-          />
-        </Group>
-        <Group grow mb="lg">
-          <TextInput
-            icon={<IconId />}
-            label="Személyi igazolvány szám"
-            name="identity_card_number"
-            placeholder="Személyi igazolvány szám..."
-            title="Személyi igazolvány szám"
-            {...form.getInputProps("identity_card_number")}
-          />
-          <Select
-            icon={<IconCoin />}
-            label="Tagdíj kategória"
-            name="membership_fee_category_id"
-            placeholder="Tagdíj kategória..."
-            title="Tagdíj kategória"
-            data={membershipFeeData}
-            {...form.getInputProps("membership_fee_category_id")}
-          />
-        </Group>
-        <Group grow mb="lg">
-          <Textarea
-            autosize
-            icon={<IconNote />}
-            label="Megjegyzés"
-            maxRows={10}
-            minRows={3}
-            name="notes"
-            placeholder="Megyjegyzés..."
-            title="Megjegyzés"
-            {...form.getInputProps("notes")}
-          />
-        </Group>
+        <Paper shadow="xs" p="md">
+          <Group grow mb="lg">
+            <TextInput
+              icon={<IconHash />}
+              label="Regisztrációs szám"
+              name="registration_number"
+              placeholder="Regisztrációs szám..."
+              title="Regisztrációs szám"
+              readOnly
+              {...form.getInputProps("registration_number")}
+            />
+            <TextInput
+              icon={<IconIdBadge2 />}
+              label="Tagsági szám"
+              name="membership_id"
+              placeholder="Tagsági szám..."
+              readOnly
+              title="Tagsági szám"
+              {...form.getInputProps("membership_id")}
+            />
+          </Group>
+          <Group grow mb="lg">
+            <TextInput
+              icon={<IconUser />}
+              label="Név"
+              name="person_name"
+              placeholder="Név..."
+              required
+              title="Név"
+              {...form.getInputProps("person_name")}
+            />
+            <DatePicker
+              allowFreeInput
+              icon={<IconCake />}
+              inputFormat="YYYY.MM.DD"
+              label="Születési dátum"
+              labelFormat="YYYY MMMM"
+              locale="hu"
+              name="birthdate"
+              placeholder="Születési dátum..."
+              required
+              title="Születési dátum"
+              {...form.getInputProps("birthdate")}
+            />
+          </Group>
+          <Group grow mb="lg">
+            <TextInput
+              icon={<IconWoman />}
+              label="Anyja neve"
+              name="mother_name"
+              placeholder="Anyja neve..."
+              required
+              title="Anyja neve"
+              {...form.getInputProps("mother_name")}
+            />
+            <Select
+              allowDeselect
+              icon={<IconVenus />}
+              label="Nem"
+              name="gender_id"
+              placeholder="Nem..."
+              title="Nem"
+              data={genderData}
+              {...form.getInputProps("gender_id")}
+            />
+          </Group>
+          <Group grow mb="lg">
+            <TextInput
+              icon={<IconId />}
+              label="Személyi igazolvány szám"
+              name="identity_card_number"
+              placeholder="Személyi igazolvány szám..."
+              title="Személyi igazolvány szám"
+              {...form.getInputProps("identity_card_number")}
+            />
+            <Select
+              icon={<IconCoin />}
+              label="Tagdíj kategória"
+              name="membership_fee_category_id"
+              placeholder="Tagdíj kategória..."
+              title="Tagdíj kategória"
+              data={membershipFeeData}
+              {...form.getInputProps("membership_fee_category_id")}
+            />
+          </Group>
+          <Group grow mb="lg">
+            <Textarea
+              autosize
+              icon={<IconNote />}
+              label="Megjegyzés"
+              maxRows={10}
+              minRows={3}
+              name="notes"
+              placeholder="Megyjegyzés..."
+              title="Megjegyzés"
+              {...form.getInputProps("notes")}
+            />
+          </Group>
+        </Paper>
       </Container>
       <Container size="sm" my="xl">
         <Title order={1} mb="xl">
           Elérhetőségek
         </Title>
-        <Group grow mb="lg">
-          <Select
-            data={addressTypeData}
-            label="Cím típusa"
-            name="address_type_id"
-            required
-            title="Cím típusa"
-            {...form.getInputProps("address_type_id")}
-          ></Select>
-          <TextInput
-            label="Irányítószám"
-            name="zip"
-            placeholder="Irányítószám..."
-            required
-            title="Irányítószám"
-            {...form.getInputProps("zip")}
-          ></TextInput>
-          <TextInput
-            label="Helység"
-            name="city"
-            placeholder="Helység..."
-            required
-            title="Helység"
-            {...form.getInputProps("city")}
-          ></TextInput>
-        </Group>
-        <Group grow mb="lg">
-          <TextInput
-            label="Cím 1"
-            name="address_1"
-            placeholder="Cím 1..."
-            required
-            title="Cím 1"
-            {...form.getInputProps("address_1")}
-          ></TextInput>
-          <TextInput
-            label="Cím 2"
-            name="address_2"
-            placeholder="Cím 2..."
-            title="Cím 2"
-            {...form.getInputProps("address_2")}
-          ></TextInput>
-        </Group>
+        <Paper shadow="xs" p="md" mb="xl">
+          <Group style={{ justifyContent: "space-between" }}>
+            <Title order={2} mb="xl">
+              Címek
+            </Title>
+            <ActionIcon color="blue" title="Új cím hozzáadása" mb={"1.5rem"}>
+              <IconPlus />
+            </ActionIcon>
+          </Group>
+          {addressFields}
+        </Paper>
+        <Paper shadow="xs" p="md" mb="xl">
+          <Group style={{ justifyContent: "space-between" }}>
+            <Title order={2} mb="xl">
+              Email címek
+            </Title>
+            <ActionIcon color="blue" title="Új email cím hozzáadása" mb={"1.5rem"}>
+              <IconPlus />
+            </ActionIcon>
+          </Group>
+          {emailFields}
+        </Paper>
+        <Paper shadow="xs" p="md" mb="xl">
+          <Group style={{ justifyContent: "space-between" }}>
+            <Title order={2} mb="xl">
+              Telefonszámok
+            </Title>
+            <ActionIcon color="blue" title="Új telefonszám hozzáadása" mb={"1.5rem"}>
+              <IconPlus />
+            </ActionIcon>
+          </Group>
+          {phoneFields}
+        </Paper>
       </Container>
-      <Group position="right" mt="lg">
+      <Group position="right" mt="xl">
         <Button type="submit">Mentés</Button>
       </Group>
     </form>
