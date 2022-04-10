@@ -14,6 +14,7 @@ import {
   Divider,
   Text,
   ActionIcon,
+  Menu,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
@@ -38,6 +39,7 @@ import {
   IconVenus,
   IconWoman,
 } from "@tabler/icons";
+import { useState } from "react";
 
 interface SelectDataType {
   value: string;
@@ -80,6 +82,11 @@ interface EmailDetailType {
   skype: string;
 }
 
+interface EmailFormType extends Omit<EmailDetailType, "messenger" | "skype"> {
+  messenger: boolean;
+  skype: boolean;
+}
+
 interface PhoneDetailType {
   id: string;
   person_id: string;
@@ -91,6 +98,13 @@ interface PhoneDetailType {
   skype: string;
   viber: string;
   whatsapp: string;
+}
+
+interface PhoneFormType extends Omit<PhoneDetailType, "messenger" | "skype" | "viber" | "whatsapp"> {
+  messenger: boolean;
+  skype: boolean;
+  viber: boolean;
+  whatsapp: boolean;
 }
 
 interface MembershipDetailType {
@@ -171,6 +185,7 @@ function Person({
   emailTypeData: Array<SelectDataType>;
   phoneTypeData: Array<SelectDataType>;
 }): JSX.Element {
+  const [availableAddresses, setAvailableAddresses] = useState(() => getAvailableAddresses());
   const form = useForm({
     schema: yupResolver(schema),
     initialValues: {
@@ -204,6 +219,46 @@ function Person({
     },
   });
 
+  function getAvailableAddresses(): Array<SelectDataType> {
+    return addressTypeData.filter(
+      (address_id) => !personData.address.map((value) => value.address_type_id).includes(address_id.value)
+    );
+  }
+
+  const defaultAddressData: AddressDetailType = {
+    id: "",
+    person_id: personData.person.id,
+    address_type_id: "",
+    address_type_name: "",
+    zip: "",
+    city: "",
+    address_1: "",
+    address_2: "",
+  };
+
+  const defaultEmailData: EmailFormType = {
+    id: "",
+    person_id: personData.person.id,
+    email_type_id: "",
+    email_type_name: "",
+    email: "",
+    messenger: false,
+    skype: false,
+  };
+
+  const defaultPhoneData: PhoneFormType = {
+    id: "",
+    person_id: personData.person.id,
+    phone_type_id: "",
+    phone_type_name: "",
+    phone_number: "",
+    phone_extension: "",
+    messenger: false,
+    skype: false,
+    viber: false,
+    whatsapp: false,
+  };
+
   const addressFields = form.values.addresses.map((_, idx) => (
     <div key={idx}>
       <Divider
@@ -212,7 +267,23 @@ function Person({
           <>
             <IconHome />
             <Text ml="xs">Cím #{idx + 1}</Text>
-            <ActionIcon color="red" ml="xs" title="Cím törlése">
+            <ActionIcon
+              color="red"
+              ml="xs"
+              title="Cím törlése"
+              onClick={() => {
+                form.removeListItem("addresses", idx);
+                setAvailableAddresses((oldAddresses) => {
+                  return [
+                    ...oldAddresses,
+                    {
+                      label: _.address_type_name,
+                      value: _.address_type_id,
+                    },
+                  ];
+                });
+              }}
+            >
               <IconTrash size={16} />
             </ActionIcon>
           </>
@@ -224,6 +295,7 @@ function Person({
           icon={<IconDirections />}
           label="Cím típusa"
           name="address_type_id"
+          placeholder="Cím típusa..."
           required
           title="Cím típusa"
           {...form.getListInputProps("addresses", idx, "address_type_id")}
@@ -277,7 +349,12 @@ function Person({
           <>
             <IconMail />
             <Text ml="xs">Email #{idx + 1}</Text>
-            <ActionIcon color="red" ml="xs" title="Email cím törlése">
+            <ActionIcon
+              color="red"
+              ml="xs"
+              title="Email cím törlése"
+              onClick={() => form.removeListItem("emails", idx)}
+            >
               <IconTrash size={16} />
             </ActionIcon>
           </>
@@ -330,7 +407,12 @@ function Person({
           <>
             <IconPhone />
             <Text ml="xs">Telefonszám #{idx + 1}</Text>
-            <ActionIcon color="red" ml="xs" title="Telefonszám törlése">
+            <ActionIcon
+              color="red"
+              ml="xs"
+              title="Telefonszám törlése"
+              onClick={() => form.removeListItem("phones", idx)}
+            >
               <IconTrash size={16} />
             </ActionIcon>
           </>
@@ -342,7 +424,7 @@ function Person({
           icon={<IconDeviceMobile />}
           label="Telefonszám típus"
           name="phone_type_id"
-          placeholder="Telefonszám típus..."
+          placeholder="Telefonszám típusa..."
           required
           title="Telefonszám típus"
           {...form.getListInputProps("phones", idx, "phone_type_id")}
@@ -509,9 +591,31 @@ function Person({
             <Title order={2} mb="xl">
               Címek
             </Title>
-            <ActionIcon color="blue" title="Új cím hozzáadása" mb={"1.5rem"}>
-              <IconPlus />
-            </ActionIcon>
+            <Menu
+              control={
+                <ActionIcon color="blue" title="Új cím hozzáadása" mb={"1.5rem"}>
+                  <IconPlus />
+                </ActionIcon>
+              }
+            >
+              {availableAddresses.map((value) => (
+                <Menu.Item
+                  key={value.value}
+                  onClick={() => {
+                    form.addListItem("addresses", {
+                      ...defaultAddressData,
+                      address_type_id: value.value,
+                      address_type_name: value.label,
+                    });
+                    setAvailableAddresses((oldAddresses) =>
+                      oldAddresses.filter((address) => address.value !== value.value)
+                    );
+                  }}
+                >
+                  {value.label}
+                </Menu.Item>
+              ))}
+            </Menu>
           </Group>
           {addressFields}
         </Paper>
@@ -520,7 +624,12 @@ function Person({
             <Title order={2} mb="xl">
               Email címek
             </Title>
-            <ActionIcon color="blue" title="Új email cím hozzáadása" mb={"1.5rem"}>
+            <ActionIcon
+              color="blue"
+              title="Új email cím hozzáadása"
+              mb={"1.5rem"}
+              onClick={() => form.addListItem("emails", defaultEmailData)}
+            >
               <IconPlus />
             </ActionIcon>
           </Group>
@@ -531,7 +640,12 @@ function Person({
             <Title order={2} mb="xl">
               Telefonszámok
             </Title>
-            <ActionIcon color="blue" title="Új telefonszám hozzáadása" mb={"1.5rem"}>
+            <ActionIcon
+              color="blue"
+              title="Új telefonszám hozzáadása"
+              mb={"1.5rem"}
+              onClick={() => form.addListItem("phones", defaultPhoneData)}
+            >
               <IconPlus />
             </ActionIcon>
           </Group>
