@@ -15,9 +15,11 @@ import {
   Text,
   ActionIcon,
   Menu,
+  Center,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
+  IconAlertCircle,
   IconAt,
   IconBuildingCommunity,
   IconCake,
@@ -126,46 +128,6 @@ interface PersonDataType {
   membership: Array<MembershipDetailType>;
 }
 
-const schema = Yup.object().shape({
-  registration_number: Yup.number(),
-  membership_id: Yup.string(),
-  person_name: Yup.string().required("Név kitöltése kötelező"),
-  birthdate: Yup.date().required("Születési dátum kitöltése kötelező"),
-  mother_name: Yup.string().required("Anyja neve kitöltése kötelező"),
-  gender_id: Yup.string(),
-  identity_card_number: Yup.string(),
-  membership_fee_category_id: Yup.string().required("Tagdíj kategória kitöltése kötelező"),
-  notes: Yup.string(),
-  addresses: Yup.array().of(
-    Yup.object().shape({
-      address_type_id: Yup.string().required("Cím típus kitöltése kötelező"),
-      zip: Yup.string().required("Irányítószám kitöltése kötelező"),
-      city: Yup.string().required("Helység kitöltése kötelező"),
-      address_1: Yup.string().required("Cím kitöltése kötelező"),
-      address_2: Yup.string(),
-    })
-  ),
-  emails: Yup.array().of(
-    Yup.object().shape({
-      email_type_id: Yup.string().required("Email típus kitöltése kötelező"),
-      email: Yup.string().email("Valós email címet ajd meg").required("Email kitöltése kötelező"),
-      messenger: Yup.bool().default(false),
-      skype: Yup.bool().default(false),
-    })
-  ),
-  phones: Yup.array().of(
-    Yup.object().shape({
-      phone_type_id: Yup.string().required("Telefonszám típus kitöltése kötelező"),
-      phone_number: Yup.string().required("Telefonszám kitöltése kötelező"),
-      phone_extension: Yup.string(),
-      messenger: Yup.bool().default(false),
-      skype: Yup.bool().default(false),
-      viber: Yup.bool().default(false),
-      whatsapp: Yup.bool().default(false),
-    })
-  ),
-});
-
 function convertToBool(value: string): boolean {
   return value === "Y" ? true : false;
 }
@@ -186,6 +148,55 @@ function Person({
   phoneTypeData: Array<SelectDataType>;
 }): JSX.Element {
   const [availableAddresses, setAvailableAddresses] = useState(() => getAvailableAddresses());
+
+  Yup.addMethod(Yup.array, "unique", function (message, mapper = (a: AddressDetailType) => a) {
+    return this.test("unique", message, function (list) {
+      return typeof list === "undefined" ? false : list.length === new Set(list.map(mapper)).size;
+    });
+  });
+
+  const schema = Yup.object().shape({
+    registration_number: Yup.number(),
+    membership_id: Yup.string(),
+    person_name: Yup.string().required("Név kitöltése kötelező"),
+    birthdate: Yup.date().required("Születési dátum kitöltése kötelező"),
+    mother_name: Yup.string().required("Anyja neve kitöltése kötelező"),
+    gender_id: Yup.string(),
+    identity_card_number: Yup.string(),
+    membership_fee_category_id: Yup.string().required("Tagdíj kategória kitöltése kötelező"),
+    notes: Yup.string(),
+    addresses: Yup.array()
+      .of(
+        Yup.object().shape({
+          address_type_id: Yup.string().required("Cím típus kitöltése kötelező"),
+          zip: Yup.string().required("Irányítószám kitöltése kötelező"),
+          city: Yup.string().required("Helység kitöltése kötelező"),
+          address_1: Yup.string().required("Cím kitöltése kötelező"),
+          address_2: Yup.string(),
+        })
+      )
+      .unique("Cím típusa nem ismétlődhet!", (a: AddressDetailType) => a.address_type_id),
+    emails: Yup.array().of(
+      Yup.object().shape({
+        email_type_id: Yup.string().required("Email típus kitöltése kötelező"),
+        email: Yup.string().email("Valós email címet ajd meg").required("Email kitöltése kötelező"),
+        messenger: Yup.bool().default(false),
+        skype: Yup.bool().default(false),
+      })
+    ),
+    phones: Yup.array().of(
+      Yup.object().shape({
+        phone_type_id: Yup.string().required("Telefonszám típus kitöltése kötelező"),
+        phone_number: Yup.string().required("Telefonszám kitöltése kötelező"),
+        phone_extension: Yup.string(),
+        messenger: Yup.bool().default(false),
+        skype: Yup.bool().default(false),
+        viber: Yup.bool().default(false),
+        whatsapp: Yup.bool().default(false),
+      })
+    ),
+  });
+
   const form = useForm({
     schema: yupResolver(schema),
     initialValues: {
@@ -220,9 +231,9 @@ function Person({
   });
 
   function getAvailableAddresses(): Array<SelectDataType> {
-    return addressTypeData.filter(
-      (address_id) => !personData.address.map((value) => value.address_type_id).includes(address_id.value)
-    );
+    return addressTypeData
+      .filter((address_id) => !personData.address.map((value) => value.address_type_id).includes(address_id.value))
+      .sort((a, b) => a.label.localeCompare(b.label));
   }
 
   const defaultAddressData: AddressDetailType = {
@@ -273,15 +284,15 @@ function Person({
               title="Cím törlése"
               onClick={() => {
                 form.removeListItem("addresses", idx);
-                setAvailableAddresses((oldAddresses) => {
-                  return [
+                setAvailableAddresses((oldAddresses) =>
+                  [
                     ...oldAddresses,
                     {
                       label: _.address_type_name,
                       value: _.address_type_id,
                     },
-                  ];
-                });
+                  ].sort((a, b) => a.label.localeCompare(b.label))
+                );
               }}
             >
               <IconTrash size={16} />
@@ -289,9 +300,10 @@ function Person({
           </>
         }
       />
-      <Group grow mb="lg">
+      <Group grow mb="lg" align="baseline">
         <Select
-          data={addressTypeData}
+          data={addressTypeData.sort((a, b) => a.label.localeCompare(b.label))}
+          error={form.errors.addresses && "Ismétlődő cím típus"}
           icon={<IconDirections />}
           label="Cím típusa"
           name="address_type_id"
@@ -593,7 +605,12 @@ function Person({
             </Title>
             <Menu
               control={
-                <ActionIcon color="blue" title="Új cím hozzáadása" mb={"1.5rem"}>
+                <ActionIcon
+                  color="blue"
+                  title="Új cím hozzáadása"
+                  mb={"1.5rem"}
+                  disabled={availableAddresses.length > 0 ? false : true}
+                >
                   <IconPlus />
                 </ActionIcon>
               }
@@ -608,7 +625,9 @@ function Person({
                       address_type_name: value.label,
                     });
                     setAvailableAddresses((oldAddresses) =>
-                      oldAddresses.filter((address) => address.value !== value.value)
+                      oldAddresses
+                        .filter((address) => address.value !== value.value)
+                        .sort((a, b) => a.label.localeCompare(b.label))
                     );
                   }}
                 >
@@ -617,6 +636,14 @@ function Person({
               ))}
             </Menu>
           </Group>
+          {form.errors.addresses && (
+            <Group align="flex-start">
+              <IconAlertCircle color="red" />
+              <Text color="red" mb="lg" align="justify">
+                {form.errors.addresses}
+              </Text>
+            </Group>
+          )}
           {addressFields}
         </Paper>
         <Paper shadow="xs" p="md" mb="xl">
