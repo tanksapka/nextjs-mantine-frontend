@@ -15,7 +15,6 @@ import {
   Text,
   ActionIcon,
   Menu,
-  Center,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
@@ -209,17 +208,7 @@ function Person({
       identity_card_number: personData.person.identity_card_number,
       membership_fee_category_id: personData.person.membership_fee_category_id,
       notes: personData.person.notes || undefined,
-      addresses: formList(
-        personData.address.map((data) => ({
-          id: data.id,
-          person_id: data.person_id,
-          address_type_id: data.address_type_id,
-          zip: data.zip,
-          city: data.city,
-          address_1: data.address_1,
-          address_2: data.address_2 || undefined,
-        }))
-      ),
+      addresses: formList(personData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined }))),
       emails: formList(
         personData.email.map((data) => ({
           ...data,
@@ -246,17 +235,10 @@ function Person({
       .sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  function getAvailableAddresses(): Array<SelectDataType> {
-    return addressTypeData
-      .filter((address_id) => !form.values.addresses.map((value) => value.address_type_id).includes(address_id.value))
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }
-
   const defaultAddressData: AddressDetailType = {
     id: "",
     person_id: personData.person.id,
     address_type_id: "",
-    // address_type_name: "",
     zip: "",
     city: "",
     address_1: "",
@@ -300,12 +282,13 @@ function Person({
               title="Cím törlése"
               onClick={() => {
                 form.removeListItem("addresses", idx);
-                // setAvailableAddresses((oldAddresses) =>
-                //   [...oldAddresses, ...addressTypeData.filter((item) => item.value === _.address_type_id)].sort(
-                //     (a, b) => a.label.localeCompare(b.label)
-                //   )
-                // );
-                setAvailableAddresses(getAvailableAddresses());
+                setAvailableAddresses((oldAddresses) =>
+                  oldAddresses.map((data) => data.value).includes(_.address_type_id)
+                    ? getDefaultAddresses()
+                    : [...oldAddresses, ...addressTypeData.filter((item) => item.value === _.address_type_id)].sort(
+                        (a, b) => a.label.localeCompare(b.label)
+                      )
+                );
               }}
             >
               <IconTrash size={16} />
@@ -635,14 +618,12 @@ function Person({
                     form.addListItem("addresses", {
                       ...defaultAddressData,
                       address_type_id: value.value,
-                      // address_type_name: value.label,
                     });
-                    // setAvailableAddresses((oldAddresses) =>
-                    //   oldAddresses
-                    //     .filter((address) => address.value !== value.value)
-                    //     .sort((a, b) => a.label.localeCompare(b.label))
-                    // );
-                    setAvailableAddresses(getAvailableAddresses());
+                    setAvailableAddresses((oldAddresses) =>
+                      oldAddresses
+                        .filter((address) => address.value !== value.value)
+                        .sort((a, b) => a.label.localeCompare(b.label))
+                    );
                   }}
                 >
                   {value.label}
