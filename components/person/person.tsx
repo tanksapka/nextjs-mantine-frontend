@@ -14,7 +14,6 @@ import {
   Divider,
   Text,
   ActionIcon,
-  Menu,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
@@ -40,7 +39,6 @@ import {
   IconVenus,
   IconWoman,
 } from "@tabler/icons";
-import { useState } from "react";
 
 interface SelectDataType {
   value: string;
@@ -146,14 +144,6 @@ function Person({
   emailTypeData: Array<SelectDataType>;
   phoneTypeData: Array<SelectDataType>;
 }): JSX.Element {
-  const [availableAddresses, setAvailableAddresses] = useState(() => getDefaultAddresses());
-
-  Yup.addMethod(Yup.array, "unique", function (message, mapper = (a: AddressDetailType) => a) {
-    return this.test("unique", message, function (list) {
-      return typeof list === "undefined" ? false : list.length === new Set(list.map(mapper)).size;
-    });
-  });
-
   const schema = Yup.object().shape({
     registration_number: Yup.number(),
     membership_id: Yup.string(),
@@ -174,7 +164,10 @@ function Person({
           address_2: Yup.string(),
         })
       )
-      .unique("Cím típusa nem ismétlődhet!", (a: AddressDetailType) => a.address_type_id),
+      .test("Unique", "Cím típusa nem ismétlődhet!", (values) => {
+        const extracted = values?.map((data) => data.address_type_id);
+        return new Set(extracted).size === extracted?.length;
+      }),
     emails: Yup.array().of(
       Yup.object().shape({
         email_type_id: Yup.string().required("Email típus kitöltése kötelező"),
@@ -229,12 +222,6 @@ function Person({
     },
   });
 
-  function getDefaultAddresses(): Array<SelectDataType> {
-    return addressTypeData
-      .filter((address_id) => !personData.address.map((value) => value.address_type_id).includes(address_id.value))
-      .sort((a, b) => a.label.localeCompare(b.label));
-  }
-
   const defaultAddressData: AddressDetailType = {
     id: "",
     person_id: personData.person.id,
@@ -276,21 +263,7 @@ function Person({
           <>
             <IconHome />
             <Text ml="xs">Cím #{idx + 1}</Text>
-            <ActionIcon
-              color="red"
-              ml="xs"
-              title="Cím törlése"
-              onClick={() => {
-                form.removeListItem("addresses", idx);
-                setAvailableAddresses((oldAddresses) =>
-                  oldAddresses.map((data) => data.value).includes(_.address_type_id)
-                    ? getDefaultAddresses()
-                    : [...oldAddresses, ...addressTypeData.filter((item) => item.value === _.address_type_id)].sort(
-                        (a, b) => a.label.localeCompare(b.label)
-                      )
-                );
-              }}
-            >
+            <ActionIcon color="red" ml="xs" title="Cím törlése" onClick={() => form.removeListItem("addresses", idx)}>
               <IconTrash size={16} />
             </ActionIcon>
           </>
@@ -599,37 +572,15 @@ function Person({
             <Title order={2} mb="xl">
               Címek
             </Title>
-            <Menu
-              control={
-                <ActionIcon
-                  color="blue"
-                  title="Új cím hozzáadása"
-                  mb={"1.5rem"}
-                  disabled={availableAddresses.length > 0 ? false : true}
-                >
-                  <IconPlus />
-                </ActionIcon>
-              }
+            <ActionIcon
+              color="blue"
+              title="Új cím hozzáadása"
+              mb={"1.5rem"}
+              disabled={form.values.addresses.length === addressTypeData.length ? true : false}
+              onClick={() => form.addListItem("addresses", defaultAddressData)}
             >
-              {availableAddresses.map((value) => (
-                <Menu.Item
-                  key={value.value}
-                  onClick={() => {
-                    form.addListItem("addresses", {
-                      ...defaultAddressData,
-                      address_type_id: value.value,
-                    });
-                    setAvailableAddresses((oldAddresses) =>
-                      oldAddresses
-                        .filter((address) => address.value !== value.value)
-                        .sort((a, b) => a.label.localeCompare(b.label))
-                    );
-                  }}
-                >
-                  {value.label}
-                </Menu.Item>
-              ))}
-            </Menu>
+              <IconPlus />
+            </ActionIcon>
           </Group>
           {form.errors.addresses && (
             <Group align="flex-start">
@@ -650,6 +601,7 @@ function Person({
               color="blue"
               title="Új email cím hozzáadása"
               mb={"1.5rem"}
+              disabled={form.values.emails.length === emailTypeData.length ? true : false}
               onClick={() => form.addListItem("emails", defaultEmailData)}
             >
               <IconPlus />
@@ -666,6 +618,7 @@ function Person({
               color="blue"
               title="Új telefonszám hozzáadása"
               mb={"1.5rem"}
+              disabled={form.values.phones.length === phoneTypeData.length ? true : false}
               onClick={() => form.addListItem("phones", defaultPhoneData)}
             >
               <IconPlus />
