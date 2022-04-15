@@ -17,7 +17,6 @@ import {
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
-  IconAlertCircle,
   IconAt,
   IconBuildingCommunity,
   IconCake,
@@ -28,6 +27,7 @@ import {
   IconHome,
   IconId,
   IconIdBadge2,
+  IconInfoCircle,
   IconMail,
   IconMailbox,
   IconNote,
@@ -164,9 +164,18 @@ function Person({
           address_2: Yup.string(),
         })
       )
-      .test("Unique", "Cím típusa nem ismétlődhet!", (values) => {
-        const extracted = values?.map((data) => data.address_type_id);
-        return new Set(extracted).size === extracted?.length;
+      .test("Unique", "Cím típusa nem ismétlődhet!", (values, ctx) => {
+        const extracted = values ? values.map((data) => data.address_type_id) : [];
+        const uniqueData = Array.from(new Set(extracted));
+        const countMap = extracted.reduce(
+          (prev, current) => prev.set(current, (prev.get(current) || 0) + 1),
+          new Map()
+        );
+        if (uniqueData.length === extracted?.length) return true;
+        const errors = extracted.map((item, idx) =>
+          countMap.get(item) > 1 ? ctx.createError({ path: `${ctx.path}.${idx}.address_type_id` }) : false
+        );
+        return errors.filter((err) => err !== false).at(-1) || true;
       }),
     emails: Yup.array().of(
       Yup.object().shape({
@@ -272,7 +281,6 @@ function Person({
       <Group grow mb="lg" align="baseline">
         <Select
           data={addressTypeData.sort((a, b) => a.label.localeCompare(b.label))}
-          error={form.errors.addresses && "Ismétlődő cím típus"}
           icon={<IconDirections />}
           label="Cím típusa"
           name="address_type_id"
@@ -582,14 +590,12 @@ function Person({
               <IconPlus />
             </ActionIcon>
           </Group>
-          {form.errors.addresses && (
-            <Group align="flex-start">
-              <IconAlertCircle color="red" />
-              <Text color="red" mb="lg" align="justify">
-                {form.errors.addresses}
-              </Text>
-            </Group>
-          )}
+          <Group align="flex-start" style={{ gap: "0.5rem" }} mb="lg">
+            <IconInfoCircle style={{ color: "#1c7ed6" }} />
+            <Text color="blue" size="sm">
+              Cím típusa nem ismétlődhet!
+            </Text>
+          </Group>
           {addressFields}
         </Paper>
         <Paper shadow="xs" p="md" mb="xl">
@@ -607,6 +613,12 @@ function Person({
               <IconPlus />
             </ActionIcon>
           </Group>
+          <Group align="flex-start" style={{ gap: "0.5rem" }} mb="lg">
+            <IconInfoCircle style={{ color: "#1c7ed6" }} />
+            <Text color="blue" size="sm">
+              Email típusa nem ismétlődhet!
+            </Text>
+          </Group>
           {emailFields}
         </Paper>
         <Paper shadow="xs" p="md" mb="xl">
@@ -623,6 +635,12 @@ function Person({
             >
               <IconPlus />
             </ActionIcon>
+          </Group>
+          <Group align="flex-start" style={{ gap: "0.5rem" }} mb="lg">
+            <IconInfoCircle style={{ color: "#1c7ed6" }} />
+            <Text color="blue" size="sm">
+              Telefonszám típusa nem ismétlődhet!
+            </Text>
           </Group>
           {phoneFields}
         </Paper>
