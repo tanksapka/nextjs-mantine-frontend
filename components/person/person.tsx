@@ -14,6 +14,7 @@ import {
   Divider,
   Text,
   ActionIcon,
+  InputWrapper,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
@@ -39,6 +40,7 @@ import {
   IconVenus,
   IconWoman,
 } from "@tabler/icons";
+import { UseFormReturnType } from "@mantine/form/lib/use-form";
 
 interface SelectDataType {
   value: string;
@@ -164,7 +166,7 @@ function Person({
           address_2: Yup.string(),
         })
       )
-      .test("Unique", "Cím típusa nem ismétlődhet!", (values, ctx) => {
+      .test("UniqueAddress", "Cím típusa nem ismétlődhet", (values, ctx) => {
         const extracted = values ? values.map((data) => data.address_type_id) : [];
         const uniqueData = Array.from(new Set(extracted));
         const countMap = extracted.reduce(
@@ -177,25 +179,53 @@ function Person({
         );
         return errors.filter((err) => err !== false).at(-1) || true;
       }),
-    emails: Yup.array().of(
-      Yup.object().shape({
-        email_type_id: Yup.string().required("Email típus kitöltése kötelező"),
-        email: Yup.string().email("Valós email címet ajd meg").required("Email kitöltése kötelező"),
-        messenger: Yup.bool().default(false),
-        skype: Yup.bool().default(false),
-      })
-    ),
-    phones: Yup.array().of(
-      Yup.object().shape({
-        phone_type_id: Yup.string().required("Telefonszám típus kitöltése kötelező"),
-        phone_number: Yup.string().required("Telefonszám kitöltése kötelező"),
-        phone_extension: Yup.string(),
-        messenger: Yup.bool().default(false),
-        skype: Yup.bool().default(false),
-        viber: Yup.bool().default(false),
-        whatsapp: Yup.bool().default(false),
-      })
-    ),
+    emails: Yup.array()
+      .of(
+        Yup.object().shape({
+          email_type_id: Yup.string().required("Email típus kitöltése kötelező"),
+          email: Yup.string().email("Valós email címet ajd meg").required("Email kitöltése kötelező"),
+          messenger: Yup.bool().default(false),
+          skype: Yup.bool().default(false),
+        })
+      )
+      .test("UniqueEmail", "Email típusa nem ismétlődhet", (values, ctx) => {
+        const extracted = values ? values.map((data) => data.email_type_id) : [];
+        const uniqueData = Array.from(new Set(extracted));
+        const countMap = extracted.reduce(
+          (prev, current) => prev.set(current, (prev.get(current) || 0) + 1),
+          new Map()
+        );
+        if (uniqueData.length === extracted?.length) return true;
+        const errors = extracted.map((item, idx) =>
+          countMap.get(item) > 1 ? ctx.createError({ path: `${ctx.path}.${idx}.email_type_id` }) : false
+        );
+        return errors.filter((err) => err !== false).at(-1) || true;
+      }),
+    phones: Yup.array()
+      .of(
+        Yup.object().shape({
+          phone_type_id: Yup.string().required("Telefonszám típus kitöltése kötelező"),
+          phone_number: Yup.string().required("Telefonszám kitöltése kötelező"),
+          phone_extension: Yup.string(),
+          messenger: Yup.bool().default(false),
+          skype: Yup.bool().default(false),
+          viber: Yup.bool().default(false),
+          whatsapp: Yup.bool().default(false),
+        })
+      )
+      .test("UniquePhone", "Telefonszám típusa nem ismétlődhet", (values, ctx) => {
+        const extracted = values ? values.map((data) => data.phone_type_id) : [];
+        const uniqueData = Array.from(new Set(extracted));
+        const countMap = extracted.reduce(
+          (prev, current) => prev.set(current, (prev.get(current) || 0) + 1),
+          new Map()
+        );
+        if (uniqueData.length === extracted?.length) return true;
+        const errors = extracted.map((item, idx) =>
+          countMap.get(item) > 1 ? ctx.createError({ path: `${ctx.path}.${idx}.phone_type_id` }) : false
+        );
+        return errors.filter((err) => err !== false).at(-1) || true;
+      }),
   });
 
   const form = useForm({
@@ -264,6 +294,18 @@ function Person({
     whatsapp: false,
   };
 
+  function removeErrors(keyStub: string, form: UseFormReturnType<any>): void {
+    const errorKeys = Object.keys(form.errors);
+    const relevantKeys = errorKeys.map((value: string): { key: string; rel: boolean } => ({
+      key: value,
+      rel: value.startsWith(keyStub),
+    }));
+
+    for (let keyObj of relevantKeys) {
+      if (keyObj.rel) delete form.errors[keyObj.key];
+    }
+  }
+
   const addressFields = form.values.addresses.map((_, idx) => (
     <div key={idx}>
       <Divider
@@ -272,7 +314,15 @@ function Person({
           <>
             <IconHome />
             <Text ml="xs">Cím #{idx + 1}</Text>
-            <ActionIcon color="red" ml="xs" title="Cím törlése" onClick={() => form.removeListItem("addresses", idx)}>
+            <ActionIcon
+              color="red"
+              ml="xs"
+              title="Cím törlése"
+              onClick={() => {
+                form.removeListItem("addresses", idx);
+                removeErrors(`addresses.${idx}`, form);
+              }}
+            >
               <IconTrash size={16} />
             </ActionIcon>
           </>
@@ -288,44 +338,45 @@ function Person({
           required
           title="Cím típusa"
           {...form.getListInputProps("addresses", idx, "address_type_id")}
-        ></Select>
-        <TextInput
-          icon={<IconMailbox />}
-          label="Irányítószám"
-          name="zip"
-          placeholder="Irányítószám..."
-          required
-          title="Irányítószám"
-          {...form.getListInputProps("addresses", idx, "zip")}
-        ></TextInput>
-        <TextInput
-          icon={<IconBuildingCommunity />}
-          label="Helység"
-          name="city"
-          placeholder="Helység..."
-          required
-          title="Helység"
-          {...form.getListInputProps("addresses", idx, "city")}
-        ></TextInput>
+        />
+        <InputWrapper id="zip" label="Irányítószám" required title="Irányítószám">
+          <TextInput
+            icon={<IconMailbox />}
+            id="zip"
+            name="zip"
+            placeholder="Irányítószám..."
+            {...form.getListInputProps("addresses", idx, "zip")}
+          />
+        </InputWrapper>
+        <InputWrapper id="city" label="Helység" required title="Helység">
+          <TextInput
+            icon={<IconBuildingCommunity />}
+            id="city"
+            name="city"
+            placeholder="Helység..."
+            {...form.getListInputProps("addresses", idx, "city")}
+          />
+        </InputWrapper>
       </Group>
-      <Group grow mb="lg">
-        <TextInput
-          icon={<IconHome />}
-          label="Cím 1"
-          name="address_1"
-          placeholder="Cím 1..."
-          required
-          title="Cím 1"
-          {...form.getListInputProps("addresses", idx, "address_1")}
-        ></TextInput>
-        <TextInput
-          icon={<IconHome />}
-          label="Cím 2"
-          name="address_2"
-          placeholder="Cím 2..."
-          title="Cím 2"
-          {...form.getListInputProps("addresses", idx, "address_2")}
-        ></TextInput>
+      <Group grow mb="lg" align="baseline">
+        <InputWrapper id="address_1" label="Cím 1" required title="Cím 1">
+          <TextInput
+            icon={<IconHome />}
+            id="address_1"
+            name="address_1"
+            placeholder="Cím 1..."
+            {...form.getListInputProps("addresses", idx, "address_1")}
+          />
+        </InputWrapper>
+        <InputWrapper id="address_2" label="Cím 2" title="Cím 2">
+          <TextInput
+            icon={<IconHome />}
+            id="address_2"
+            name="address_2"
+            placeholder="Cím 2..."
+            {...form.getListInputProps("addresses", idx, "address_2")}
+          />
+        </InputWrapper>
       </Group>
     </div>
   ));
@@ -342,14 +393,17 @@ function Person({
               color="red"
               ml="xs"
               title="Email cím törlése"
-              onClick={() => form.removeListItem("emails", idx)}
+              onClick={() => {
+                form.removeListItem("emails", idx);
+                removeErrors(`emails.${idx}`, form);
+              }}
             >
               <IconTrash size={16} />
             </ActionIcon>
           </>
         }
       />
-      <Group grow mb="lg">
+      <Group grow mb="lg" align="baseline">
         <Select
           data={emailTypeData}
           icon={<IconMail />}
@@ -359,31 +413,31 @@ function Person({
           required
           title="Email cím típusa"
           {...form.getListInputProps("emails", idx, "email_type_id")}
-        ></Select>
-        <TextInput
-          icon={<IconAt />}
-          label="Email"
-          name="email"
-          placeholder="Email..."
-          required
-          title="Email"
-          type="email"
-          {...form.getListInputProps("emails", idx, "email")}
-        ></TextInput>
+        />
+        <InputWrapper id="email" label="Email" required title="Email">
+          <TextInput
+            icon={<IconAt />}
+            id="email"
+            name="email"
+            placeholder="Email..."
+            type="email"
+            {...form.getListInputProps("emails", idx, "email")}
+          />
+        </InputWrapper>
       </Group>
-      <Group mb="lg">
+      <Group mb="lg" align="baseline">
         <Checkbox
           label="Messenger"
           name="messenger"
           title="Messenger"
           {...form.getListInputProps("emails", idx, "messenger", { type: "checkbox" })}
-        ></Checkbox>
+        />
         <Checkbox
           label="Skype"
           name="skype"
           title="Skype"
           {...form.getListInputProps("emails", idx, "skype", { type: "checkbox" })}
-        ></Checkbox>
+        />
       </Group>
     </div>
   ));
@@ -400,14 +454,17 @@ function Person({
               color="red"
               ml="xs"
               title="Telefonszám törlése"
-              onClick={() => form.removeListItem("phones", idx)}
+              onClick={() => {
+                form.removeListItem("phones", idx);
+                removeErrors(`phones.${idx}`, form);
+              }}
             >
               <IconTrash size={16} />
             </ActionIcon>
           </>
         }
       />
-      <Group grow mb="lg">
+      <Group grow mb="lg" align="baseline">
         <Select
           data={phoneTypeData}
           icon={<IconDeviceMobile />}
@@ -417,50 +474,51 @@ function Person({
           required
           title="Telefonszám típus"
           {...form.getListInputProps("phones", idx, "phone_type_id")}
-        ></Select>
-        <TextInput
-          icon={<IconPhone />}
-          label="Telefonszám"
-          name="phone_number"
-          placeholder="Telefonszám..."
-          required
-          title="Telefonszám"
-          {...form.getListInputProps("phones", idx, "phone_number")}
-        ></TextInput>
-        <TextInput
-          icon={<IconNumbers />}
-          label="Mellék"
-          name="phone_extension"
-          placeholder="Mellék..."
-          title="Mellék"
-          {...form.getListInputProps("phones", idx, "phone_extension")}
-        ></TextInput>
+        />
+        <InputWrapper id="phone_number" label="Telefonszám" required title="Telefonszám">
+          <TextInput
+            icon={<IconPhone />}
+            id="phone_number"
+            name="phone_number"
+            placeholder="Telefonszám..."
+            {...form.getListInputProps("phones", idx, "phone_number")}
+          />
+        </InputWrapper>
+        <InputWrapper label="Mellék" title="Mellék">
+          <TextInput
+            icon={<IconNumbers />}
+            id="phone_extension"
+            name="phone_extension"
+            placeholder="Mellék..."
+            {...form.getListInputProps("phones", idx, "phone_extension")}
+          />
+        </InputWrapper>
       </Group>
-      <Group mb="lg">
+      <Group mb="lg" align="baseline">
         <Checkbox
           label="Messenger"
           name="messenger"
           title="Messenger"
           {...form.getListInputProps("phones", idx, "messenger", { type: "checkbox" })}
-        ></Checkbox>
+        />
         <Checkbox
           label="Skype"
           name="skype"
           title="Skype"
           {...form.getListInputProps("phones", idx, "skype", { type: "checkbox" })}
-        ></Checkbox>
+        />
         <Checkbox
           label="Viber"
           name="viber"
           title="Viber"
           {...form.getListInputProps("phones", idx, "viber", { type: "checkbox" })}
-        ></Checkbox>
+        />
         <Checkbox
           label="Whatsapp"
           name="whatsapp"
           title="Whatsapp"
           {...form.getListInputProps("phones", idx, "whatsapp", { type: "checkbox" })}
-        ></Checkbox>
+        />
       </Group>
     </div>
   ));
@@ -472,7 +530,7 @@ function Person({
           Személyes adatok
         </Title>
         <Paper shadow="xs" p="md">
-          <Group grow mb="lg">
+          <Group grow mb="lg" align="baseline">
             <TextInput
               icon={<IconHash />}
               label="Regisztrációs szám"
@@ -492,40 +550,40 @@ function Person({
               {...form.getInputProps("membership_id")}
             />
           </Group>
-          <Group grow mb="lg">
-            <TextInput
-              icon={<IconUser />}
-              label="Név"
-              name="person_name"
-              placeholder="Név..."
-              required
-              title="Név"
-              {...form.getInputProps("person_name")}
-            />
-            <DatePicker
-              allowFreeInput
-              icon={<IconCake />}
-              inputFormat="YYYY.MM.DD"
-              label="Születési dátum"
-              labelFormat="YYYY MMMM"
-              locale="hu"
-              name="birthdate"
-              placeholder="Születési dátum..."
-              required
-              title="Születési dátum"
-              {...form.getInputProps("birthdate")}
-            />
+          <Group grow mb="lg" align="baseline">
+            <InputWrapper id="person_name" label="Név" required title="Név">
+              <TextInput
+                icon={<IconUser />}
+                id="person_name"
+                name="person_name"
+                placeholder="Név..."
+                {...form.getInputProps("person_name")}
+              />
+            </InputWrapper>
+            <InputWrapper id="birthdate" label="Születési dátum" required title="Születési dátum">
+              <DatePicker
+                allowFreeInput
+                icon={<IconCake />}
+                id="birthdate"
+                inputFormat="YYYY.MM.DD"
+                labelFormat="YYYY MMMM"
+                locale="hu"
+                name="birthdate"
+                placeholder="Születési dátum..."
+                {...form.getInputProps("birthdate")}
+              />
+            </InputWrapper>
           </Group>
-          <Group grow mb="lg">
-            <TextInput
-              icon={<IconWoman />}
-              label="Anyja neve"
-              name="mother_name"
-              placeholder="Anyja neve..."
-              required
-              title="Anyja neve"
-              {...form.getInputProps("mother_name")}
-            />
+          <Group grow mb="lg" align="baseline">
+            <InputWrapper id="mother_name" label="Anyja neve" required title="Anyja neve">
+              <TextInput
+                icon={<IconWoman />}
+                id="mother_name"
+                name="mother_name"
+                placeholder="Anyja neve..."
+                {...form.getInputProps("mother_name")}
+              />
+            </InputWrapper>
             <Select
               allowDeselect
               icon={<IconVenus />}
@@ -537,37 +595,40 @@ function Person({
               {...form.getInputProps("gender_id")}
             />
           </Group>
-          <Group grow mb="lg">
-            <TextInput
-              icon={<IconId />}
-              label="Személyi igazolvány szám"
-              name="identity_card_number"
-              placeholder="Személyi igazolvány szám..."
-              title="Személyi igazolvány szám"
-              {...form.getInputProps("identity_card_number")}
-            />
+          <Group grow mb="lg" align="baseline">
+            <InputWrapper id="identity_card_number" label="Személyi igazolvány szám" title="Személyi igazolvány szám">
+              <TextInput
+                icon={<IconId />}
+                id="identity_card_number"
+                name="identity_card_number"
+                placeholder="Személyi igazolvány szám..."
+                {...form.getInputProps("identity_card_number")}
+              />
+            </InputWrapper>
             <Select
               icon={<IconCoin />}
               label="Tagdíj kategória"
               name="membership_fee_category_id"
               placeholder="Tagdíj kategória..."
+              required
               title="Tagdíj kategória"
               data={membershipFeeData}
               {...form.getInputProps("membership_fee_category_id")}
             />
           </Group>
-          <Group grow mb="lg">
-            <Textarea
-              autosize
-              icon={<IconNote />}
-              label="Megjegyzés"
-              maxRows={10}
-              minRows={3}
-              name="notes"
-              placeholder="Megyjegyzés..."
-              title="Megjegyzés"
-              {...form.getInputProps("notes")}
-            />
+          <Group grow mb="lg" align="baseline">
+            <InputWrapper id="notes" label="Megjegyzés" title="Megjegyzés">
+              <Textarea
+                autosize
+                icon={<IconNote />}
+                id="notes"
+                maxRows={10}
+                minRows={3}
+                name="notes"
+                placeholder="Megyjegyzés..."
+                {...form.getInputProps("notes")}
+              />
+            </InputWrapper>
           </Group>
         </Paper>
       </Container>
