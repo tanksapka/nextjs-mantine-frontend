@@ -40,7 +40,7 @@ import {
   IconVenus,
   IconWoman,
 } from "@tabler/icons";
-import { UseFormReturnType } from "@mantine/form/lib/use-form";
+import { removeErrors } from "../../utils/util";
 
 interface SelectDataType {
   value: string;
@@ -66,7 +66,6 @@ interface AddressDetailType {
   id: string;
   person_id: string;
   address_type_id: string;
-  // address_type_name: string;
   zip: string;
   city: string;
   address_1: string;
@@ -77,7 +76,6 @@ interface EmailDetailType {
   id: string;
   person_id: string;
   email_type_id: string;
-  email_type_name: string;
   email: string;
   messenger: string;
   skype: string;
@@ -92,7 +90,6 @@ interface PhoneDetailType {
   id: string;
   person_id: string;
   phone_type_id: string;
-  phone_type_name: string;
   phone_number: string;
   phone_extension: string;
   messenger: string;
@@ -150,7 +147,10 @@ function Person({
     registration_number: Yup.number(),
     membership_id: Yup.string(),
     person_name: Yup.string().required("Név kitöltése kötelező"),
-    birthdate: Yup.date().required("Születési dátum kitöltése kötelező"),
+    birthdate: Yup.date()
+      .nullable()
+      .transform((curr, orig) => (orig === "" ? null : curr))
+      .required("Születési dátum kitöltése kötelező"),
     mother_name: Yup.string().required("Anyja neve kitöltése kötelező"),
     gender_id: Yup.string(),
     identity_card_number: Yup.string(),
@@ -275,7 +275,6 @@ function Person({
     id: "",
     person_id: personData.person.id,
     email_type_id: "",
-    email_type_name: "",
     email: "",
     messenger: false,
     skype: false,
@@ -285,7 +284,6 @@ function Person({
     id: "",
     person_id: personData.person.id,
     phone_type_id: "",
-    phone_type_name: "",
     phone_number: "",
     phone_extension: "",
     messenger: false,
@@ -293,18 +291,6 @@ function Person({
     viber: false,
     whatsapp: false,
   };
-
-  function removeErrors(keyStub: string, form: UseFormReturnType<any>): void {
-    const errorKeys = Object.keys(form.errors);
-    const relevantKeys = errorKeys.map((value: string): { key: string; rel: boolean } => ({
-      key: value,
-      rel: value.startsWith(keyStub),
-    }));
-
-    for (let keyObj of relevantKeys) {
-      if (keyObj.rel) delete form.errors[keyObj.key];
-    }
-  }
 
   const addressFields = form.values.addresses.map((_, idx) => (
     <div key={idx}>
