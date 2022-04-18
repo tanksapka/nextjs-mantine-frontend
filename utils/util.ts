@@ -1,5 +1,9 @@
 import { UseFormReturnType } from "@mantine/form/lib/use-form";
 
+function convertToBool(value: string): boolean {
+  return value === "Y" ? true : false;
+}
+
 function removeErrors(keyStub: string, form: UseFormReturnType<any>): void {
   const errorKeys = Object.keys(form.errors);
   const relevantKeys = errorKeys.map((value: string): { key: string; rel: boolean } => ({
@@ -12,4 +16,4 @@ function removeErrors(keyStub: string, form: UseFormReturnType<any>): void {
   }
 }
 
-export { removeErrors };
+export { convertToBool, removeErrors };

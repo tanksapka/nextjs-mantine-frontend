@@ -40,12 +40,12 @@ import {
   IconVenus,
   IconWoman,
 } from "@tabler/icons";
-import { removeErrors } from "../../utils/util";
-
-interface SelectDataType {
-  value: string;
-  label: string;
-}
+import { convertToBool, removeErrors } from "../../utils/util";
+import type { SelectDataType } from "../../types/general";
+import { AddressDetailType, addressesValidation, defaultAddressData } from "../../types/address-detail";
+import { EmailDetailType, emailsValidation, defaultEmailData } from "../../types/email-detail";
+import { PhoneDetailType, phonesValidation, defaultPhoneData } from "../../types/phone-detail";
+import { Address } from "../address/Address";
 
 interface PersonDetailType {
   id: string;
@@ -60,49 +60,6 @@ interface PersonDetailType {
   membership_fee_category_id: string;
   membership_fee_category_name: string;
   notes: string;
-}
-
-interface AddressDetailType {
-  id: string;
-  person_id: string;
-  address_type_id: string;
-  zip: string;
-  city: string;
-  address_1: string;
-  address_2: string;
-}
-
-interface EmailDetailType {
-  id: string;
-  person_id: string;
-  email_type_id: string;
-  email: string;
-  messenger: string;
-  skype: string;
-}
-
-interface EmailFormType extends Omit<EmailDetailType, "messenger" | "skype"> {
-  messenger: boolean;
-  skype: boolean;
-}
-
-interface PhoneDetailType {
-  id: string;
-  person_id: string;
-  phone_type_id: string;
-  phone_number: string;
-  phone_extension: string;
-  messenger: string;
-  skype: string;
-  viber: string;
-  whatsapp: string;
-}
-
-interface PhoneFormType extends Omit<PhoneDetailType, "messenger" | "skype" | "viber" | "whatsapp"> {
-  messenger: boolean;
-  skype: boolean;
-  viber: boolean;
-  whatsapp: boolean;
 }
 
 interface MembershipDetailType {
@@ -122,10 +79,6 @@ interface PersonDataType {
   email: Array<EmailDetailType>;
   phone: Array<PhoneDetailType>;
   membership: Array<MembershipDetailType>;
-}
-
-function convertToBool(value: string): boolean {
-  return value === "Y" ? true : false;
 }
 
 function Person({
@@ -156,76 +109,9 @@ function Person({
     identity_card_number: Yup.string(),
     membership_fee_category_id: Yup.string().required("Tagdíj kategória kitöltése kötelező"),
     notes: Yup.string(),
-    addresses: Yup.array()
-      .of(
-        Yup.object().shape({
-          address_type_id: Yup.string().required("Cím típus kitöltése kötelező"),
-          zip: Yup.string().required("Irányítószám kitöltése kötelező"),
-          city: Yup.string().required("Helység kitöltése kötelező"),
-          address_1: Yup.string().required("Cím kitöltése kötelező"),
-          address_2: Yup.string(),
-        })
-      )
-      .test("UniqueAddress", "Cím típusa nem ismétlődhet", (values, ctx) => {
-        const extracted = values ? values.map((data) => data.address_type_id) : [];
-        const uniqueData = Array.from(new Set(extracted));
-        const countMap = extracted.reduce(
-          (prev, current) => prev.set(current, (prev.get(current) || 0) + 1),
-          new Map()
-        );
-        if (uniqueData.length === extracted?.length) return true;
-        const errors = extracted.map((item, idx) =>
-          countMap.get(item) > 1 ? ctx.createError({ path: `${ctx.path}.${idx}.address_type_id` }) : false
-        );
-        return errors.filter((err) => err !== false).at(-1) || true;
-      }),
-    emails: Yup.array()
-      .of(
-        Yup.object().shape({
-          email_type_id: Yup.string().required("Email típus kitöltése kötelező"),
-          email: Yup.string().email("Valós email címet ajd meg").required("Email kitöltése kötelező"),
-          messenger: Yup.bool().default(false),
-          skype: Yup.bool().default(false),
-        })
-      )
-      .test("UniqueEmail", "Email típusa nem ismétlődhet", (values, ctx) => {
-        const extracted = values ? values.map((data) => data.email_type_id) : [];
-        const uniqueData = Array.from(new Set(extracted));
-        const countMap = extracted.reduce(
-          (prev, current) => prev.set(current, (prev.get(current) || 0) + 1),
-          new Map()
-        );
-        if (uniqueData.length === extracted?.length) return true;
-        const errors = extracted.map((item, idx) =>
-          countMap.get(item) > 1 ? ctx.createError({ path: `${ctx.path}.${idx}.email_type_id` }) : false
-        );
-        return errors.filter((err) => err !== false).at(-1) || true;
-      }),
-    phones: Yup.array()
-      .of(
-        Yup.object().shape({
-          phone_type_id: Yup.string().required("Telefonszám típus kitöltése kötelező"),
-          phone_number: Yup.string().required("Telefonszám kitöltése kötelező"),
-          phone_extension: Yup.string(),
-          messenger: Yup.bool().default(false),
-          skype: Yup.bool().default(false),
-          viber: Yup.bool().default(false),
-          whatsapp: Yup.bool().default(false),
-        })
-      )
-      .test("UniquePhone", "Telefonszám típusa nem ismétlődhet", (values, ctx) => {
-        const extracted = values ? values.map((data) => data.phone_type_id) : [];
-        const uniqueData = Array.from(new Set(extracted));
-        const countMap = extracted.reduce(
-          (prev, current) => prev.set(current, (prev.get(current) || 0) + 1),
-          new Map()
-        );
-        if (uniqueData.length === extracted?.length) return true;
-        const errors = extracted.map((item, idx) =>
-          countMap.get(item) > 1 ? ctx.createError({ path: `${ctx.path}.${idx}.phone_type_id` }) : false
-        );
-        return errors.filter((err) => err !== false).at(-1) || true;
-      }),
+    addresses: addressesValidation,
+    emails: emailsValidation,
+    phones: phonesValidation,
   });
 
   const form = useForm({
@@ -261,37 +147,9 @@ function Person({
     },
   });
 
-  const defaultAddressData: AddressDetailType = {
-    id: "",
-    person_id: personData.person.id,
-    address_type_id: "",
-    zip: "",
-    city: "",
-    address_1: "",
-    address_2: "",
-  };
-
-  const defaultEmailData: EmailFormType = {
-    id: "",
-    person_id: personData.person.id,
-    email_type_id: "",
-    email: "",
-    messenger: false,
-    skype: false,
-  };
-
-  const defaultPhoneData: PhoneFormType = {
-    id: "",
-    person_id: personData.person.id,
-    phone_type_id: "",
-    phone_number: "",
-    phone_extension: "",
-    messenger: false,
-    skype: false,
-    viber: false,
-    whatsapp: false,
-  };
-
+  // const addressFields = form.values.addresses.map((_, idx) => (
+  //   <Address key={idx} idx={idx} form={{ addresses: form.values.addresses }} addressTypeData={addressTypeData} />
+  // ));
   const addressFields = form.values.addresses.map((_, idx) => (
     <div key={idx}>
       <Divider
@@ -632,7 +490,7 @@ function Person({
               title="Új cím hozzáadása"
               mb={"1.5rem"}
               disabled={form.values.addresses.length === addressTypeData.length ? true : false}
-              onClick={() => form.addListItem("addresses", defaultAddressData)}
+              onClick={() => form.addListItem("addresses", defaultAddressData(personData.person.id))}
             >
               <IconPlus />
             </ActionIcon>
@@ -655,7 +513,7 @@ function Person({
               title="Új email cím hozzáadása"
               mb={"1.5rem"}
               disabled={form.values.emails.length === emailTypeData.length ? true : false}
-              onClick={() => form.addListItem("emails", defaultEmailData)}
+              onClick={() => form.addListItem("emails", defaultEmailData(personData.person.id))}
             >
               <IconPlus />
             </ActionIcon>
@@ -678,7 +536,7 @@ function Person({
               title="Új telefonszám hozzáadása"
               mb={"1.5rem"}
               disabled={form.values.phones.length === phoneTypeData.length ? true : false}
-              onClick={() => form.addListItem("phones", defaultPhoneData)}
+              onClick={() => form.addListItem("phones", defaultPhoneData(personData.person.id))}
             >
               <IconPlus />
             </ActionIcon>
