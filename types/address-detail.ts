@@ -34,7 +34,7 @@ function defaultOrgAddressData(organizationId: string): OrgAddressDetailType {
   return { ...defaultAddress, organization_id: organizationId };
 }
 
-const addressesValidation = Yup.array()
+const addressValidation = Yup.array()
   .of(
     Yup.object().shape({
       address_type_id: Yup.string().required("Cím típus kitöltése kötelező"),
@@ -56,4 +56,4 @@ const addressesValidation = Yup.array()
   });
 
 export type { AddressDetailType, OrgAddressDetailType };
-export { addressesValidation, defaultAddressData, defaultOrgAddressData };
+export { addressValidation, defaultAddressData, defaultOrgAddressData };

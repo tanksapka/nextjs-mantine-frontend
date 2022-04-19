@@ -42,25 +42,11 @@ import {
 } from "@tabler/icons";
 import { convertToBool, removeErrors } from "../../utils/util";
 import type { SelectDataType } from "../../types/general";
-import { AddressDetailType, addressesValidation, defaultAddressData } from "../../types/address-detail";
-import { EmailDetailType, emailsValidation, defaultEmailData } from "../../types/email-detail";
-import { PhoneDetailType, phonesValidation, defaultPhoneData } from "../../types/phone-detail";
+import { PersonDetailType, personValidation } from "../../types/person-detail";
+import { AddressDetailType, addressValidation, defaultAddressData } from "../../types/address-detail";
+import { EmailDetailType, emailValidation, defaultEmailData } from "../../types/email-detail";
+import { PhoneDetailType, phoneValidation, defaultPhoneData } from "../../types/phone-detail";
 import { Address } from "../address/Address";
-
-interface PersonDetailType {
-  id: string;
-  registration_number: number;
-  membership_id: string;
-  person_name: string;
-  birthdate: string;
-  mother_name: string;
-  gender_id: string;
-  gender_name: string;
-  identity_card_number: string;
-  membership_fee_category_id: string;
-  membership_fee_category_name: string;
-  notes: string;
-}
 
 interface MembershipDetailType {
   id: string;
@@ -97,21 +83,10 @@ function Person({
   phoneTypeData: Array<SelectDataType>;
 }): JSX.Element {
   const schema = Yup.object().shape({
-    registration_number: Yup.number(),
-    membership_id: Yup.string(),
-    person_name: Yup.string().required("Név kitöltése kötelező"),
-    birthdate: Yup.date()
-      .nullable()
-      .transform((curr, orig) => (orig === "" ? null : curr))
-      .required("Születési dátum kitöltése kötelező"),
-    mother_name: Yup.string().required("Anyja neve kitöltése kötelező"),
-    gender_id: Yup.string(),
-    identity_card_number: Yup.string(),
-    membership_fee_category_id: Yup.string().required("Tagdíj kategória kitöltése kötelező"),
-    notes: Yup.string(),
-    addresses: addressesValidation,
-    emails: emailsValidation,
-    phones: phonesValidation,
+    ...personValidation,
+    address: addressValidation,
+    email: emailValidation,
+    phone: phoneValidation,
   });
 
   const form = useForm({
@@ -126,15 +101,15 @@ function Person({
       identity_card_number: personData.person.identity_card_number,
       membership_fee_category_id: personData.person.membership_fee_category_id,
       notes: personData.person.notes || undefined,
-      addresses: formList(personData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined }))),
-      emails: formList(
+      address: formList(personData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined }))),
+      email: formList(
         personData.email.map((data) => ({
           ...data,
           messenger: convertToBool(data.messenger),
           skype: convertToBool(data.skype),
         }))
       ),
-      phones: formList(
+      phone: formList(
         personData.phone.map((data) => ({
           ...data,
           phone_extension: data.phone_extension || undefined,
@@ -147,85 +122,11 @@ function Person({
     },
   });
 
-  // const addressFields = form.values.addresses.map((_, idx) => (
-  //   <Address key={idx} idx={idx} form={{ addresses: form.values.addresses }} addressTypeData={addressTypeData} />
-  // ));
-  const addressFields = form.values.addresses.map((_, idx) => (
-    <div key={idx}>
-      <Divider
-        mb="xs"
-        label={
-          <>
-            <IconHome />
-            <Text ml="xs">Cím #{idx + 1}</Text>
-            <ActionIcon
-              color="red"
-              ml="xs"
-              title="Cím törlése"
-              onClick={() => {
-                form.removeListItem("addresses", idx);
-                removeErrors(`addresses.${idx}`, form);
-              }}
-            >
-              <IconTrash size={16} />
-            </ActionIcon>
-          </>
-        }
-      />
-      <Group grow mb="lg" align="baseline">
-        <Select
-          data={addressTypeData.sort((a, b) => a.label.localeCompare(b.label))}
-          icon={<IconDirections />}
-          label="Cím típusa"
-          name="address_type_id"
-          placeholder="Cím típusa..."
-          required
-          title="Cím típusa"
-          {...form.getListInputProps("addresses", idx, "address_type_id")}
-        />
-        <InputWrapper id="zip" label="Irányítószám" required title="Irányítószám">
-          <TextInput
-            icon={<IconMailbox />}
-            id="zip"
-            name="zip"
-            placeholder="Irányítószám..."
-            {...form.getListInputProps("addresses", idx, "zip")}
-          />
-        </InputWrapper>
-        <InputWrapper id="city" label="Helység" required title="Helység">
-          <TextInput
-            icon={<IconBuildingCommunity />}
-            id="city"
-            name="city"
-            placeholder="Helység..."
-            {...form.getListInputProps("addresses", idx, "city")}
-          />
-        </InputWrapper>
-      </Group>
-      <Group grow mb="lg" align="baseline">
-        <InputWrapper id="address_1" label="Cím 1" required title="Cím 1">
-          <TextInput
-            icon={<IconHome />}
-            id="address_1"
-            name="address_1"
-            placeholder="Cím 1..."
-            {...form.getListInputProps("addresses", idx, "address_1")}
-          />
-        </InputWrapper>
-        <InputWrapper id="address_2" label="Cím 2" title="Cím 2">
-          <TextInput
-            icon={<IconHome />}
-            id="address_2"
-            name="address_2"
-            placeholder="Cím 2..."
-            {...form.getListInputProps("addresses", idx, "address_2")}
-          />
-        </InputWrapper>
-      </Group>
-    </div>
+  const addressFields = form.values.address.map((_, idx) => (
+    <Address key={idx} idx={idx} form={form} addressTypeData={addressTypeData} />
   ));
 
-  const emailFields = form.values.emails.map((_, idx) => (
+  const emailFields = form.values.email.map((_, idx) => (
     <div key={idx}>
       <Divider
         mb="xs"
@@ -238,8 +139,8 @@ function Person({
               ml="xs"
               title="Email cím törlése"
               onClick={() => {
-                form.removeListItem("emails", idx);
-                removeErrors(`emails.${idx}`, form);
+                form.removeListItem("email", idx);
+                removeErrors(`email.${idx}`, form);
               }}
             >
               <IconTrash size={16} />
@@ -256,7 +157,7 @@ function Person({
           placeholder="Email cím típusa..."
           required
           title="Email cím típusa"
-          {...form.getListInputProps("emails", idx, "email_type_id")}
+          {...form.getListInputProps("email", idx, "email_type_id")}
         />
         <InputWrapper id="email" label="Email" required title="Email">
           <TextInput
@@ -265,7 +166,7 @@ function Person({
             name="email"
             placeholder="Email..."
             type="email"
-            {...form.getListInputProps("emails", idx, "email")}
+            {...form.getListInputProps("email", idx, "email")}
           />
         </InputWrapper>
       </Group>
@@ -274,19 +175,19 @@ function Person({
           label="Messenger"
           name="messenger"
           title="Messenger"
-          {...form.getListInputProps("emails", idx, "messenger", { type: "checkbox" })}
+          {...form.getListInputProps("email", idx, "messenger", { type: "checkbox" })}
         />
         <Checkbox
           label="Skype"
           name="skype"
           title="Skype"
-          {...form.getListInputProps("emails", idx, "skype", { type: "checkbox" })}
+          {...form.getListInputProps("email", idx, "skype", { type: "checkbox" })}
         />
       </Group>
     </div>
   ));
 
-  const phoneFields = form.values.phones.map((_, idx) => (
+  const phoneFields = form.values.phone.map((_, idx) => (
     <div key={idx}>
       <Divider
         mb="xs"
@@ -299,8 +200,8 @@ function Person({
               ml="xs"
               title="Telefonszám törlése"
               onClick={() => {
-                form.removeListItem("phones", idx);
-                removeErrors(`phones.${idx}`, form);
+                form.removeListItem("phone", idx);
+                removeErrors(`phone.${idx}`, form);
               }}
             >
               <IconTrash size={16} />
@@ -317,7 +218,7 @@ function Person({
           placeholder="Telefonszám típusa..."
           required
           title="Telefonszám típus"
-          {...form.getListInputProps("phones", idx, "phone_type_id")}
+          {...form.getListInputProps("phone", idx, "phone_type_id")}
         />
         <InputWrapper id="phone_number" label="Telefonszám" required title="Telefonszám">
           <TextInput
@@ -325,7 +226,7 @@ function Person({
             id="phone_number"
             name="phone_number"
             placeholder="Telefonszám..."
-            {...form.getListInputProps("phones", idx, "phone_number")}
+            {...form.getListInputProps("phone", idx, "phone_number")}
           />
         </InputWrapper>
         <InputWrapper label="Mellék" title="Mellék">
@@ -334,7 +235,7 @@ function Person({
             id="phone_extension"
             name="phone_extension"
             placeholder="Mellék..."
-            {...form.getListInputProps("phones", idx, "phone_extension")}
+            {...form.getListInputProps("phone", idx, "phone_extension")}
           />
         </InputWrapper>
       </Group>
@@ -343,25 +244,25 @@ function Person({
           label="Messenger"
           name="messenger"
           title="Messenger"
-          {...form.getListInputProps("phones", idx, "messenger", { type: "checkbox" })}
+          {...form.getListInputProps("phone", idx, "messenger", { type: "checkbox" })}
         />
         <Checkbox
           label="Skype"
           name="skype"
           title="Skype"
-          {...form.getListInputProps("phones", idx, "skype", { type: "checkbox" })}
+          {...form.getListInputProps("phone", idx, "skype", { type: "checkbox" })}
         />
         <Checkbox
           label="Viber"
           name="viber"
           title="Viber"
-          {...form.getListInputProps("phones", idx, "viber", { type: "checkbox" })}
+          {...form.getListInputProps("phone", idx, "viber", { type: "checkbox" })}
         />
         <Checkbox
           label="Whatsapp"
           name="whatsapp"
           title="Whatsapp"
-          {...form.getListInputProps("phones", idx, "whatsapp", { type: "checkbox" })}
+          {...form.getListInputProps("phone", idx, "whatsapp", { type: "checkbox" })}
         />
       </Group>
     </div>
@@ -489,8 +390,8 @@ function Person({
               color="blue"
               title="Új cím hozzáadása"
               mb={"1.5rem"}
-              disabled={form.values.addresses.length === addressTypeData.length ? true : false}
-              onClick={() => form.addListItem("addresses", defaultAddressData(personData.person.id))}
+              disabled={form.values.address.length === addressTypeData.length ? true : false}
+              onClick={() => form.addListItem("address", defaultAddressData(personData.person.id))}
             >
               <IconPlus />
             </ActionIcon>
@@ -512,8 +413,8 @@ function Person({
               color="blue"
               title="Új email cím hozzáadása"
               mb={"1.5rem"}
-              disabled={form.values.emails.length === emailTypeData.length ? true : false}
-              onClick={() => form.addListItem("emails", defaultEmailData(personData.person.id))}
+              disabled={form.values.email.length === emailTypeData.length ? true : false}
+              onClick={() => form.addListItem("email", defaultEmailData(personData.person.id))}
             >
               <IconPlus />
             </ActionIcon>
@@ -535,8 +436,8 @@ function Person({
               color="blue"
               title="Új telefonszám hozzáadása"
               mb={"1.5rem"}
-              disabled={form.values.phones.length === phoneTypeData.length ? true : false}
-              onClick={() => form.addListItem("phones", defaultPhoneData(personData.person.id))}
+              disabled={form.values.phone.length === phoneTypeData.length ? true : false}
+              onClick={() => form.addListItem("phone", defaultPhoneData(personData.person.id))}
             >
               <IconPlus />
             </ActionIcon>

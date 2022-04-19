@@ -59,7 +59,7 @@ function defaultOrgPhoneData(organizationId: string): OrgPhoneFormType {
   return { ...defaultPhone, organization_id: organizationId };
 }
 
-const phonesValidation = Yup.array()
+const phoneValidation = Yup.array()
   .of(
     Yup.object().shape({
       phone_type_id: Yup.string().required("Telefonszám típus kitöltése kötelező"),
@@ -83,4 +83,4 @@ const phonesValidation = Yup.array()
   });
 
 export type { PhoneBaseType, PhoneDetailType, PhoneFormType, OrgPhoneDetailType, OrgPhoneFormType };
-export { phonesValidation, defaultPhoneData, defaultOrgPhoneData };
+export { phoneValidation, defaultPhoneData, defaultOrgPhoneData };

@@ -14,13 +14,24 @@ import { FormList } from "@mantine/form/lib/form-list/form-list";
 
 interface AddressType {
   idx: number;
-  form: UseFormReturnType<{ addresses: FormList<AddressDetailType | OrgAddressDetailType> }>;
+  form: UseFormReturnType<{
+    registration_number: number;
+    membership_id: string;
+    person_name: string;
+    birthdate: Date;
+    mother_name: string;
+    gender_id: string;
+    identity_card_number: string;
+    membership_fee_category_id: string;
+    notes: string | undefined;
+    address: FormList<any>;
+    email: FormList<any>;
+    phone: FormList<any>;
+  }>;
   addressTypeData: Array<SelectDataType>;
 }
 
 function Address({ idx, form, addressTypeData }: AddressType): JSX.Element {
-  // idx, form itself, addressTypeData
-
   return (
     <div key={idx}>
       <Divider
@@ -34,8 +45,8 @@ function Address({ idx, form, addressTypeData }: AddressType): JSX.Element {
               ml="xs"
               title="Cím törlése"
               onClick={() => {
-                form.removeListItem("addresses", idx);
-                removeErrors(`addresses.${idx}`, form);
+                form.removeListItem("address", idx);
+                removeErrors(`address.${idx}`, form);
               }}
             >
               <IconTrash size={16} />
@@ -52,7 +63,7 @@ function Address({ idx, form, addressTypeData }: AddressType): JSX.Element {
           placeholder="Cím típusa..."
           required
           title="Cím típusa"
-          {...form.getListInputProps("addresses", idx, "address_type_id")}
+          {...form.getListInputProps("address", idx, "address_type_id")}
         />
         <InputWrapper id="zip" label="Irányítószám" required title="Irányítószám">
           <TextInput
@@ -60,7 +71,7 @@ function Address({ idx, form, addressTypeData }: AddressType): JSX.Element {
             id="zip"
             name="zip"
             placeholder="Irányítószám..."
-            {...form.getListInputProps("addresses", idx, "zip")}
+            {...form.getListInputProps("address", idx, "zip")}
           />
         </InputWrapper>
         <InputWrapper id="city" label="Helység" required title="Helység">
@@ -69,7 +80,7 @@ function Address({ idx, form, addressTypeData }: AddressType): JSX.Element {
             id="city"
             name="city"
             placeholder="Helység..."
-            {...form.getListInputProps("addresses", idx, "city")}
+            {...form.getListInputProps("address", idx, "city")}
           />
         </InputWrapper>
       </Group>
@@ -80,7 +91,7 @@ function Address({ idx, form, addressTypeData }: AddressType): JSX.Element {
             id="address_1"
             name="address_1"
             placeholder="Cím 1..."
-            {...form.getListInputProps("addresses", idx, "address_1")}
+            {...form.getListInputProps("address", idx, "address_1")}
           />
         </InputWrapper>
         <InputWrapper id="address_2" label="Cím 2" title="Cím 2">
@@ -89,7 +100,7 @@ function Address({ idx, form, addressTypeData }: AddressType): JSX.Element {
             id="address_2"
             name="address_2"
             placeholder="Cím 2..."
-            {...form.getListInputProps("addresses", idx, "address_2")}
+            {...form.getListInputProps("address", idx, "address_2")}
           />
         </InputWrapper>
       </Group>

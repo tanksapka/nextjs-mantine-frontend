@@ -47,7 +47,7 @@ function defaultOrgEmailData(organizationId: string): OrgEmailFormType {
   return { ...defaultEmail, organization_id: organizationId };
 }
 
-const emailsValidation = Yup.array()
+const emailValidation = Yup.array()
   .of(
     Yup.object().shape({
       email_type_id: Yup.string().required("Email típus kitöltése kötelező"),
@@ -68,4 +68,4 @@ const emailsValidation = Yup.array()
   });
 
 export type { EmailBaseType, EmailDetailType, EmailFormType, OrgEmailDetailType, OrgEmailFormType };
-export { emailsValidation, defaultEmailData, defaultOrgEmailData };
+export { emailValidation, defaultEmailData, defaultOrgEmailData };
