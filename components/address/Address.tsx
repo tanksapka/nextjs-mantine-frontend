@@ -1,12 +1,5 @@
-// - define default values
-// - gather input props
-// - define validation
-// - define types -> move types into types folder to be shared
-// - reference to removeErrors function -> move it to a util folder
-
 import { UseFormReturnType } from "@mantine/form/lib/use-form";
 import { SelectDataType } from "../../types/general";
-import { AddressDetailType, OrgAddressDetailType } from "../../types/address-detail";
 import { ActionIcon, Divider, Group, InputWrapper, Select, Text, TextInput } from "@mantine/core";
 import { IconBuildingCommunity, IconDirections, IconHome, IconMailbox, IconTrash } from "@tabler/icons";
 import { removeErrors } from "../../utils/util";

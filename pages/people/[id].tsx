@@ -1,4 +1,4 @@
-import Person from "../../components/person/person";
+import { Person } from "../../components/person/person";
 import type { SelectDataType, PersonDataType } from "../../components/person/person";
 import { GetServerSideProps } from "next";
 
