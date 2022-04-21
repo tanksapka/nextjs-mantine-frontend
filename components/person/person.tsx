@@ -28,7 +28,7 @@ import {
   IconVenus,
   IconWoman,
 } from "@tabler/icons";
-import { convertToBool, removeErrors } from "../../utils/util";
+import { convertToBool } from "../../utils/util";
 import type { SelectDataType } from "../../types/general";
 import { PersonDetailType, personValidation } from "../../types/person-detail";
 import { AddressDetailType, addressValidation, defaultAddressData } from "../../types/address-detail";
