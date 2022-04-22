@@ -1,4 +1,5 @@
 import { GetServerSideProps } from "next";
+import { Organization } from "../../components/organization/organization";
 import { SelectDataType } from "../../types/general";
 import { getAddressTypes, getEmailTypes, getPhoneTypes } from "../../utils/mappings";
 
@@ -13,10 +14,17 @@ function OrganizationPage({
   emailTypeData: Array<SelectDataType>;
   phoneTypeData: Array<SelectDataType>;
 }) {
-  return <div>Org page</div>;
+  return (
+    <Organization
+      organizationData={organizationData}
+      addressTypeData={addressTypeData}
+      emailTypeData={emailTypeData}
+      phoneTypeData={phoneTypeData}
+    />
+  );
 }
 
-export { OrganizationPage };
+export default OrganizationPage;
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const id = params?.id;

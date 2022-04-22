@@ -18,6 +18,7 @@ import { DatePicker } from "@mantine/dates";
 import {
   IconCake,
   IconCoin,
+  IconGenderBigender,
   IconHash,
   IconId,
   IconIdBadge2,
@@ -25,7 +26,6 @@ import {
   IconNote,
   IconPlus,
   IconUser,
-  IconVenus,
   IconWoman,
 } from "@tabler/icons";
 import { convertToBool } from "../../utils/util";
@@ -187,7 +187,7 @@ function Person({
             </InputWrapper>
             <Select
               allowDeselect
-              icon={<IconVenus />}
+              icon={<IconGenderBigender />}
               label="Nem"
               name="gender_id"
               placeholder="Nem..."

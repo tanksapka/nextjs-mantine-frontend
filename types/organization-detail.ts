@@ -14,11 +14,11 @@ interface OrganizationDetailType {
 
 const organizationValidation = {
   organization_name: Yup.string().required("Alapszervezet név kitöltése kötelező"),
-  description: Yup.string(),
-  accepts_members_flag: Yup.boolean().required("Kötelezően kitöltendő"),
-  establishment_date: Yup.date().nullable(),
+  description: Yup.string().nullable(),
+  accepts_members_flag: Yup.boolean().default(false).required("Kötelezően kitöltendő"),
+  establishment_date: Yup.date().required("Alapítás dátum kitöltése kötelező"),
   termination_date: Yup.date().nullable(),
-  notes: Yup.string(),
+  notes: Yup.string().nullable(),
 };
 
 export type { OrganizationDetailType };
