@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import { Group, Text } from "@mantine/core";
 import Link from "next/link";
 import React from "react";

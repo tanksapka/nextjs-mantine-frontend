@@ -1,5 +1,5 @@
-import { Person } from "../../components/person/person";
-import type { SelectDataType, PersonDataType } from "../../components/person/person";
+import { PersonDataType, Person } from "../../components/person/person";
+import { SelectDataType } from "../../types/general";
 import { GetServerSideProps } from "next";
 import {
   getAddressTypes,

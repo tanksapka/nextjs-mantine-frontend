@@ -1,5 +1,8 @@
 import * as Yup from "yup";
+import { OrgAddressDetailType } from "./address-detail";
+import { OrgEmailDetailType } from "./email-detail";
 import { ContactDetailType } from "./general";
+import { OrgPhoneDetailType } from "./phone-detail";
 
 interface OrganizationDetailType {
   id: string;
@@ -23,6 +26,14 @@ interface OrganizationDetailFormType extends ContactDetailType {
   notes?: string;
 }
 
+interface OrganizationDataType {
+  organization: OrganizationDetailType;
+  address: Array<OrgAddressDetailType>;
+  email: Array<OrgEmailDetailType>;
+  phone: Array<OrgPhoneDetailType>;
+  // membership: Array<MembershipDetailType>;
+}
+
 const organizationValidation = {
   organization_name: Yup.string().required("Alapszervezet név kitöltése kötelező"),
   parent_organization_name: Yup.string(),
@@ -33,5 +44,5 @@ const organizationValidation = {
   notes: Yup.string().nullable(),
 };
 
-export type { OrganizationDetailType, OrganizationDetailFormType };
+export type { OrganizationDetailType, OrganizationDetailFormType, OrganizationDataType };
 export { organizationValidation };

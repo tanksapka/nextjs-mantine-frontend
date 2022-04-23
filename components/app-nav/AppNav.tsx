@@ -1,5 +1,5 @@
 import { Navbar } from "@mantine/core";
-import NavbarItem, { NavbarItemType } from "../navbar-item/navbar-item";
+import NavbarItem, { NavbarItemType } from "../navbar-item/NavbarItem";
 
 export default function AppNav({ navItems }: any) {
   const navItemElements = navItems.map((item: NavbarItemType) => (

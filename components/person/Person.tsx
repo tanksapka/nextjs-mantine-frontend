@@ -30,34 +30,15 @@ import {
 } from "@tabler/icons";
 import { convertToBool } from "../../utils/util";
 import type { SelectDataType } from "../../types/general";
-import { PersonDetailFormType, PersonDetailType, personValidation } from "../../types/person-detail";
-import { AddressDetailType, addressValidation, defaultAddressData } from "../../types/address-detail";
-import { EmailDetailType, emailValidation, defaultEmailData } from "../../types/email-detail";
-import { PhoneDetailType, phoneValidation, defaultPhoneData } from "../../types/phone-detail";
+import { PersonDataType, PersonDetailFormType, personValidation } from "../../types/person-detail";
+import { addressValidation, defaultAddressData } from "../../types/address-detail";
+import { emailValidation, defaultEmailData } from "../../types/email-detail";
+import { phoneValidation, defaultPhoneData } from "../../types/phone-detail";
 import { Address } from "../address/Address";
 import { Email } from "../email/Email";
 import { Phone } from "../phone/Phone";
 import { UseFormReturnType } from "@mantine/form/lib/use-form";
 import { OrganizationDetailFormType } from "../../types/organization-detail";
-
-interface MembershipDetailType {
-  id: string;
-  person_id: string;
-  organization_id: string;
-  organization_name: string;
-  active_flag: string;
-  inactivity_status_id: string;
-  event_date: string;
-  notes: string;
-}
-
-interface PersonDataType {
-  person: PersonDetailType;
-  address: Array<AddressDetailType>;
-  email: Array<EmailDetailType>;
-  phone: Array<PhoneDetailType>;
-  membership: Array<MembershipDetailType>;
-}
 
 function Person({
   personData,
@@ -332,4 +313,4 @@ function Person({
 }
 
 export { Person };
-export type { SelectDataType, PersonDataType };
+export type { PersonDataType };

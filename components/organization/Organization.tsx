@@ -25,28 +25,20 @@ import {
   IconWreckingBall,
 } from "@tabler/icons";
 import * as Yup from "yup";
-import { addressValidation, defaultOrgAddressData, OrgAddressDetailType } from "../../types/address-detail";
-import { defaultOrgEmailData, emailValidation, OrgEmailDetailType } from "../../types/email-detail";
+import { addressValidation, defaultOrgAddressData } from "../../types/address-detail";
+import { defaultOrgEmailData, emailValidation } from "../../types/email-detail";
 import {
+  OrganizationDataType,
   OrganizationDetailFormType,
-  OrganizationDetailType,
   organizationValidation,
 } from "../../types/organization-detail";
 import { PersonDetailFormType } from "../../types/person-detail";
-import { defaultOrgPhoneData, OrgPhoneDetailType, phoneValidation } from "../../types/phone-detail";
+import { defaultOrgPhoneData, phoneValidation } from "../../types/phone-detail";
 import { convertToBool } from "../../utils/util";
 import { Address } from "../address/Address";
 import { Email } from "../email/Email";
-import { SelectDataType } from "../person/person";
+import { SelectDataType } from "../../types/general";
 import { Phone } from "../phone/Phone";
-
-interface OrganizationDataType {
-  organization: OrganizationDetailType;
-  address: Array<OrgAddressDetailType>;
-  email: Array<OrgEmailDetailType>;
-  phone: Array<OrgPhoneDetailType>;
-  // membership: Array<MembershipDetailType>;
-}
 
 function Organization({
   organizationData,
@@ -302,3 +294,4 @@ function Organization({
 }
 
 export { Organization };
+export type { OrganizationDataType };

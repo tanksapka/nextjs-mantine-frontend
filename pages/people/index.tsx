@@ -1,7 +1,7 @@
-import People from "../../components/people/people";
+import People from "../../components/people/People";
 
 function PeopleIndex() {
-  return <People></People>;
+  return <People />;
 }
 
 export default PeopleIndex;

@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next";
-import { Organization } from "../../components/organization/organization";
+import { Organization, OrganizationDataType } from "../../components/organization/organization";
 import { SelectDataType } from "../../types/general";
 import { getAddressTypes, getEmailTypes, getPhoneTypes } from "../../utils/mappings";
 
@@ -9,7 +9,7 @@ function OrganizationPage({
   emailTypeData,
   phoneTypeData,
 }: {
-  organizationData: any;
+  organizationData: OrganizationDataType;
   addressTypeData: Array<SelectDataType>;
   emailTypeData: Array<SelectDataType>;
   phoneTypeData: Array<SelectDataType>;

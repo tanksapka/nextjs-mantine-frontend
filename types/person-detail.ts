@@ -1,5 +1,8 @@
 import * as Yup from "yup";
+import { AddressDetailType } from "./address-detail";
+import { EmailDetailType } from "./email-detail";
 import { ContactDetailType } from "./general";
+import { PhoneDetailType } from "./phone-detail";
 
 interface PersonDetailType {
   id: string;
@@ -28,6 +31,25 @@ interface PersonDetailFormType extends ContactDetailType {
   notes?: string;
 }
 
+interface MembershipDetailType {
+  id: string;
+  person_id: string;
+  organization_id: string;
+  organization_name: string;
+  active_flag: string;
+  inactivity_status_id: string;
+  event_date: string;
+  notes: string;
+}
+
+interface PersonDataType {
+  person: PersonDetailType;
+  address: Array<AddressDetailType>;
+  email: Array<EmailDetailType>;
+  phone: Array<PhoneDetailType>;
+  membership: Array<MembershipDetailType>;
+}
+
 const personValidation = {
   registration_number: Yup.number(),
   membership_id: Yup.string(),
@@ -43,5 +65,5 @@ const personValidation = {
   notes: Yup.string().nullable(),
 };
 
-export type { PersonDetailType, PersonDetailFormType };
+export type { PersonDetailType, PersonDetailFormType, PersonDataType };
 export { personValidation };
