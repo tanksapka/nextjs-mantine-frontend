@@ -3,24 +3,12 @@ import { SelectDataType } from "../../types/general";
 import { ActionIcon, Checkbox, Divider, Group, InputWrapper, Select, Text, TextInput } from "@mantine/core";
 import { IconDeviceMobile, IconNumbers, IconPhone, IconTrash } from "@tabler/icons";
 import { removeErrors } from "../../utils/util";
-import { FormList } from "@mantine/form/lib/form-list/form-list";
+import { PersonDetailFormType } from "../../types/person-detail";
+import { OrganizationDetailFormType } from "../../types/organization-detail";
 
 interface PhoneType {
   idx: number;
-  form: UseFormReturnType<{
-    registration_number: number;
-    membership_id: string;
-    person_name: string;
-    birthdate: Date;
-    mother_name: string;
-    gender_id: string;
-    identity_card_number: string;
-    membership_fee_category_id: string;
-    notes: string | undefined;
-    address: FormList<any>;
-    email: FormList<any>;
-    phone: FormList<any>;
-  }>;
+  form: UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>;
   phoneTypeData: Array<SelectDataType>;
 }
 

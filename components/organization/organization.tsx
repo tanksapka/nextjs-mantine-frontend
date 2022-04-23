@@ -1,19 +1,39 @@
-import { Button, Checkbox, Container, Group, InputWrapper, Paper, Textarea, TextInput, Title } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Checkbox,
+  Container,
+  Group,
+  InputWrapper,
+  Paper,
+  Text,
+  Textarea,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { formList, useForm, yupResolver } from "@mantine/form";
+import { UseFormReturnType } from "@mantine/form/lib/use-form";
 import {
   IconBuilding,
   IconBuildingSkyscraper,
   IconCake,
   IconFileDescription,
+  IconInfoCircle,
   IconNote,
+  IconPlus,
   IconWreckingBall,
 } from "@tabler/icons";
 import * as Yup from "yup";
-import { addressValidation, OrgAddressDetailType } from "../../types/address-detail";
-import { emailValidation, OrgEmailDetailType } from "../../types/email-detail";
-import { OrganizationDetailType, organizationValidation } from "../../types/organization-detail";
-import { OrgPhoneDetailType, phoneValidation } from "../../types/phone-detail";
+import { addressValidation, defaultOrgAddressData, OrgAddressDetailType } from "../../types/address-detail";
+import { defaultOrgEmailData, emailValidation, OrgEmailDetailType } from "../../types/email-detail";
+import {
+  OrganizationDetailFormType,
+  OrganizationDetailType,
+  organizationValidation,
+} from "../../types/organization-detail";
+import { PersonDetailFormType } from "../../types/person-detail";
+import { defaultOrgPhoneData, OrgPhoneDetailType, phoneValidation } from "../../types/phone-detail";
 import { convertToBool } from "../../utils/util";
 import { Address } from "../address/Address";
 import { Email } from "../email/Email";
@@ -51,7 +71,7 @@ function Organization({
     initialValues: {
       organization_name: organizationData.organization.organization_name,
       parent_organization_name: organizationData.organization.parent_organization_name,
-      description: organizationData.organization.description,
+      description: organizationData.organization.description || undefined,
       accepts_members_flag: convertToBool(organizationData.organization.accepts_members_flag),
       establishment_date: new Date(organizationData.organization.establishment_date),
       termination_date: organizationData.organization.termination_date
@@ -79,17 +99,32 @@ function Organization({
     },
   });
 
-  // const addressFields = form.values.address.map((_, idx) => (
-  //   <Address key={idx} idx={idx} form={form} addressTypeData={addressTypeData} />
-  // ));
+  const addressFields = form.values.address.map((_, idx) => (
+    <Address
+      key={idx}
+      idx={idx}
+      form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
+      addressTypeData={addressTypeData}
+    />
+  ));
 
-  // const emailFields = form.values.email.map((_, idx) => (
-  //   <Email key={idx} idx={idx} form={form} emailTypeData={emailTypeData} />
-  // ));
+  const emailFields = form.values.email.map((_, idx) => (
+    <Email
+      key={idx}
+      idx={idx}
+      form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
+      emailTypeData={emailTypeData}
+    />
+  ));
 
-  // const phoneFields = form.values.phone.map((_, idx) => (
-  //   <Phone key={idx} idx={idx} form={form} phoneTypeData={phoneTypeData} />
-  // ));
+  const phoneFields = form.values.phone.map((_, idx) => (
+    <Phone
+      key={idx}
+      idx={idx}
+      form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
+      phoneTypeData={phoneTypeData}
+    />
+  ));
 
   return (
     <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -183,6 +218,80 @@ function Organization({
               />
             </InputWrapper>
           </Group>
+        </Paper>
+      </Container>
+      <Container size="sm" my="xl">
+        <Title order={1} mb="xl">
+          Elérhetőségek
+        </Title>
+        <Paper shadow="xs" p="md" mb="xl">
+          <Group style={{ justifyContent: "space-between" }}>
+            <Title order={2} mb="xl">
+              Címek
+            </Title>
+            <ActionIcon
+              color="blue"
+              title="Új cím hozzáadása"
+              mb={"1.5rem"}
+              disabled={form.values.address.length === addressTypeData.length ? true : false}
+              onClick={() => form.addListItem("address", defaultOrgAddressData(organizationData.organization.id))}
+            >
+              <IconPlus />
+            </ActionIcon>
+          </Group>
+          <Group align="flex-start" style={{ gap: "0.5rem" }} mb="lg">
+            <IconInfoCircle style={{ color: "#1c7ed6" }} />
+            <Text color="blue" size="sm">
+              Cím típusa nem ismétlődhet!
+            </Text>
+          </Group>
+          {addressFields}
+        </Paper>
+        <Paper shadow="xs" p="md" mb="xl">
+          <Group style={{ justifyContent: "space-between" }}>
+            <Title order={2} mb="xl">
+              Email címek
+            </Title>
+            <ActionIcon
+              color="blue"
+              title="Új email cím hozzáadása"
+              mb={"1.5rem"}
+              disabled={form.values.email.length === emailTypeData.length ? true : false}
+              onClick={() => form.addListItem("email", defaultOrgEmailData(organizationData.organization.id))}
+            >
+              <IconPlus />
+            </ActionIcon>
+          </Group>
+          <Group align="flex-start" style={{ gap: "0.5rem" }} mb="lg">
+            <IconInfoCircle style={{ color: "#1c7ed6" }} />
+            <Text color="blue" size="sm">
+              Email típusa nem ismétlődhet!
+            </Text>
+          </Group>
+          {emailFields}
+        </Paper>
+        <Paper shadow="xs" p="md" mb="xl">
+          <Group style={{ justifyContent: "space-between" }}>
+            <Title order={2} mb="xl">
+              Telefonszámok
+            </Title>
+            <ActionIcon
+              color="blue"
+              title="Új telefonszám hozzáadása"
+              mb={"1.5rem"}
+              disabled={form.values.phone.length === phoneTypeData.length ? true : false}
+              onClick={() => form.addListItem("phone", defaultOrgPhoneData(organizationData.organization.id))}
+            >
+              <IconPlus />
+            </ActionIcon>
+          </Group>
+          <Group align="flex-start" style={{ gap: "0.5rem" }} mb="lg">
+            <IconInfoCircle style={{ color: "#1c7ed6" }} />
+            <Text color="blue" size="sm">
+              Telefonszám típusa nem ismétlődhet!
+            </Text>
+          </Group>
+          {phoneFields}
         </Paper>
       </Container>
       <Group position="right" mt="xl">

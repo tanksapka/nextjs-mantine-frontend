@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import { ContactDetailType } from "./general";
 
 interface PersonDetailType {
   id: string;
@@ -15,6 +16,18 @@ interface PersonDetailType {
   notes: string;
 }
 
+interface PersonDetailFormType extends ContactDetailType {
+  registration_number: number;
+  membership_id: string;
+  person_name: string;
+  birthdate: Date;
+  mother_name: string;
+  gender_id?: string;
+  identity_card_number?: string;
+  membership_fee_category_id: string;
+  notes?: string;
+}
+
 const personValidation = {
   registration_number: Yup.number(),
   membership_id: Yup.string(),
@@ -24,11 +37,11 @@ const personValidation = {
     .transform((curr, orig) => (orig === "" ? null : curr))
     .required("Születési dátum kitöltése kötelező"),
   mother_name: Yup.string().required("Anyja neve kitöltése kötelező"),
-  gender_id: Yup.string(),
-  identity_card_number: Yup.string(),
+  gender_id: Yup.string().nullable(),
+  identity_card_number: Yup.string().nullable(),
   membership_fee_category_id: Yup.string().required("Tagdíj kategória kitöltése kötelező"),
-  notes: Yup.string(),
+  notes: Yup.string().nullable(),
 };
 
-export type { PersonDetailType };
+export type { PersonDetailType, PersonDetailFormType };
 export { personValidation };

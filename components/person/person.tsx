@@ -30,13 +30,15 @@ import {
 } from "@tabler/icons";
 import { convertToBool } from "../../utils/util";
 import type { SelectDataType } from "../../types/general";
-import { PersonDetailType, personValidation } from "../../types/person-detail";
+import { PersonDetailFormType, PersonDetailType, personValidation } from "../../types/person-detail";
 import { AddressDetailType, addressValidation, defaultAddressData } from "../../types/address-detail";
 import { EmailDetailType, emailValidation, defaultEmailData } from "../../types/email-detail";
 import { PhoneDetailType, phoneValidation, defaultPhoneData } from "../../types/phone-detail";
 import { Address } from "../address/Address";
 import { Email } from "../email/Email";
 import { Phone } from "../phone/Phone";
+import { UseFormReturnType } from "@mantine/form/lib/use-form";
+import { OrganizationDetailFormType } from "../../types/organization-detail";
 
 interface MembershipDetailType {
   id: string;
@@ -113,15 +115,30 @@ function Person({
   });
 
   const addressFields = form.values.address.map((_, idx) => (
-    <Address key={idx} idx={idx} form={form} addressTypeData={addressTypeData} />
+    <Address
+      key={idx}
+      idx={idx}
+      form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
+      addressTypeData={addressTypeData}
+    />
   ));
 
   const emailFields = form.values.email.map((_, idx) => (
-    <Email key={idx} idx={idx} form={form} emailTypeData={emailTypeData} />
+    <Email
+      key={idx}
+      idx={idx}
+      form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
+      emailTypeData={emailTypeData}
+    />
   ));
 
   const phoneFields = form.values.phone.map((_, idx) => (
-    <Phone key={idx} idx={idx} form={form} phoneTypeData={phoneTypeData} />
+    <Phone
+      key={idx}
+      idx={idx}
+      form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
+      phoneTypeData={phoneTypeData}
+    />
   ));
 
   return (
