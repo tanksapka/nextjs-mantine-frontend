@@ -1,19 +1,7 @@
 import * as Yup from "yup";
 import "dayjs/locale/hu";
 import { formList, useForm, yupResolver } from "@mantine/form";
-import {
-  Group,
-  TextInput,
-  Select,
-  Textarea,
-  Container,
-  Button,
-  Title,
-  Paper,
-  Text,
-  ActionIcon,
-  InputWrapper,
-} from "@mantine/core";
+import { Group, TextInput, Select, Textarea, Container, Button, Title, Paper, InputWrapper } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
   IconCake,
@@ -22,23 +10,19 @@ import {
   IconHash,
   IconId,
   IconIdBadge2,
-  IconInfoCircle,
   IconNote,
-  IconPlus,
   IconUser,
   IconWoman,
 } from "@tabler/icons";
 import { convertToBool } from "../../utils/util";
 import type { SelectDataType } from "../../types/general";
 import { PersonDataType, PersonDetailFormType, personValidation } from "../../types/person-detail";
-import { addressValidation, defaultAddressData } from "../../types/address-detail";
-import { emailValidation, defaultEmailData } from "../../types/email-detail";
-import { phoneValidation, defaultPhoneData } from "../../types/phone-detail";
-import { Address } from "../address/Address";
-import { Email } from "../email/Email";
-import { Phone } from "../phone/Phone";
+import { addressValidation } from "../../types/address-detail";
+import { emailValidation } from "../../types/email-detail";
+import { phoneValidation } from "../../types/phone-detail";
 import { UseFormReturnType } from "@mantine/form/lib/use-form";
 import { OrganizationDetailFormType } from "../../types/organization-detail";
+import { ContactInfo } from "../contact-info/ContactInfo";
 
 function Person({
   personData,
@@ -94,33 +78,6 @@ function Person({
       ),
     },
   });
-
-  const addressFields = form.values.address.map((_, idx) => (
-    <Address
-      key={idx}
-      idx={idx}
-      form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
-      addressTypeData={addressTypeData}
-    />
-  ));
-
-  const emailFields = form.values.email.map((_, idx) => (
-    <Email
-      key={idx}
-      idx={idx}
-      form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
-      emailTypeData={emailTypeData}
-    />
-  ));
-
-  const phoneFields = form.values.phone.map((_, idx) => (
-    <Phone
-      key={idx}
-      idx={idx}
-      form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
-      phoneTypeData={phoneTypeData}
-    />
-  ));
 
   return (
     <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -231,80 +188,14 @@ function Person({
           </Group>
         </Paper>
       </Container>
-      <Container size="sm" my="xl">
-        <Title order={1} mb="xl">
-          Elérhetőségek
-        </Title>
-        <Paper shadow="xs" p="md" mb="xl">
-          <Group style={{ justifyContent: "space-between" }}>
-            <Title order={2} mb="xl">
-              Címek
-            </Title>
-            <ActionIcon
-              color="blue"
-              title="Új cím hozzáadása"
-              mb={"1.5rem"}
-              disabled={form.values.address.length === addressTypeData.length ? true : false}
-              onClick={() => form.addListItem("address", defaultAddressData(personData.person.id))}
-            >
-              <IconPlus />
-            </ActionIcon>
-          </Group>
-          <Group align="flex-start" style={{ gap: "0.5rem" }} mb="lg">
-            <IconInfoCircle style={{ color: "#1c7ed6" }} />
-            <Text color="blue" size="sm">
-              Cím típusa nem ismétlődhet!
-            </Text>
-          </Group>
-          {addressFields}
-        </Paper>
-        <Paper shadow="xs" p="md" mb="xl">
-          <Group style={{ justifyContent: "space-between" }}>
-            <Title order={2} mb="xl">
-              Email címek
-            </Title>
-            <ActionIcon
-              color="blue"
-              title="Új email cím hozzáadása"
-              mb={"1.5rem"}
-              disabled={form.values.email.length === emailTypeData.length ? true : false}
-              onClick={() => form.addListItem("email", defaultEmailData(personData.person.id))}
-            >
-              <IconPlus />
-            </ActionIcon>
-          </Group>
-          <Group align="flex-start" style={{ gap: "0.5rem" }} mb="lg">
-            <IconInfoCircle style={{ color: "#1c7ed6" }} />
-            <Text color="blue" size="sm">
-              Email típusa nem ismétlődhet!
-            </Text>
-          </Group>
-          {emailFields}
-        </Paper>
-        <Paper shadow="xs" p="md" mb="xl">
-          <Group style={{ justifyContent: "space-between" }}>
-            <Title order={2} mb="xl">
-              Telefonszámok
-            </Title>
-            <ActionIcon
-              color="blue"
-              title="Új telefonszám hozzáadása"
-              mb={"1.5rem"}
-              disabled={form.values.phone.length === phoneTypeData.length ? true : false}
-              onClick={() => form.addListItem("phone", defaultPhoneData(personData.person.id))}
-            >
-              <IconPlus />
-            </ActionIcon>
-          </Group>
-          <Group align="flex-start" style={{ gap: "0.5rem" }} mb="lg">
-            <IconInfoCircle style={{ color: "#1c7ed6" }} />
-            <Text color="blue" size="sm">
-              Telefonszám típusa nem ismétlődhet!
-            </Text>
-          </Group>
-          {phoneFields}
-        </Paper>
-      </Container>
+      <ContactInfo
+        entityId={personData.person.id}
+        entityType="person"
+        form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
+        addressTypeData={addressTypeData}
+        emailTypeData={emailTypeData}
+        phoneTypeData={phoneTypeData}
+      />
       <Group position="right" mt="xl">
         <Button type="submit">Mentés</Button>
       </Group>
