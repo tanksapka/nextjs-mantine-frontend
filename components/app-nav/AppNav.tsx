@@ -1,7 +1,11 @@
 import { Navbar } from "@mantine/core";
 import NavbarItem, { NavbarItemType } from "../navbar-item/NavbarItem";
 
-export default function AppNav({ navItems }: any) {
+interface AppNavType {
+  navItems: Array<NavbarItemType>;
+}
+
+function AppNav({ navItems }: AppNavType): JSX.Element {
   const navItemElements = navItems.map((item: NavbarItemType) => (
     <Navbar.Section key={item.link}>
       <NavbarItem {...item}></NavbarItem>
@@ -14,3 +18,6 @@ export default function AppNav({ navItems }: any) {
     </Navbar>
   );
 }
+
+export default AppNav;
+export type { AppNavType };

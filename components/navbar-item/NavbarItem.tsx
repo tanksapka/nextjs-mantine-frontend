@@ -1,6 +1,5 @@
 import { Group, Text } from "@mantine/core";
 import Link from "next/link";
-import React from "react";
 
 interface NavbarItemType {
   icon: React.ReactNode;
@@ -8,7 +7,7 @@ interface NavbarItemType {
   link: string;
 }
 
-function NavbarItem({ icon, text, link }: NavbarItemType) {
+function NavbarItem({ icon, text, link }: NavbarItemType): JSX.Element {
   return (
     <Group
       sx={(theme) => ({

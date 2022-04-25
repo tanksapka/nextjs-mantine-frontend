@@ -1,5 +1,5 @@
 import { GetServerSideProps } from "next";
-import { Organization, OrganizationDataType } from "../../components/organization/organization";
+import { Organization, OrganizationDataType } from "../../components/organization/Organization";
 import { SelectDataType } from "../../types/general";
 import { getAddressTypes, getEmailTypes, getPhoneTypes } from "../../utils/mappings";
 

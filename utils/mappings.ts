@@ -1,4 +1,5 @@
 import { SelectDataType } from "../types/general";
+import { MappingPropsType } from "../types/mappings";
 
 async function getAddressTypes(): Promise<Array<SelectDataType>> {
   const resAddressType = await fetch(`${process.env.REACT_APP_API_URL}/address-types`);
@@ -25,4 +26,20 @@ async function getMembershipFeeTypes(): Promise<Array<SelectDataType>> {
   return await resMembershipFee.json().then((data) => data.map((item: any) => ({ value: item.id, label: item.name })));
 }
 
-export { getAddressTypes, getEmailTypes, getGenderTypes, getMembershipFeeTypes, getPhoneTypes };
+async function getMappings(): Promise<MappingPropsType> {
+  const resAddress = await fetch(`${process.env.REACT_APP_API_URL}/address-types`);
+  const resEmail = await fetch(`${process.env.REACT_APP_API_URL}/email-types`);
+  const resPhone = await fetch(`${process.env.REACT_APP_API_URL}/phone-types`);
+  const resGender = await fetch(`${process.env.REACT_APP_API_URL}/genders`);
+  const resMembershipFee = await fetch(`${process.env.REACT_APP_API_URL}/membership-fee-categories`);
+
+  return {
+    genderTypeData: await resGender.json(),
+    membershipFeeTypeData: await resMembershipFee.json(),
+    addressTypeData: await resAddress.json(),
+    emailTypeData: await resEmail.json(),
+    phoneTypeData: await resPhone.json(),
+  };
+}
+
+export { getAddressTypes, getEmailTypes, getGenderTypes, getMappings, getMembershipFeeTypes, getPhoneTypes };

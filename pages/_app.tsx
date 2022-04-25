@@ -4,13 +4,14 @@ import Head from "next/head";
 import { AppShell, MantineProvider } from "@mantine/core";
 import AppHeader from "../components/app-header/AppHeader";
 import AppNav from "../components/app-nav/AppNav";
-import { IconBuilding, IconCoin, IconUser } from "@tabler/icons";
+import { IconBuilding, IconCoin, IconSettings, IconUser } from "@tabler/icons";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const navItemsList = [
     { icon: <IconUser />, text: "Személyek", link: "/people" },
     { icon: <IconBuilding />, text: "Szervezetek", link: "/organziations" },
     { icon: <IconCoin />, text: "Tagdíjak", link: "/fees" },
+    { icon: <IconSettings />, text: "Beállítások", link: "/settings" },
   ];
 
   return (
@@ -22,7 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <MantineProvider withGlobalStyles withNormalizeCSS>
         <AppShell
           header={<AppHeader />}
-          navbar={<AppNav padding="md" navItems={navItemsList} />}
+          navbar={<AppNav navItems={navItemsList} />}
           styles={(theme) => ({
             main: { backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0] },
           })}
