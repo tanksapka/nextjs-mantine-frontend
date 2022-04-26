@@ -1,5 +1,6 @@
-import { Checkbox, Container, Grid, InputWrapper, Text, TextInput } from "@mantine/core";
+import { Button, Checkbox, Container, Grid, Group, InputWrapper, Text, TextInput } from "@mantine/core";
 import { formList, useForm, yupResolver } from "@mantine/form";
+import { useEffect, useRef } from "react";
 import { MappingDataType, MappingRawDataType, mappingValidation } from "../../types/mappings";
 import { convertToBool } from "../../utils/util";
 
@@ -19,6 +20,15 @@ function Mapping({ mappingData }: { mappingData: Array<MappingRawDataType> }): J
       mapping: formList(mappingData.map(coerceResult)),
     },
   });
+  // const mounted = useRef(false);
+
+  // useEffect(() => {
+  //   if (mounted.current) {
+  //     console.log(form.values);
+  //   } else {
+  //     mounted.current = true;
+  //   }
+  // }, [form.values]);
 
   const fields = form.values.mapping.map((_, idx) => (
     <Grid key={idx} align="center">
@@ -43,26 +53,33 @@ function Mapping({ mappingData }: { mappingData: Array<MappingRawDataType> }): J
   ));
 
   return (
-    <Container>
-      <Grid align="center">
-        <Grid.Col span={2}>
-          <Text>Típus</Text>
-        </Grid.Col>
-        <Grid.Col span={3}>
-          <Text>Leírás</Text>
-        </Grid.Col>
-        <Grid.Col span={1}>
-          <Text>Aktív?</Text>
-        </Grid.Col>
-        <Grid.Col span={3}>
-          <Text>Hozzáadás dátuma</Text>
-        </Grid.Col>
-        <Grid.Col span={2}>
-          <Text>Hozzáadó</Text>
-        </Grid.Col>
-      </Grid>
-      {fields}
-    </Container>
+    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+      <Container>
+        <Grid align="center">
+          <Grid.Col span={2}>
+            <Text>Típus</Text>
+          </Grid.Col>
+          <Grid.Col span={3}>
+            <Text>Leírás</Text>
+          </Grid.Col>
+          <Grid.Col span={1}>
+            <Text>Aktív?</Text>
+          </Grid.Col>
+          <Grid.Col span={3}>
+            <Text>Hozzáadás dátuma</Text>
+          </Grid.Col>
+          <Grid.Col span={2}>
+            <Text>Hozzáadó</Text>
+          </Grid.Col>
+        </Grid>
+        {fields}
+      </Container>
+      <Container>
+        <Group position="right" mt="xl">
+          <Button type="submit">Mentés</Button>
+        </Group>
+      </Container>
+    </form>
   );
 }
 

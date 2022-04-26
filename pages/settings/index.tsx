@@ -1,3 +1,4 @@
+import { Tabs } from "@mantine/core";
 import { GetServerSideProps } from "next";
 import Mapping from "../../components/mapping/Mapping";
 import { MappingPropsType } from "../../types/mappings";
@@ -11,9 +12,23 @@ function SettingsPage({
   phoneTypeData,
 }: MappingPropsType) {
   return (
-    <div>
-      <Mapping mappingData={genderTypeData} />
-    </div>
+    <Tabs>
+      <Tabs.Tab label="Nemek">
+        <Mapping mappingData={genderTypeData} />
+      </Tabs.Tab>
+      <Tabs.Tab label="Tagdíjak">
+        <Mapping mappingData={membershipFeeTypeData} />
+      </Tabs.Tab>
+      <Tabs.Tab label="Címek">
+        <Mapping mappingData={addressTypeData} />
+      </Tabs.Tab>
+      <Tabs.Tab label="Emailek">
+        <Mapping mappingData={emailTypeData} />
+      </Tabs.Tab>
+      <Tabs.Tab label="Telefonok">
+        <Mapping mappingData={phoneTypeData} />
+      </Tabs.Tab>
+    </Tabs>
   );
 }
 
