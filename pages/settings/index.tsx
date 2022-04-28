@@ -1,4 +1,5 @@
-import { Tabs } from "@mantine/core";
+import { Container, Paper, Tabs } from "@mantine/core";
+import { IconCoin, IconGenderBigender, IconHome, IconMail, IconPhone } from "@tabler/icons";
 import { GetServerSideProps } from "next";
 import Mapping from "../../components/mapping/Mapping";
 import { MappingPropsType } from "../../types/mappings";
@@ -12,23 +13,27 @@ function SettingsPage({
   phoneTypeData,
 }: MappingPropsType) {
   return (
-    <Tabs>
-      <Tabs.Tab label="Nemek">
-        <Mapping mappingData={genderTypeData} />
-      </Tabs.Tab>
-      <Tabs.Tab label="Tagdíjak">
-        <Mapping mappingData={membershipFeeTypeData} />
-      </Tabs.Tab>
-      <Tabs.Tab label="Címek">
-        <Mapping mappingData={addressTypeData} />
-      </Tabs.Tab>
-      <Tabs.Tab label="Emailek">
-        <Mapping mappingData={emailTypeData} />
-      </Tabs.Tab>
-      <Tabs.Tab label="Telefonok">
-        <Mapping mappingData={phoneTypeData} />
-      </Tabs.Tab>
-    </Tabs>
+    <Container>
+      <Paper shadow="xs">
+        <Tabs p={"md"}>
+          <Tabs.Tab icon={<IconGenderBigender />} label="Nemek">
+            <Mapping mappingData={genderTypeData} />
+          </Tabs.Tab>
+          <Tabs.Tab icon={<IconCoin />} label="Tagdíjak">
+            <Mapping mappingData={membershipFeeTypeData} />
+          </Tabs.Tab>
+          <Tabs.Tab icon={<IconHome />} label="Címek">
+            <Mapping mappingData={addressTypeData} />
+          </Tabs.Tab>
+          <Tabs.Tab icon={<IconMail />} label="Emailek">
+            <Mapping mappingData={emailTypeData} />
+          </Tabs.Tab>
+          <Tabs.Tab icon={<IconPhone />} label="Telefonok">
+            <Mapping mappingData={phoneTypeData} />
+          </Tabs.Tab>
+        </Tabs>
+      </Paper>
+    </Container>
   );
 }
 

@@ -32,7 +32,7 @@ function Mapping({ mappingData }: { mappingData: Array<MappingRawDataType> }): J
 
   const fields = form.values.mapping.map((_, idx) => (
     <Grid key={idx} align="center">
-      <Grid.Col span={2}>
+      <Grid.Col span={3}>
         <InputWrapper id="name" required>
           <TextInput id="name" placeholder="..." {...form.getListInputProps("mapping", idx, "name")} />
         </InputWrapper>
@@ -56,7 +56,7 @@ function Mapping({ mappingData }: { mappingData: Array<MappingRawDataType> }): J
     <form onSubmit={form.onSubmit((values) => console.log(values))}>
       <Container>
         <Grid align="center">
-          <Grid.Col span={2}>
+          <Grid.Col span={3}>
             <Text>Típus</Text>
           </Grid.Col>
           <Grid.Col span={3}>
