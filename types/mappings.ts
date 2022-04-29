@@ -38,8 +38,8 @@ const defaultMapping: MappingDataType = {
 const mappingValidation = Yup.object().shape({
   created_on: Yup.date().required(),
   created_by: Yup.string().required(),
-  name: Yup.string().required("Típus név kitöltése kötelező"),
-  description: Yup.string().nullable(),
+  name: Yup.string().required("Típus név kitöltése kötelező").max(255, "Típus nem lehet hosszabb mint 255 karakter"),
+  description: Yup.string().nullable().max(255, "Típus nem lehet hosszabb mint 255 karakter"),
   valid_flag: Yup.boolean().default(true).required(),
 });
 
