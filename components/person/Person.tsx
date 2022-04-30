@@ -15,7 +15,6 @@ import {
   IconWoman,
 } from "@tabler/icons";
 import { convertToBool } from "../../utils/util";
-import type { SelectDataType } from "../../types/general";
 import { PersonDataType, PersonDetailFormType, personValidation } from "../../types/person-detail";
 import { addressValidation } from "../../types/address-detail";
 import { emailValidation } from "../../types/email-detail";
@@ -24,21 +23,7 @@ import { UseFormReturnType } from "@mantine/form/lib/use-form";
 import { OrganizationDetailFormType } from "../../types/organization-detail";
 import { ContactInfo } from "../contact-info/ContactInfo";
 
-function Person({
-  personData,
-  genderData,
-  membershipFeeData,
-  addressTypeData,
-  emailTypeData,
-  phoneTypeData,
-}: {
-  personData: PersonDataType;
-  genderData: Array<SelectDataType>;
-  membershipFeeData: Array<SelectDataType>;
-  addressTypeData: Array<SelectDataType>;
-  emailTypeData: Array<SelectDataType>;
-  phoneTypeData: Array<SelectDataType>;
-}): JSX.Element {
+function Person({ personData }: { personData: PersonDataType }): JSX.Element {
   const schema = Yup.object().shape({
     ...personValidation,
     address: addressValidation,
@@ -147,7 +132,7 @@ function Person({
               name="gender_id"
               placeholder="Nem..."
               title="Nem"
-              data={genderData}
+              data={personData.gender_type}
               {...form.getInputProps("gender_id")}
             />
           </Group>
@@ -168,7 +153,7 @@ function Person({
               placeholder="Tagdíj kategória..."
               required
               title="Tagdíj kategória"
-              data={membershipFeeData}
+              data={personData.membership_fee_type}
               {...form.getInputProps("membership_fee_category_id")}
             />
           </Group>
@@ -192,9 +177,9 @@ function Person({
         entityId={personData.person.id}
         entityType="person"
         form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
-        addressTypeData={addressTypeData}
-        emailTypeData={emailTypeData}
-        phoneTypeData={phoneTypeData}
+        addressTypeData={personData.address_type}
+        emailTypeData={personData.email_type}
+        phoneTypeData={personData.phone_type}
       />
       <Group position="right" mt="xl">
         <Button type="submit">Mentés</Button>
@@ -204,4 +189,3 @@ function Person({
 }
 
 export { Person };
-export type { PersonDataType };

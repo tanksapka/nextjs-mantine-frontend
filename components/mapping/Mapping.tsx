@@ -15,7 +15,7 @@ function coerceResult(item: MappingRawDataType): MappingDataType {
   };
 }
 
-function Mapping({ mappingData }: { mappingData: Array<MappingRawDataType> }): JSX.Element {
+function Mapping({ mappingData, userId }: { mappingData: Array<MappingRawDataType>; userId: string }): JSX.Element {
   const form = useForm({
     schema: yupResolver(Yup.object().shape({ mapping: Yup.array().of(mappingValidation) })),
     initialValues: {
@@ -33,7 +33,7 @@ function Mapping({ mappingData }: { mappingData: Array<MappingRawDataType> }): J
   // }, [form.values]);
 
   const fields = form.values.mapping.map((_, idx) => (
-    <Grid key={idx} align="center">
+    <Grid key={idx}>
       <Grid.Col span={3}>
         <InputWrapper id="name" required label={idx === 0 && "Típus"} size="md" title="Típus">
           <TextInput id="name" placeholder="Típus..." {...form.getListInputProps("mapping", idx, "name")} />
@@ -83,7 +83,7 @@ function Mapping({ mappingData }: { mappingData: Array<MappingRawDataType> }): J
           <ActionIcon
             color="blue"
             title="Új típus hozzáadása"
-            onClick={() => form.addListItem("mapping", defaultMapping)}
+            onClick={() => form.addListItem("mapping", { ...defaultMapping, created_by: userId })}
           >
             <IconPlus />
           </ActionIcon>

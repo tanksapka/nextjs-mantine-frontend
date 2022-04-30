@@ -11,25 +11,26 @@ function SettingsPage({
   addressTypeData,
   emailTypeData,
   phoneTypeData,
-}: MappingPropsType) {
+  userId,
+}: MappingPropsType & { userId: string }) {
   return (
     <Container>
       <Paper shadow="xs">
         <Tabs p={"md"}>
           <Tabs.Tab icon={<IconGenderBigender />} label="Nemek">
-            <Mapping mappingData={genderTypeData} />
+            <Mapping mappingData={genderTypeData} userId={userId} />
           </Tabs.Tab>
           <Tabs.Tab icon={<IconCoin />} label="Tagdíjak">
-            <Mapping mappingData={membershipFeeTypeData} />
+            <Mapping mappingData={membershipFeeTypeData} userId={userId} />
           </Tabs.Tab>
           <Tabs.Tab icon={<IconHome />} label="Címek">
-            <Mapping mappingData={addressTypeData} />
+            <Mapping mappingData={addressTypeData} userId={userId} />
           </Tabs.Tab>
           <Tabs.Tab icon={<IconMail />} label="Emailek">
-            <Mapping mappingData={emailTypeData} />
+            <Mapping mappingData={emailTypeData} userId={userId} />
           </Tabs.Tab>
           <Tabs.Tab icon={<IconPhone />} label="Telefonok">
-            <Mapping mappingData={phoneTypeData} />
+            <Mapping mappingData={phoneTypeData} userId={userId} />
           </Tabs.Tab>
         </Tabs>
       </Paper>
@@ -49,6 +50,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 
   return {
-    props: mappingData,
+    props: { ...mappingData, userId: process.env.REACT_APP_USER_ID || "unknown" },
   };
 };

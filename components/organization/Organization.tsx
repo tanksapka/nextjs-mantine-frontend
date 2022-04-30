@@ -21,20 +21,9 @@ import {
 import { PersonDetailFormType } from "../../types/person-detail";
 import { phoneValidation } from "../../types/phone-detail";
 import { convertToBool } from "../../utils/util";
-import { SelectDataType } from "../../types/general";
 import { ContactInfo } from "../contact-info/ContactInfo";
 
-function Organization({
-  organizationData,
-  addressTypeData,
-  emailTypeData,
-  phoneTypeData,
-}: {
-  organizationData: OrganizationDataType;
-  addressTypeData: Array<SelectDataType>;
-  emailTypeData: Array<SelectDataType>;
-  phoneTypeData: Array<SelectDataType>;
-}): JSX.Element {
+function Organization({ organizationData }: { organizationData: OrganizationDataType }): JSX.Element {
   const schema = Yup.object().shape({
     ...organizationValidation,
     address: addressValidation,
@@ -173,9 +162,9 @@ function Organization({
         entityId={organizationData.organization.id}
         entityType="organization"
         form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
-        addressTypeData={addressTypeData}
-        emailTypeData={emailTypeData}
-        phoneTypeData={phoneTypeData}
+        addressTypeData={organizationData.address_type}
+        emailTypeData={organizationData.email_type}
+        phoneTypeData={organizationData.phone_type}
       />
       <Group position="right" mt="xl">
         <Button type="submit">Mentés</Button>

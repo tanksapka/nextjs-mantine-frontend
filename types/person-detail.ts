@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { AddressDetailType } from "./address-detail";
 import { EmailDetailType } from "./email-detail";
-import { ContactDetailType } from "./general";
+import { ContactDetailType, SelectDataType } from "./general";
 import { PhoneDetailType } from "./phone-detail";
 
 interface PersonDetailType {
@@ -48,6 +48,11 @@ interface PersonDataType {
   email: Array<EmailDetailType>;
   phone: Array<PhoneDetailType>;
   membership: Array<MembershipDetailType>;
+  gender_type: Array<SelectDataType>;
+  membership_fee_type: Array<SelectDataType>;
+  address_type: Array<SelectDataType>;
+  email_type: Array<SelectDataType>;
+  phone_type: Array<SelectDataType>;
 }
 
 const personValidation = {

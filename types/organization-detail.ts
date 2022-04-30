@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { OrgAddressDetailType } from "./address-detail";
 import { OrgEmailDetailType } from "./email-detail";
-import { ContactDetailType } from "./general";
+import { ContactDetailType, SelectDataType } from "./general";
 import { OrgPhoneDetailType } from "./phone-detail";
 
 interface OrganizationDetailType {
@@ -32,6 +32,9 @@ interface OrganizationDataType {
   email: Array<OrgEmailDetailType>;
   phone: Array<OrgPhoneDetailType>;
   // membership: Array<MembershipDetailType>;
+  address_type: Array<SelectDataType>;
+  email_type: Array<SelectDataType>;
+  phone_type: Array<SelectDataType>;
 }
 
 const organizationValidation = {
