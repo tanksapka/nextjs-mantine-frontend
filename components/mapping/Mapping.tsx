@@ -5,6 +5,7 @@ import { IconPlus } from "@tabler/icons";
 import { useEffect, useRef } from "react";
 import { defaultMapping, MappingDataType, MappingRawDataType, mappingValidation } from "../../types/mappings";
 import { convertToBool } from "../../utils/util";
+import { sendMappings } from "../../utils/mappings";
 
 function coerceResult(item: MappingRawDataType): MappingDataType {
   return {
@@ -76,7 +77,12 @@ function Mapping({ mappingData, userId }: { mappingData: Array<MappingRawDataTyp
   ));
 
   return (
-    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+    <form
+      onSubmit={form.onSubmit((values) => {
+        console.log(values);
+        sendMappings("genders", values.mapping);
+      })}
+    >
       <Container>{fields}</Container>
       <Container>
         <Group position="right" mt="xl">
