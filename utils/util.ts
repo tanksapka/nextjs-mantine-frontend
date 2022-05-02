@@ -4,6 +4,10 @@ function convertToBool(value: string): boolean {
   return value === "Y" ? true : false;
 }
 
+function convertToBoolString(value: boolean): string {
+  return value ? "Y" : "N";
+}
+
 function removeErrors(keyStub: string, form: UseFormReturnType<any>): void {
   const errorKeys = Object.keys(form.errors);
   const relevantKeys = errorKeys.map((value: string): { key: string; rel: boolean } => ({
@@ -16,4 +20,4 @@ function removeErrors(keyStub: string, form: UseFormReturnType<any>): void {
   }
 }
 
-export { convertToBool, removeErrors };
+export { convertToBool, convertToBoolString, removeErrors };

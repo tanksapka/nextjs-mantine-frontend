@@ -1,5 +1,6 @@
 import axios from "axios";
-import { MappingDataType, MappingPropsType } from "../types/mappings";
+import { MappingDataType, MappingPropsType, MappingRawDataType } from "../types/mappings";
+import { convertToBool, convertToBoolString } from "./util";
 
 async function getMappings(): Promise<MappingPropsType> {
   const resAddress = await axios.get(`${process.env.REACT_APP_API_URL}/address-types`);
@@ -17,15 +18,15 @@ async function getMappings(): Promise<MappingPropsType> {
   };
 }
 
-async function sendMappings(mappingType: string, mappingData: Array<MappingDataType>): Promise<any> {
+async function sendMappings(mappingType: string, mappingData: Array<MappingDataType>): Promise<MappingDataType> {
   const res = await axios.post(`http://127.0.0.1:8000/${mappingType}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    data: mappingData,
+    data: mappingData.map((item) => ({ ...item, valid_flag: convertToBoolString(item.valid_flag) })),
   });
-  return await res.data;
+  return await res.data.map((item: MappingRawDataType) => ({ ...item, valid_flag: convertToBool(item.valid_flag) }));
 }
 
 export { getMappings, sendMappings };
