@@ -18,7 +18,7 @@ function coerceResult(item: MappingRawDataType): MappingDataType {
 
 function Mapping({ mappingData, userId }: { mappingData: Array<MappingRawDataType>; userId: string }): JSX.Element {
   const form = useForm({
-    schema: yupResolver(Yup.object().shape({ mapping: Yup.array().of(mappingValidation) })),
+    schema: yupResolver(Yup.object().shape({ mapping: mappingValidation })),
     initialValues: {
       mapping: formList(mappingData.map(coerceResult)),
     },
@@ -77,12 +77,7 @@ function Mapping({ mappingData, userId }: { mappingData: Array<MappingRawDataTyp
   ));
 
   return (
-    <form
-      onSubmit={form.onSubmit((values) => {
-        console.log(values);
-        sendMappings("genders", values.mapping);
-      })}
-    >
+    <form onSubmit={form.onSubmit((values) => sendMappings("genders", values.mapping))}>
       <Container>{fields}</Container>
       <Container>
         <Group position="right" mt="xl">
