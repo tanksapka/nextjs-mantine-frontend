@@ -1,21 +1,21 @@
-import { Group } from "@mantine/core";
-import PeopleRow from "./PeopleRow";
+import { Container, Group } from "@mantine/core";
+import { PeopleRawType, PeopleType } from "../../types/people";
+import { PeopleRow } from "./PeopleRow";
 
-function People() {
-  return (
-    <Group direction="column">
-      <PeopleRow
-        registrationNumber="1"
-        membershipId="01"
-        name="Test 1"
-        birthDate={new Date()}
-        identityCardNumber="A1"
-      />
-      <div>People</div>
-      <div>People</div>
-      <div>People</div>
-    </Group>
-  );
+function People({ peopleData }: { peopleData: Array<PeopleRawType> }) {
+  const peopleRows = peopleData.map((person) => (
+    <PeopleRow
+      key={person.id}
+      id={person.id}
+      registrationNumber={person.registration_number}
+      membershipId={person.membership_id}
+      name={person.person_name}
+      birthDate={new Date(person.birthdate)}
+      identityCardNumber={person.identity_card_number}
+    />
+  ));
+
+  return <Container size="xl">{peopleRows}</Container>;
 }
 
-export default People;
+export { People };
