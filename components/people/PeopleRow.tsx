@@ -21,23 +21,21 @@ function PeopleRow({ id, registrationNumber, membershipId, name, birthDate, iden
         <Grid.Col span={2}>
           <Text>{membershipId}</Text>
         </Grid.Col>
-        <Grid.Col span={5}>
+        <Grid.Col span={4}>
           <Text>{name}</Text>
         </Grid.Col>
         <Grid.Col span={2}>
           <Text>{birthDate.toLocaleDateString()}</Text>
         </Grid.Col>
-        <Grid.Col span={1}>
+        <Grid.Col span={2}>
           <Text>{identityCardNumber}</Text>
         </Grid.Col>
         <Grid.Col span={1}>
-          {/* <ActionIcon<typeof Link> color="blue" component={Link} href={`/people/${id}`} passHref >
-          <ActionIcon color="blue" title="Szerkesztés">
-            <IconPencil />
-          </ActionIcon> */}
-          <Link href={`/people/${id}`} passHref>
-            Szerk...
-          </Link>
+          <ActionIcon component={Link} href={`/people/${id}`} passHref>
+            <a>
+              <IconPencil style={{ color: "#1c7ed6" }} />
+            </a>
+          </ActionIcon>
         </Grid.Col>
       </Grid>
       <Divider size="xs" color="dark" />

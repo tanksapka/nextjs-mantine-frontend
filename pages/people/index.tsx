@@ -2,8 +2,8 @@ import { GetServerSideProps } from "next";
 import { People } from "../../components/people/People";
 import { PeopleRawType } from "../../types/people";
 
-function PeopleIndex({ peopleData }: { peopleData: Array<PeopleRawType> }) {
-  return <People peopleData={peopleData} />;
+function PeopleIndex(peopleData: PeopleRawType) {
+  return <People {...peopleData} />;
 }
 
 export default PeopleIndex;
@@ -19,8 +19,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
   }
 
   return {
-    props: {
-      peopleData: peopleData,
-    },
+    props: peopleData,
   };
 };
