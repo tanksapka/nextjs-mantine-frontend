@@ -1,10 +1,8 @@
-import { Container, Divider, Grid, Pagination, Text } from "@mantine/core";
-import { useState } from "react";
-import { PeopleRawType, PeopleType } from "../../types/people";
+import { Container, Divider, Grid, Text } from "@mantine/core";
+import { PeopleRawType } from "../../types/people";
 import { PeopleRow } from "./PeopleRow";
 
-function People({ people, page, page_size, row_count, page_count }: PeopleRawType) {
-  const [activePage, setPage] = useState(page + 1);
+function People({ people }: PeopleRawType) {
   const peopleRows = people.map((person) => (
     <PeopleRow
       key={person.id}
@@ -41,14 +39,6 @@ function People({ people, page, page_size, row_count, page_count }: PeopleRawTyp
       </Grid>
       <Divider size="xs" color="dark" />
       {peopleRows}
-      <Pagination
-        onChange={setPage}
-        mt="lg"
-        page={activePage}
-        style={{ justifyContent: "center" }}
-        total={page_count + 1}
-        withEdges
-      />
     </Container>
   );
 }
