@@ -9,7 +9,7 @@ import { IconBuilding, IconCoin, IconSettings, IconUser } from "@tabler/icons";
 function MyApp({ Component, pageProps }: AppProps) {
   const navItemsList = [
     { icon: <IconUser />, text: "Személyek", link: "/people" },
-    { icon: <IconBuilding />, text: "Szervezetek", link: "/organziations" },
+    { icon: <IconBuilding />, text: "Szervezetek", link: "/organizations" },
     { icon: <IconCoin />, text: "Tagdíjak", link: "/fees" },
     { icon: <IconSettings />, text: "Beállítások", link: "/settings" },
   ];
