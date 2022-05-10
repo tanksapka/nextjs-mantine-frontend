@@ -1,10 +1,23 @@
 import * as Yup from "yup";
 import "dayjs/locale/hu";
 import { formList, useForm, yupResolver } from "@mantine/form";
-import { Group, TextInput, Select, Textarea, Container, Button, Title, Paper, InputWrapper } from "@mantine/core";
+import {
+  Group,
+  TextInput,
+  Select,
+  Textarea,
+  Container,
+  Button,
+  Title,
+  Paper,
+  InputWrapper,
+  Checkbox,
+} from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
+  IconBuilding,
   IconCake,
+  IconCalendarEvent,
   IconCoin,
   IconGenderBigender,
   IconHash,
@@ -61,8 +74,71 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
           whatsapp: convertToBool(data.whatsapp),
         }))
       ),
+      membership: formList(
+        personData.membership.map((data) => ({
+          ...data,
+          active_flag: convertToBool(data.active_flag),
+          event_date: data.event_date ? new Date(data.event_date) : undefined,
+        }))
+      ),
     },
   });
+
+  const membershipComponents = form.values.membership.map((data, idx) => (
+    <>
+      <Group grow mb="lg" align="baseline" key={data.id}>
+        <TextInput
+          icon={<IconBuilding />}
+          label="Alapszervezet neve"
+          name="organization_name"
+          placeholder="Alapszervezet neve..."
+          title="Alapszervezet neve"
+          readOnly
+          {...form.getListInputProps("membership", idx, "organization_name")}
+        />
+        <InputWrapper id="event_date" label="Státusz dátuma" required title="Státusz dátuma">
+          <DatePicker
+            // allowFreeInput
+            icon={<IconCalendarEvent />}
+            id="event_date"
+            inputFormat="YYYY.MM.DD"
+            labelFormat="YYYY MMMM"
+            locale="hu"
+            name="event_date"
+            placeholder="Státusz dátuma..."
+            disabled
+            {...form.getListInputProps("membership", idx, "event_date")}
+          />
+        </InputWrapper>
+      </Group>
+      <Group grow mb="lg" align="baseline">
+        <Checkbox
+          style={{ alignSelf: "flex-end" }}
+          defaultChecked
+          label="Aktív tag?"
+          name="active_flag"
+          readOnly
+          required
+          title="Aktív tag?"
+          {...form.getListInputProps("membership", idx, "active_flag")}
+        />
+      </Group>
+      <Group grow mb="lg" align="baseline">
+        <InputWrapper id="notes" label="Megjegyzés" title="Megjegyzés">
+          <Textarea
+            autosize
+            icon={<IconNote />}
+            id="notes"
+            maxRows={10}
+            minRows={3}
+            name="notes"
+            placeholder="Megyjegyzés..."
+            {...form.getListInputProps("membership", idx, "notes")}
+          />
+        </InputWrapper>
+      </Group>
+    </>
+  ));
 
   return (
     <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -181,6 +257,14 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
         emailTypeData={personData.email_type}
         phoneTypeData={personData.phone_type}
       />
+      <Container size="sm" my="xl">
+        <Title order={1} mb="xl">
+          Tagsági adatok
+        </Title>
+        <Paper shadow="xs" p="md">
+          {membershipComponents}
+        </Paper>
+      </Container>
       <Group position="right" mt="xl">
         <Button type="submit">Mentés</Button>
       </Group>

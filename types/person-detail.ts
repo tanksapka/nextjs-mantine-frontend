@@ -19,6 +19,28 @@ interface PersonDetailType {
   notes: string;
 }
 
+interface MembershipDetailRawType {
+  id: string;
+  person_id: string;
+  organization_id: string;
+  organization_name: string;
+  active_flag: string;
+  inactivity_status_id?: string;
+  event_date?: string;
+  notes?: string;
+}
+
+interface MembershipDetailType {
+  id: string;
+  person_id: string;
+  organization_id: string;
+  organization_name: string;
+  active_flag: boolean;
+  inactivity_status_id?: string;
+  event_date?: Date;
+  notes?: string;
+}
+
 interface PersonDetailFormType extends ContactDetailType {
   registration_number: number;
   membership_id: string;
@@ -29,17 +51,7 @@ interface PersonDetailFormType extends ContactDetailType {
   identity_card_number?: string;
   membership_fee_category_id: string;
   notes?: string;
-}
-
-interface MembershipDetailType {
-  id: string;
-  person_id: string;
-  organization_id: string;
-  organization_name: string;
-  active_flag: string;
-  inactivity_status_id: string;
-  event_date: string;
-  notes: string;
+  membership: MembershipDetailType;
 }
 
 interface PersonDataType {
@@ -47,7 +59,7 @@ interface PersonDataType {
   address: Array<AddressDetailType>;
   email: Array<EmailDetailType>;
   phone: Array<PhoneDetailType>;
-  membership: Array<MembershipDetailType>;
+  membership: Array<MembershipDetailRawType>;
   gender_type: Array<SelectDataType>;
   membership_fee_type: Array<SelectDataType>;
   address_type: Array<SelectDataType>;
