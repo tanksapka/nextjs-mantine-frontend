@@ -85,8 +85,8 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
   });
 
   const membershipComponents = form.values.membership.map((data, idx) => (
-    <>
-      <Group grow mb="lg" align="baseline" key={data.id}>
+    <div key={data.id}>
+      <Group grow mb="lg" align="baseline">
         <TextInput
           icon={<IconBuilding />}
           label="Alapszervezet neve"
@@ -137,7 +137,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
           />
         </InputWrapper>
       </Group>
-    </>
+    </div>
   ));
 
   return (
@@ -252,7 +252,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
       <ContactInfo
         entityId={personData.person.id}
         entityType="person"
-        form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
+        form={form as unknown as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
         addressTypeData={personData.address_type}
         emailTypeData={personData.email_type}
         phoneTypeData={personData.phone_type}

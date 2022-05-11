@@ -2,6 +2,7 @@ import * as Yup from "yup";
 import { OrgAddressDetailType } from "./address-detail";
 import { OrgEmailDetailType } from "./email-detail";
 import { ContactDetailType, SelectDataType } from "./general";
+import { OrganziationMembershipDetailRawType, OrganziationMembershipDetailType } from "./membership-details";
 import { OrgPhoneDetailType } from "./phone-detail";
 
 interface OrganizationDetailType {
@@ -24,6 +25,7 @@ interface OrganizationDetailFormType extends ContactDetailType {
   establishment_date: Date;
   termination_date?: Date;
   notes?: string;
+  membership: Array<OrganziationMembershipDetailType>;
 }
 
 interface OrganizationDataType {
@@ -31,7 +33,7 @@ interface OrganizationDataType {
   address: Array<OrgAddressDetailType>;
   email: Array<OrgEmailDetailType>;
   phone: Array<OrgPhoneDetailType>;
-  // membership: Array<MembershipDetailType>;
+  membership: Array<OrganziationMembershipDetailRawType>;
   address_type: Array<SelectDataType>;
   email_type: Array<SelectDataType>;
   phone_type: Array<SelectDataType>;

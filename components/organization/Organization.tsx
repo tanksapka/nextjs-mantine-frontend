@@ -6,6 +6,7 @@ import {
   IconBuilding,
   IconBuildingSkyscraper,
   IconCake,
+  IconCalendarEvent,
   IconFileDescription,
   IconNote,
   IconWreckingBall,
@@ -61,8 +62,71 @@ function Organization({ organizationData }: { organizationData: OrganizationData
           whatsapp: convertToBool(data.whatsapp),
         }))
       ),
+      membership: formList(
+        organizationData.membership.map((data) => ({
+          ...data,
+          active_flag: convertToBool(data.active_flag),
+          event_date: data.event_date ? new Date(data.event_date) : undefined,
+        }))
+      ),
     },
   });
+
+  const membershipComponents = form.values.membership.map((data, idx) => (
+    <div key={data.id}>
+      <Group grow mb="lg" align="baseline">
+        <TextInput
+          icon={<IconBuilding />}
+          label="Tag neve"
+          name="person_name"
+          placeholder="Tag neve..."
+          title="Tag neve"
+          readOnly
+          {...form.getListInputProps("membership", idx, "person_name")}
+        />
+        <InputWrapper id="event_date" label="Státusz dátuma" required title="Státusz dátuma">
+          <DatePicker
+            // allowFreeInput
+            icon={<IconCalendarEvent />}
+            id="event_date"
+            inputFormat="YYYY.MM.DD"
+            labelFormat="YYYY MMMM"
+            locale="hu"
+            name="event_date"
+            placeholder="Státusz dátuma..."
+            disabled
+            {...form.getListInputProps("membership", idx, "event_date")}
+          />
+        </InputWrapper>
+      </Group>
+      <Group grow mb="lg" align="baseline">
+        <Checkbox
+          style={{ alignSelf: "flex-end" }}
+          defaultChecked
+          label="Aktív tag?"
+          name="active_flag"
+          readOnly
+          required
+          title="Aktív tag?"
+          {...form.getListInputProps("membership", idx, "active_flag")}
+        />
+      </Group>
+      <Group grow mb="lg" align="baseline">
+        <InputWrapper id="notes" label="Megjegyzés" title="Megjegyzés">
+          <Textarea
+            autosize
+            icon={<IconNote />}
+            id="notes"
+            maxRows={10}
+            minRows={3}
+            name="notes"
+            placeholder="Megyjegyzés..."
+            {...form.getListInputProps("membership", idx, "notes")}
+          />
+        </InputWrapper>
+      </Group>
+    </div>
+  ));
 
   return (
     <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -161,11 +225,19 @@ function Organization({ organizationData }: { organizationData: OrganizationData
       <ContactInfo
         entityId={organizationData.organization.id}
         entityType="organization"
-        form={form as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
+        form={form as unknown as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
         addressTypeData={organizationData.address_type}
         emailTypeData={organizationData.email_type}
         phoneTypeData={organizationData.phone_type}
       />
+      <Container size="sm" my="xl">
+        <Title order={1} mb="xl">
+          Tagsági adatok
+        </Title>
+        <Paper shadow="xs" p="md">
+          {membershipComponents}
+        </Paper>
+      </Container>
       <Group position="right" mt="xl">
         <Button type="submit">Mentés</Button>
       </Group>
