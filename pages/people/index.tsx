@@ -1,4 +1,5 @@
-import { Pagination } from "@mantine/core";
+import { Button, Group, Pagination } from "@mantine/core";
+import { IconPlus } from "@tabler/icons";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import { People } from "../../components/people/People";
@@ -17,6 +18,11 @@ function PeopleIndex(peopleData: PeopleRawType) {
 
   return (
     <>
+      <Group mb="lg" position="right">
+        <Button title="Új személy hozzáadása" leftIcon={<IconPlus size={20} />} name="new-person" type="button">
+          Új személy
+        </Button>
+      </Group>
       <People {...data} />
       <Pagination
         onChange={changeHandler}

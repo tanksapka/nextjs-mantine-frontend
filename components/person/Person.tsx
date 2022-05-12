@@ -79,6 +79,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
           ...data,
           active_flag: convertToBool(data.active_flag),
           event_date: data.event_date ? new Date(data.event_date) : undefined,
+          notes: data.notes || undefined,
         }))
       ),
     },

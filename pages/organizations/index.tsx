@@ -1,4 +1,5 @@
-import { Pagination } from "@mantine/core";
+import { Button, Group, Pagination } from "@mantine/core";
+import { IconPlus } from "@tabler/icons";
 import { GetServerSideProps } from "next";
 import { useState } from "react";
 import { Organizations } from "../../components/organizations/Organizations";
@@ -17,6 +18,11 @@ function OrganizationsIndex(organziationData: OrganizationsRawType) {
 
   return (
     <>
+      <Group mb="lg" position="right">
+        <Button title="Új szervezet hozzáadása" leftIcon={<IconPlus size={20} />} name="new-organization" type="button">
+          Új szervezet
+        </Button>
+      </Group>
       <Organizations {...data} />
       <Pagination
         onChange={changeHandler}
