@@ -12,13 +12,13 @@ function DateFilter(props: any): JSX.Element {
   const [state, setState] = useSetState(filterValue || { operator: "eq", value: null });
 
   const handleClose = () => {
-    setState(filterValue || { operator: "cont", value: "" });
+    setState(filterValue || { operator: "cont", value: null });
     setOpened(false);
   };
 
   const handleClear = () => {
     setFilter(undefined);
-    setState({ operator: "cont", value: "" });
+    setState({ operator: "cont", value: null });
     setOpened(false);
   };
 
