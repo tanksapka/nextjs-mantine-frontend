@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useFilters, usePagination, useRowSelect, useSortBy, useTable } from "react-table";
+import { Column, useFilters, usePagination, useRowSelect, useSortBy, useTable } from "react-table";
 import {
   Checkbox,
   createStyles,
@@ -62,7 +62,29 @@ const selectionHook = (hook, selection) => {
   }
 };
 
-export const ReactTable = ({
+interface MantineTableType {
+  columns: Array<Column>;
+  data: Array<any>;
+  serverSideDataSource: boolean;
+  initialPageSize: number;
+  initialPageIndex: number;
+  pageCount: number;
+  total: number;
+  // stickyHeader,
+  customFilterTypes: object;
+  debugging: boolean;
+  reload: boolean;
+  loading: boolean;
+  filtering: boolean;
+  sorting: boolean;
+  selection: any;
+  pagination: boolean;
+  onRowClick: any;
+  onAllRowsSelection: any;
+  fetchData: any;
+}
+
+export const MantineTable = ({
   columns,
   data = [],
   serverSideDataSource = false,
@@ -82,8 +104,8 @@ export const ReactTable = ({
   onRowClick,
   onAllRowsSelection,
   fetchData, // Pass function to fetch data for server side operations
-  ...rest
-}) => {
+}: // ...rest
+MantineTableType) => {
   const { classes, cx } = useStyles();
   const { css } = useCss();
 
