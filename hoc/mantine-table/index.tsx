@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { Column, useFilters, usePagination, useRowSelect, useSortBy, useTable } from "react-table";
+import { SyntheticEvent, useEffect } from "react";
+import { Column, Row, useFilters, usePagination, useRowSelect, useSortBy, useTable } from "react-table";
 import {
   Checkbox,
   createStyles,
@@ -35,10 +35,10 @@ const useStyles = createStyles((t) => ({
   sortDirectionIcon: { transition: "transform 200ms ease" },
 }));
 
-const defaultColumn = {
-  Filter: StringFilter,
-  filter: "stringFilter",
-};
+interface defaultColumnType {
+  Filter: (prop: any) => JSX.Element;
+  filter: string;
+}
 
 const selectionHook = (hook, selection) => {
   if (selection) {
@@ -48,11 +48,11 @@ const selectionHook = (hook, selection) => {
         Header: ({ getToggleAllRowsSelectedProps }) => (
           <Checkbox {...getToggleAllRowsSelectedProps({ title: undefined })} />
         ),
-        Cell: ({ row }) => (
+        Cell: ({ row }: { row: Row }) => (
           <Checkbox
             {...row.getToggleRowSelectedProps({
               title: undefined,
-              onClick: (e) => e.stopPropagation(),
+              onClick: (e: SyntheticEvent) => e.stopPropagation(),
             })}
           />
         ),
@@ -108,6 +108,10 @@ export const MantineTable = ({
 MantineTableType) => {
   const { classes, cx } = useStyles();
   const { css } = useCss();
+  const defaultColumn: defaultColumnType = {
+    Filter: StringFilter,
+    filter: "stringFilter",
+  };
 
   const tableOptions = useTable(
     {
@@ -157,7 +161,7 @@ MantineTableType) => {
     reload && fetchData && fetchData({ pageIndex, pageSize, sortBy, filters });
   }, [reload]);
 
-  const handleRowClick = (e, row) => {
+  const handleRowClick = (e: SyntheticEvent, row: Row) => {
     console.log("Row Selected: ", row);
     onRowClick && onRowClick(row);
   };
@@ -179,50 +183,61 @@ MantineTableType) => {
   const handlePageChange = (pageNum: number) => gotoPage(pageNum - 1);
 
   const renderHeader = () =>
-    headerGroups.map((hg) => (
-      <tr {...hg.getHeaderGroupProps()}>
-        {hg.headers.map((column) => (
-          <th
-            className={cx(
-              { [classes.sortableHeader]: column.canSort },
-              { [css({ minWidth: column.cellMinWidth })]: column.cellMinWidth },
-              { [css({ width: column.cellWidth })]: column.cellWidth }
-            )}
-            {...column.getHeaderProps(column.getSortByToggleProps({ title: undefined }))}
-          >
-            <Group noWrap position={column.align || "apart"}>
-              <div>{column.render("Header")}</div>
-              <Group noWrap position="left">
-                {column.canFilter ? column.render("Filter") : null}
-                {column.canSort ? (
-                  column.isSorted ? (
-                    <IconArrowNarrowUp
-                      className={classes.sortDirectionIcon}
-                      style={{
-                        transform: column.isSortedDesc ? "rotate(180deg)" : "none",
-                      }}
-                    />
-                  ) : (
-                    <IconArrowsSort className={classes.disableSortIcon} />
-                  )
-                ) : null}
-              </Group>
-            </Group>
-          </th>
-        ))}
-      </tr>
-    ));
-
-  const renderRow = (rows) =>
-    rows.map((row, i) => {
-      prepareRow(row);
+    headerGroups.map((hg) => {
+      const { key, ...restHeaderGroupProps } = hg.getHeaderGroupProps();
       return (
-        <tr key={i} {...row.getRowProps({ onClick: (e) => handleRowClick(e, row) })}>
-          {row.cells.map((cell) => (
-            <td align={cell.column.align || "left"} {...cell.getCellProps()}>
-              {cell.render("Cell")}
-            </td>
-          ))}
+        <tr key={key} {...restHeaderGroupProps}>
+          {hg.headers.map((column) => {
+            const { key, ...restColumn } = column.getHeaderProps(column.getSortByToggleProps({ title: undefined }));
+            return (
+              <th
+                className={cx(
+                  { [classes.sortableHeader]: column.canSort },
+                  { [css({ minWidth: column.cellMinWidth })]: column.cellMinWidth },
+                  { [css({ width: column.cellWidth })]: column.cellWidth }
+                )}
+                key={key}
+                {...restColumn}
+              >
+                <Group noWrap position={column.align || "apart"}>
+                  <div>{column.render("Header")}</div>
+                  <Group noWrap position="left">
+                    {column.canFilter ? column.render("Filter") : null}
+                    {column.canSort ? (
+                      column.isSorted ? (
+                        <IconArrowNarrowUp
+                          className={classes.sortDirectionIcon}
+                          style={{
+                            transform: column.isSortedDesc ? "rotate(180deg)" : "none",
+                          }}
+                        />
+                      ) : (
+                        <IconArrowsSort className={classes.disableSortIcon} />
+                      )
+                    ) : null}
+                  </Group>
+                </Group>
+              </th>
+            );
+          })}
+        </tr>
+      );
+    });
+
+  const renderRow = (rows: Array<Row>) =>
+    rows.map((row) => {
+      prepareRow(row);
+      const { key, ...restRowProps } = row.getRowProps({ onClick: (e) => handleRowClick(e, row) });
+      return (
+        <tr key={key} {...restRowProps}>
+          {row.cells.map((cell) => {
+            const { key, ...restCellProps } = cell.getCellProps();
+            return (
+              <td align={cell.column.align || "left"} key={key} {...restCellProps}>
+                {cell.render("Cell")}
+              </td>
+            );
+          })}
         </tr>
       );
     });
