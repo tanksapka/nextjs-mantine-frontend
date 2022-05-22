@@ -1,21 +1,44 @@
-import { useMemo } from "react";
-import { Column, useTable } from "react-table";
+import { Table } from "@mantine/core";
+import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
+import { Column, useTable, useSortBy } from "react-table";
 
 function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<any> }) {
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data });
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
+    {
+      columns,
+      data,
+      // initialState: {
+      //   hiddenColumns: columns
+      //     .filter((column) => column.accessor?.toString().endsWith("id"))
+      //     .map((col): string => (col.accessor ? col.accessor?.toString() : "")),
+      // },
+    },
+    useSortBy
+  );
 
   return (
-    <table {...getTableProps()}>
+    <Table {...getTableProps()}>
       <thead>
         {headerGroups.map((headerGroup) => {
           const { key, ...restHeaderGroupProps } = headerGroup.getHeaderGroupProps();
           return (
             <tr key={key} {...restHeaderGroupProps}>
               {headerGroup.headers.map((column) => {
-                const { key, ...restColumn } = column.getHeaderProps();
+                const { key, ...restColumn } = column.getHeaderProps(column.getSortByToggleProps());
                 return (
-                  <th key={key} {...restColumn}>
+                  <th key={key} {...restColumn} hidden={!column.isVisible}>
                     {column.render("Header")}
+                    <span style={{ marginLeft: "1rem" }}>
+                      {column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <IconSortDescending size={16} />
+                        ) : (
+                          <IconSortAscending size={16} />
+                        )
+                      ) : (
+                        <IconArrowsSort size={16} />
+                      )}
+                    </span>
                   </th>
                 );
               })}
@@ -41,7 +64,7 @@ function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<an
           );
         })}
       </tbody>
-    </table>
+    </Table>
   );
 }
 
