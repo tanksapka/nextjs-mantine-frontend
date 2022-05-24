@@ -34,7 +34,7 @@ function StringFilter(props: any): JSX.Element {
           color={filterValue ? "blue" : "gray"}
           onClick={() => setOpened((o) => !o)}
         >
-          <IconFilter />
+          <IconFilter size={16} />
         </ActionIcon>
       }
       opened={opened}

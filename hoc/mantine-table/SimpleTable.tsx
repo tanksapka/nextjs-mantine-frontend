@@ -1,6 +1,7 @@
-import { Center, Group, Pagination, Select, Table } from "@mantine/core";
+import { Grid, Group, Pagination, Select, Stack, Table } from "@mantine/core";
 import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
-import { Column, useTable, useSortBy, usePagination } from "react-table";
+import { Column, useTable, useSortBy, usePagination, useFilters } from "react-table";
+import { ColumnFilter } from "./filters";
 
 const pageSizeOptions = [
   { value: "10", label: "10" },
@@ -26,11 +27,12 @@ function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<an
       data,
       initialState: {
         pageSize: 20,
-        //   hiddenColumns: columns
-        //     .filter((column) => column.accessor?.toString().endsWith("id"))
-        //     .map((col): string => (col.accessor ? col.accessor?.toString() : "")),
+        hiddenColumns: columns
+          .filter((column) => column.accessor?.toString().endsWith("id"))
+          .map((col): string => (col.accessor ? col.accessor?.toString() : "")),
       },
     },
+    useFilters,
     useSortBy,
     usePagination
   );
@@ -44,21 +46,28 @@ function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<an
             return (
               <tr key={key} {...restHeaderGroupProps}>
                 {headerGroup.headers.map((column) => {
-                  const { key, ...restColumn } = column.getHeaderProps(column.getSortByToggleProps());
+                  const { key, ...restColumn } = column.getHeaderProps();
                   return (
                     <th key={key} {...restColumn} hidden={!column.isVisible}>
-                      {column.render("Header")}
-                      <span style={{ marginLeft: "1rem" }}>
-                        {column.isSorted ? (
-                          column.isSortedDesc ? (
-                            <IconSortDescending size={16} />
-                          ) : (
-                            <IconSortAscending size={16} />
-                          )
-                        ) : (
-                          <IconArrowsSort size={16} />
-                        )}
-                      </span>
+                      <Grid align="center" justify="center">
+                        <Grid.Col span={8} style={{ marginRight: "1rem", justifyContent: "center" }}>
+                          {column.render("Header")}
+                        </Grid.Col>
+                        <Grid.Col span={2} {...column.getSortByToggleProps()}>
+                          <Stack>
+                            {column.canFilter && <ColumnFilter column={column} />}
+                            {column.isSorted ? (
+                              column.isSortedDesc ? (
+                                <IconSortDescending size={16} />
+                              ) : (
+                                <IconSortAscending size={16} />
+                              )
+                            ) : (
+                              <IconArrowsSort size={16} />
+                            )}
+                          </Stack>
+                        </Grid.Col>
+                      </Grid>
                     </th>
                   );
                 })}
@@ -85,8 +94,7 @@ function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<an
           })}
         </tbody>
       </Table>
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-        {/* <Center> */}
+      <Group align="center" style={{ justifyContent: "center" }}>
         <Pagination
           onChange={(n: number) => gotoPage(n - 1)}
           mt="lg"
@@ -95,15 +103,16 @@ function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<an
           total={pageCount}
           withEdges
         />
-        {/* </Center> */}
         <Select
           mt="lg"
           ml="sm"
+          // width={6} // not applied
           data={pageSizeOptions}
           defaultValue={pageSize.toString()}
           onChange={(value) => setPageSize(parseInt(value as string))}
+          style={{ width: "6rem" }}
         />
-      </div>
+      </Group>
     </>
   );
 }
