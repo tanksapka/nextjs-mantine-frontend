@@ -31,6 +31,7 @@ function NumberFilter(props: any): JSX.Element {
     <Popover
       target={
         <ActionIcon
+          size={18}
           variant={filterValue ? "light" : "hover"}
           color={filterValue ? "blue" : "gray"}
           onClick={() => setOpened((o) => !o)}
@@ -51,12 +52,12 @@ function NumberFilter(props: any): JSX.Element {
         value={state.operator}
         onChange={(o) => setState({ operator: o })}
       >
-        <Radio value="eq">Equals</Radio>
-        <Radio value="not_eq">Not equal</Radio>
-        <Radio value="gt">Greater than</Radio>
-        <Radio value="gteq">Greater than or equal</Radio>
-        <Radio value="lt">Less than</Radio>
-        <Radio value="lteq">Less than or equal</Radio>
+        <Radio value="eq" label="Equals" />
+        <Radio value="not_eq" label="Not equal" />
+        <Radio value="gt" label="Greater than" />
+        <Radio value="gteq" label="Greater than or equal" />
+        <Radio value="lt" label="Less than" />
+        <Radio value="lteq" label="Less than or equal" />
       </RadioGroup>
       <Divider my="sm" />
       <NumberInput

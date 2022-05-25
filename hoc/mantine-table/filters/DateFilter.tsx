@@ -31,6 +31,7 @@ function DateFilter(props: any): JSX.Element {
     <Popover
       target={
         <ActionIcon
+          size={18}
           variant={filterValue ? "light" : "hover"}
           color={filterValue ? "blue" : "gray"}
           onClick={() => setOpened((o) => !o)}
@@ -51,12 +52,12 @@ function DateFilter(props: any): JSX.Element {
         value={state.operator}
         onChange={(o) => setState({ operator: o })}
       >
-        <Radio value="eq">Equals</Radio>
-        <Radio value="not_eq">Does not equal</Radio>
-        <Radio value="gt">After</Radio>
-        <Radio value="gteq">After or on</Radio>
-        <Radio value="lt">Before</Radio>
-        <Radio value="lteq">Before or on</Radio>
+        <Radio value="eq" label="Equals" />
+        <Radio value="not_eq" label="Does not equal" />
+        <Radio value="gt" label="After" />
+        <Radio value="gteq" label="After or on" />
+        <Radio value="lt" label="Before" />
+        <Radio value="lteq" label="Before or on" />
       </RadioGroup>
       <Divider my="sm" />
       <DatePicker

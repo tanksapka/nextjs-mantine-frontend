@@ -1,10 +1,11 @@
-import { Row } from "react-table";
+import { IdType, Row } from "react-table";
 
 function stringFilterFn(
   rows: Array<Row>,
-  id: string,
+  columnIds: Array<IdType<string>>,
   filter: { operator: string; value?: string | number | Date }
 ): Array<Row> {
+  const id = columnIds[0];
   let result = [];
   const { operator = "cont", value } = filter;
   switch (operator) {
@@ -54,9 +55,10 @@ stringFilterFn.autoRemove = (val: boolean) => !val;
 
 function numberFilterFn(
   rows: Array<Row>,
-  id: string,
+  columnIds: Array<IdType<string>>,
   filter: { operator: string; value?: string | number | Date }
 ): Array<Row> {
+  const id = columnIds[0];
   let result = [];
   const { operator = "eq", value } = filter;
   switch (operator) {
@@ -106,9 +108,10 @@ numberFilterFn.autoRemove = (val: boolean) => !val;
 
 function dateFilterFn(
   rows: Array<Row>,
-  id: string,
+  columnIds: Array<IdType<string>>,
   filter: { operator: string; value?: string | number | Date }
 ): Array<Row> {
+  const id = columnIds[0];
   let result = [];
   const { operator = "eq", value } = filter;
   switch (operator) {

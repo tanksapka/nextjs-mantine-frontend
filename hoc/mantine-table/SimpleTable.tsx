@@ -1,7 +1,6 @@
-import { Grid, Group, Pagination, Select, Stack, Table } from "@mantine/core";
+import { ActionIcon, Grid, Group, Pagination, Radio, RadioGroup, Select, Stack, Table } from "@mantine/core";
 import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
 import { Column, useTable, useSortBy, usePagination, useFilters } from "react-table";
-import { ColumnFilter } from "./filters";
 
 const pageSizeOptions = [
   { value: "10", label: "10" },
@@ -54,16 +53,22 @@ function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<an
                           {column.render("Header")}
                         </Grid.Col>
                         <Grid.Col span={2} {...column.getSortByToggleProps()}>
-                          <Stack>
-                            {column.canFilter && <ColumnFilter column={column} />}
+                          <Stack justify="center">
+                            {column.canFilter && column.render("Filter")}
                             {column.isSorted ? (
                               column.isSortedDesc ? (
-                                <IconSortDescending size={16} />
+                                <ActionIcon size={16} color="blue" variant="hover">
+                                  <IconSortDescending />
+                                </ActionIcon>
                               ) : (
-                                <IconSortAscending size={16} />
+                                <ActionIcon size={16} color="blue" variant="hover">
+                                  <IconSortAscending />
+                                </ActionIcon>
                               )
                             ) : (
-                              <IconArrowsSort size={16} />
+                              <ActionIcon size={16}>
+                                <IconArrowsSort />
+                              </ActionIcon>
                             )}
                           </Stack>
                         </Grid.Col>

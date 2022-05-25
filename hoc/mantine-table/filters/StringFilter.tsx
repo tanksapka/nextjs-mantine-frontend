@@ -30,11 +30,12 @@ function StringFilter(props: any): JSX.Element {
     <Popover
       target={
         <ActionIcon
+          size={18}
           variant={filterValue ? "light" : "hover"}
           color={filterValue ? "blue" : "gray"}
           onClick={() => setOpened((o) => !o)}
         >
-          <IconFilter size={16} />
+          <IconFilter />
         </ActionIcon>
       }
       opened={opened}
@@ -50,12 +51,12 @@ function StringFilter(props: any): JSX.Element {
         value={state.operator}
         onChange={(o) => setState({ operator: o })}
       >
-        <Radio value="cont">Contains</Radio>
-        <Radio value="not_cont">Does not contain</Radio>
-        <Radio value="start">Starts with</Radio>
-        <Radio value="end">Ends with</Radio>
-        <Radio value="eq">Equals</Radio>
-        <Radio value="not_eq">Not equal</Radio>
+        <Radio value="cont" label="Contains" />
+        <Radio value="not_cont" label="Does not contain" />
+        <Radio value="start" label="Starts with" />
+        <Radio value="end" label="Ends with" />
+        <Radio value="eq" label="Equals" />
+        <Radio value="not_eq" label="Not equal" />
       </RadioGroup>
       <Divider my="sm" />
       <TextInput
