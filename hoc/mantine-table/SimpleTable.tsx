@@ -111,7 +111,6 @@ function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<an
         <Select
           mt="lg"
           ml="sm"
-          // width={6} // not applied
           data={pageSizeOptions}
           defaultValue={pageSize.toString()}
           onChange={(value) => setPageSize(parseInt(value as string))}

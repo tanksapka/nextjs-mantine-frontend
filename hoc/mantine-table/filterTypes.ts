@@ -109,7 +109,7 @@ numberFilterFn.autoRemove = (val: boolean) => !val;
 function dateFilterFn(
   rows: Array<Row>,
   columnIds: Array<IdType<string>>,
-  filter: { operator: string; value?: string | number | Date }
+  filter: { operator: string; value?: Date }
 ): Array<Row> {
   const id = columnIds[0];
   let result = [];
@@ -118,37 +118,37 @@ function dateFilterFn(
     case "eq":
       result = rows.filter((row) => {
         const rowValue = row.values[id];
-        return !!rowValue ? new Date(rowValue) === value : false;
+        return !!rowValue ? new Date(`${rowValue} 00:00:00`).getTime() === value?.getTime() : false;
       });
       break;
     case "not_eq":
       result = rows.filter((row) => {
         const rowValue = row.values[id];
-        return !!rowValue ? new Date(rowValue) !== value : true;
+        return !!rowValue ? new Date(`${rowValue} 00:00:00`).getTime() !== value?.getTime() : true;
       });
       break;
     case "gt":
       result = rows.filter((row) => {
         const rowValue = row.values[id];
-        return !!rowValue && !!value ? new Date(rowValue) > new Date(value) : false;
+        return !!rowValue && !!value ? new Date(`${rowValue} 00:00:00`).getTime() > value?.getTime() : false;
       });
       break;
     case "gteq":
       result = rows.filter((row) => {
         const rowValue = row.values[id];
-        return !!rowValue && !!value ? new Date(rowValue) >= new Date(value) : false;
+        return !!rowValue && !!value ? new Date(`${rowValue} 00:00:00`).getTime() >= value?.getTime() : false;
       });
       break;
     case "lt":
       result = rows.filter((row) => {
         const rowValue = row.values[id];
-        return !!rowValue && !!value ? new Date(rowValue) < new Date(value) : false;
+        return !!rowValue && !!value ? new Date(`${rowValue} 00:00:00`).getTime() < value?.getTime() : false;
       });
       break;
     case "lteq":
       result = rows.filter((row) => {
         const rowValue = row.values[id];
-        return !!rowValue && !!value ? new Date(rowValue) <= new Date(value) : false;
+        return !!rowValue && !!value ? new Date(`${rowValue} 00:00:00`).getTime() <= value?.getTime() : false;
       });
       break;
     default:
