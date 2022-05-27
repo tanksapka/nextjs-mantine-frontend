@@ -49,7 +49,7 @@ function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<an
                   return (
                     <th key={key} {...restColumn} hidden={!column.isVisible}>
                       <Grid align="center" justify="center">
-                        <Grid.Col span={8} style={{ marginRight: "1rem", justifyContent: "center" }}>
+                        <Grid.Col span={8} style={{ justifyContent: "center", textAlign: "center" }}>
                           {column.render("Header")}
                         </Grid.Col>
                         <Grid.Col span={2} {...column.getSortByToggleProps()}>

@@ -1,21 +1,11 @@
-import { Button, Group, Pagination } from "@mantine/core";
+import { Button, Group } from "@mantine/core";
 import { IconPlus } from "@tabler/icons";
 import { GetServerSideProps } from "next";
-import { useState } from "react";
 import { People } from "../../components/people/People";
 import { PeopleRawType } from "../../types/people";
 import { getPeople } from "../../utils/people";
 
 function PeopleIndex(peopleData: PeopleRawType) {
-  const [data, setData] = useState(peopleData);
-  const [activePage, setPage] = useState(peopleData.page + 1);
-
-  async function changeHandler(page: number) {
-    const res = await getPeople(page - 1, peopleData.page_size);
-    setPage(page);
-    setData(res);
-  }
-
   return (
     <>
       <Group mb="lg" position="right">
@@ -23,15 +13,7 @@ function PeopleIndex(peopleData: PeopleRawType) {
           Új személy
         </Button>
       </Group>
-      <People {...data} />
-      <Pagination
-        onChange={changeHandler}
-        mt="lg"
-        page={activePage}
-        style={{ justifyContent: "center" }}
-        total={peopleData.page_count}
-        withEdges
-      />
+      <People {...peopleData} />
     </>
   );
 }
