@@ -1,6 +1,6 @@
 import { ActionIcon, Grid, Group, Pagination, Radio, RadioGroup, Select, Stack, Table } from "@mantine/core";
 import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
-import { Column, useTable, useSortBy, usePagination, useFilters } from "react-table";
+import { Column, useTable, useSortBy, usePagination, useFilters, TableOptions } from "react-table";
 
 const pageSizeOptions = [
   { value: "10", label: "10" },
@@ -9,7 +9,7 @@ const pageSizeOptions = [
   { value: "100", label: "100" },
 ];
 
-function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<any> }) {
+function SimpleTable(tableOptions: TableOptions<object>) {
   const {
     getTableProps,
     getTableBodyProps,
@@ -20,21 +20,7 @@ function SimpleTable({ columns, data }: { columns: Array<Column>; data: Array<an
     setPageSize,
     state: { pageIndex, pageSize },
     prepareRow,
-  } = useTable(
-    {
-      columns,
-      data,
-      initialState: {
-        pageSize: 20,
-        hiddenColumns: columns
-          .filter((column) => column.accessor?.toString().endsWith("id"))
-          .map((col): string => (col.accessor ? col.accessor?.toString() : "")),
-      },
-    },
-    useFilters,
-    useSortBy,
-    usePagination
-  );
+  } = useTable(tableOptions, useFilters, useSortBy, usePagination);
 
   return (
     <>

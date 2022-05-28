@@ -108,7 +108,14 @@ function People({ people }: PeopleRawType) {
       </Grid>
       <Divider size="xs" color="dark" />
       {peopleRows} */}
-      <SimpleTable columns={columns} data={data} />
+      <SimpleTable
+        columns={columns}
+        data={data}
+        initialState={{
+          pageSize: 20,
+          hiddenColumns: ["id"],
+        }}
+      />
     </Container>
   );
 }

@@ -62,7 +62,16 @@ function Organizations({ organizations }: OrganizationsRawType) {
 
   return (
     <Container size="xl">
-      <SimpleTable columns={columns} data={data} />
+      <SimpleTable
+        columns={columns}
+        data={data}
+        initialState={{
+          pageSize: 20,
+          hiddenColumns: columns
+            .filter((column) => column.accessor?.toString().endsWith("id"))
+            .map((col): string => (col.accessor ? col.accessor?.toString() : "")),
+        }}
+      />
     </Container>
   );
 }
