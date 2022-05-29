@@ -109,11 +109,16 @@ function People({ people }: PeopleRawType) {
       <Divider size="xs" color="dark" />
       {peopleRows} */}
       <SimpleTable
-        columns={columns}
-        data={data}
-        initialState={{
-          pageSize: 20,
-          hiddenColumns: ["id"],
+        tableOptions={{
+          columns: columns,
+          data: data,
+          initialState: {
+            pageSize: 20,
+            hiddenColumns: ["id"],
+          },
+        }}
+        displayOptions={{
+          hover: { header: true, row: true },
         }}
       />
     </Container>
