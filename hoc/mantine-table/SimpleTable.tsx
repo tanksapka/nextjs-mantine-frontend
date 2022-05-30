@@ -29,9 +29,9 @@ interface DisplayOptions {
 }
 
 interface InteractionOptions {
-  rowSelectable: boolean;
-  rowOnClick: () => void;
-  rowIcons: Array<JSX.Element>;
+  rowSelectable?: boolean;
+  rowOnClick?: () => void;
+  rowIcons?: Array<JSX.Element>;
 }
 
 const defaultPageSizeOptions: PageSizeOptions = [
@@ -117,12 +117,20 @@ function SimpleTable({
                     </th>
                   );
                 })}
+                {interactionOptions?.rowIcons && (
+                  <th
+                    className={displayOptions?.hover?.header ? classes.hoverCls : undefined}
+                    style={{ ...displayOptions?.styleOverrides?.header?.th }}
+                  >
+                    Actions
+                  </th>
+                )}
               </tr>
             );
           })}
         </thead>
         <tbody {...getTableBodyProps} style={{ ...displayOptions?.styleOverrides?.body?.tbody }}>
-          {page.map((row) => {
+          {page.map((row, rowIdx) => {
             prepareRow(row);
             const { key, ...restRowProps } = row.getRowProps();
             return (
@@ -140,6 +148,7 @@ function SimpleTable({
                     </td>
                   );
                 })}
+                {interactionOptions?.rowIcons && <td>{interactionOptions.rowIcons[pageIndex * pageSize + rowIdx]}</td>}
               </tr>
             );
           })}

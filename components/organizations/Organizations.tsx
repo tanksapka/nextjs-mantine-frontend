@@ -1,4 +1,6 @@
-import { Container } from "@mantine/core";
+import { ActionIcon, Container } from "@mantine/core";
+import { IconPencil } from "@tabler/icons";
+import Link from "next/link";
 import { useMemo } from "react";
 import { Column } from "react-table";
 import { DateFilter, StringFilter } from "../../hoc/mantine-table/filters";
@@ -75,6 +77,15 @@ function Organizations({ organizations }: OrganizationsRawType) {
         }}
         displayOptions={{
           hover: { header: true, row: true },
+        }}
+        interactionOptions={{
+          rowIcons: data.map((row) => (
+            <ActionIcon key={row.id} component={Link} href={`/organizations/${row.id}`} passHref>
+              <a title="Edit...">
+                <IconPencil style={{ color: "#1c7ed6" }} />
+              </a>
+            </ActionIcon>
+          )),
         }}
       />
     </Container>
