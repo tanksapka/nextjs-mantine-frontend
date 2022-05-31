@@ -41,10 +41,21 @@ const defaultPageSizeOptions: PageSizeOptions = [
   { value: "100", label: "100" },
 ];
 
-const useStyles = createStyles((t) => ({
+const useStyles = createStyles((t, { hoverRow, striped }: { hoverRow?: boolean; striped?: boolean }) => ({
   hoverCls: {
     "&:hover": {
+      backgroundColor: t.colors.gray[4],
+    },
+  },
+  mergedCls: {
+    "tr:nth-of-type(2n)": striped && {
       backgroundColor: t.colors.gray[1],
+      "&:hover": hoverRow && {
+        backgroundColor: t.colors.gray[4],
+      },
+    },
+    "tr:hover": hoverRow && {
+      backgroundColor: t.colors.gray[4],
     },
   },
 }));
@@ -69,7 +80,7 @@ function SimpleTable({
     state: { pageIndex, pageSize },
     prepareRow,
   } = useTable(tableOptions, useFilters, useSortBy, usePagination);
-  const { classes, cx } = useStyles();
+  const { classes, cx } = useStyles({ hoverRow: displayOptions?.hover?.row, striped: displayOptions?.stripedRows });
 
   return (
     <>
@@ -129,17 +140,16 @@ function SimpleTable({
             );
           })}
         </thead>
-        <tbody {...getTableBodyProps} style={{ ...displayOptions?.styleOverrides?.body?.tbody }}>
+        <tbody
+          {...getTableBodyProps}
+          className={classes.mergedCls}
+          style={{ ...displayOptions?.styleOverrides?.body?.tbody }}
+        >
           {page.map((row, rowIdx) => {
             prepareRow(row);
             const { key, ...restRowProps } = row.getRowProps();
             return (
-              <tr
-                key={key}
-                {...restRowProps}
-                className={displayOptions?.hover?.row ? classes.hoverCls : undefined}
-                style={{ ...displayOptions?.styleOverrides?.body?.tr }}
-              >
+              <tr key={key} {...restRowProps} style={{ ...displayOptions?.styleOverrides?.body?.tr }}>
                 {row.cells.map((cell) => {
                   const { key, ...restCellProps } = cell.getCellProps();
                   return (

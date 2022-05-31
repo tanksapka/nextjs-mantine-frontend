@@ -13,7 +13,7 @@ function People({ people }: PeopleRawType) {
   const columns = useMemo(
     (): Array<Column> => [
       {
-        Header: "Szemály azonosítója",
+        Header: "Személy azonosítója",
         accessor: "id",
       },
       {
@@ -121,6 +121,7 @@ function People({ people }: PeopleRawType) {
         }}
         displayOptions={{
           hover: { header: true, row: true },
+          stripedRows: true,
         }}
         interactionOptions={{
           rowIcons: data.map((row) => (
