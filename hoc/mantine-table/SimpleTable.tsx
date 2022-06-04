@@ -1,6 +1,6 @@
 import { ActionIcon, createStyles, Grid, Group, Pagination, Select, Stack, Table } from "@mantine/core";
 import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
-import { useTable, useSortBy, usePagination, useFilters, TableOptions } from "react-table";
+import { useTable, useSortBy, usePagination, useFilters, TableOptions, Row } from "react-table";
 import { CSSProperties } from "react";
 
 type PageSizeOptions = Array<{ value: string; label: string }>;
@@ -30,7 +30,7 @@ interface DisplayOptions {
 
 interface InteractionOptions {
   rowSelectable?: boolean;
-  rowOnClick?: () => void;
+  rowOnClick?: (row: Row<object>) => void;
   rowIcons?: Array<JSX.Element>;
 }
 
@@ -149,7 +149,15 @@ function SimpleTable({
             prepareRow(row);
             const { key, ...restRowProps } = row.getRowProps();
             return (
-              <tr key={key} {...restRowProps} style={{ ...displayOptions?.styleOverrides?.body?.tr }}>
+              <tr
+                key={key}
+                {...restRowProps}
+                onClick={() => interactionOptions?.rowOnClick && interactionOptions.rowOnClick(row)}
+                style={{
+                  cursor: interactionOptions?.rowOnClick ? "pointer" : "default",
+                  ...displayOptions?.styleOverrides?.body?.tr,
+                }}
+              >
                 {row.cells.map((cell) => {
                   const { key, ...restCellProps } = cell.getCellProps();
                   return (

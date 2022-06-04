@@ -1,19 +1,20 @@
 import { ActionIcon, Container } from "@mantine/core";
 import { IconPencil } from "@tabler/icons";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { Column } from "react-table";
+import { Column, Row } from "react-table";
 import { DateFilter, StringFilter } from "../../hoc/mantine-table/filters";
 import filterObject from "../../hoc/mantine-table/filterTypes";
 import { SimpleTable } from "../../hoc/mantine-table/SimpleTable";
-import { OrganizationsRawType } from "../../types/organizations";
+import { OrganizationsRawType, OrganizationsRowItem } from "../../types/organizations";
 
 function Organizations({ organizations }: OrganizationsRawType) {
   const columns = useMemo(
     (): Array<Column> => [
       {
         Header: "Alapszervezet azonosítója",
-        accessor: "id",
+        accessor: "organization_id",
       },
       {
         Header: "Alapszervezet neve",
@@ -31,10 +32,10 @@ function Organizations({ organizations }: OrganizationsRawType) {
         Filter: StringFilter,
         filter: filterObject.stringFilter,
       },
-      // {
-      //   Header: "Leírás",
-      //   accessor: "description",
-      // },
+      {
+        Header: "Leírás",
+        accessor: "description",
+      },
       {
         Header: "Fogad tagokat?",
         accessor: "accepts_members_flag",
@@ -53,14 +54,15 @@ function Organizations({ organizations }: OrganizationsRawType) {
         Filter: DateFilter,
         filter: filterObject.dateFilter,
       },
-      // {
-      //   Header: "Jegyzet",
-      //   accessor: "notes",
-      // },
+      {
+        Header: "Jegyzetek",
+        accessor: "notes",
+      },
     ],
     []
   );
   const data = useMemo(() => organizations, []);
+  const router = useRouter();
 
   return (
     <Container size="xl">
@@ -70,9 +72,7 @@ function Organizations({ organizations }: OrganizationsRawType) {
           data: data,
           initialState: {
             pageSize: 20,
-            hiddenColumns: columns
-              .filter((column) => column.accessor?.toString().endsWith("id"))
-              .map((col): string => (col.accessor ? col.accessor?.toString() : "")),
+            hiddenColumns: ["organization_id", "parent_organization_id", "description", "notes"],
           },
         }}
         displayOptions={{
@@ -80,12 +80,21 @@ function Organizations({ organizations }: OrganizationsRawType) {
         }}
         interactionOptions={{
           rowIcons: data.map((row) => (
-            <ActionIcon key={row.id} component={Link} href={`/organizations/${row.id}`} passHref>
+            <ActionIcon
+              key={row.organization_id}
+              component={Link}
+              href={`/organizations/${row.organization_id}`}
+              passHref
+            >
               <a title="Edit...">
                 <IconPencil style={{ color: "#1c7ed6" }} />
               </a>
             </ActionIcon>
           )),
+          rowOnClick: (row: Row<object>) => {
+            const rowOriginal = row.original as OrganizationsRowItem;
+            router.push(`/organizations/${rowOriginal.organization_id}`);
+          },
         }}
       />
     </Container>

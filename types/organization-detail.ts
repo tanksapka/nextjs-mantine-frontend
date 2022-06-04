@@ -6,7 +6,7 @@ import { OrganziationMembershipDetailRawType, OrganziationMembershipDetailType }
 import { OrgPhoneDetailType } from "./phone-detail";
 
 interface OrganizationDetailType {
-  id: string;
+  organization_id: string;
   organization_name: string;
   parent_organization_id: string;
   parent_organization_name: string;

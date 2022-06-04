@@ -224,7 +224,7 @@ function Organization({ organizationData }: { organizationData: OrganizationData
         </Paper>
       </Container>
       <ContactInfo
-        entityId={organizationData.organization.id}
+        entityId={organizationData.organization.organization_id}
         entityType="organization"
         form={form as unknown as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
         addressTypeData={organizationData.address_type}
