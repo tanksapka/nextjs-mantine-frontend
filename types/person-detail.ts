@@ -6,7 +6,7 @@ import { PersonMembershipDetailRawType, PersonMembershipDetailType } from "./mem
 import { PhoneDetailType } from "./phone-detail";
 
 interface PersonDetailType {
-  id: string;
+  person_id: string;
   registration_number: number;
   membership_id: string;
   person_name: string;
