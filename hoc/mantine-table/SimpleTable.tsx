@@ -1,6 +1,6 @@
-import { ActionIcon, createStyles, Grid, Group, Pagination, Select, Stack, Table } from "@mantine/core";
+import { ActionIcon, Checkbox, createStyles, Grid, Group, Pagination, Select, Stack, Table } from "@mantine/core";
 import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
-import { useTable, useSortBy, usePagination, useFilters, TableOptions, Row } from "react-table";
+import { useTable, useSortBy, usePagination, useFilters, TableOptions, Row, Hooks } from "react-table";
 import { CSSProperties } from "react";
 
 type PageSizeOptions = Array<{ value: string; label: string }>;
@@ -60,6 +60,19 @@ const useStyles = createStyles((t, { hoverRow, striped }: { hoverRow?: boolean; 
   },
 }));
 
+const selectionHook = (hook: Hooks<object>, selection: boolean) => {
+  if (selection) {
+    hook.visibleColumns.push((columns) => [
+      {
+        id: "selection",
+        Header: () => <Checkbox />,
+        Cell: () => <Checkbox />,
+      },
+      ...columns,
+    ]);
+  }
+};
+
 function SimpleTable({
   tableOptions,
   displayOptions,
@@ -79,7 +92,9 @@ function SimpleTable({
     setPageSize,
     state: { pageIndex, pageSize },
     prepareRow,
-  } = useTable(tableOptions, useFilters, useSortBy, usePagination);
+  } = useTable(tableOptions, useFilters, useSortBy, usePagination, (hook) =>
+    selectionHook(hook, interactionOptions?.rowSelectable || false)
+  );
   const { classes, cx } = useStyles({ hoverRow: displayOptions?.hover?.row, striped: displayOptions?.stripedRows });
 
   return (
