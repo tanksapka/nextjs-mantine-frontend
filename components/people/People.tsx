@@ -100,13 +100,16 @@ function People({ people }: PeopleRawType) {
           stripedRows: true,
         }}
         interactionOptions={{
-          rowIcons: data.map((row) => (
-            <ActionIcon key={row.person_id} component={Link} href={`/people/${row.person_id}`} passHref>
-              <a title="Edit...">
-                <IconPencil style={{ color: "#1c7ed6" }} />
-              </a>
-            </ActionIcon>
-          )),
+          rowIcons: (row) => {
+            const rowOriginal = row.original as PeopleRowItem;
+            return (
+              <ActionIcon component={Link} href={`/people/${rowOriginal.person_id}`} passHref>
+                <a title="Edit...">
+                  <IconPencil style={{ color: "#1c7ed6" }} />
+                </a>
+              </ActionIcon>
+            );
+          },
           rowOnClick: (row: Row<object>) => {
             const rowOriginal = row.original as PeopleRowItem;
             router.push(`/people/${rowOriginal.person_id}`);

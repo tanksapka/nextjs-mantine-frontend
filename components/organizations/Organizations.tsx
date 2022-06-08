@@ -79,22 +79,21 @@ function Organizations({ organizations }: OrganizationsRawType) {
           hover: { header: true, row: true },
         }}
         interactionOptions={{
-          rowIcons: data.map((row) => (
-            <ActionIcon
-              key={row.organization_id}
-              component={Link}
-              href={`/organizations/${row.organization_id}`}
-              passHref
-            >
-              <a title="Edit...">
-                <IconPencil style={{ color: "#1c7ed6" }} />
-              </a>
-            </ActionIcon>
-          )),
+          rowIcons: (row) => {
+            const rowOriginal = row.original as OrganizationsRowItem;
+            return (
+              <ActionIcon component={Link} href={`/organizations/${rowOriginal.organization_id}`} passHref>
+                <a title="Edit...">
+                  <IconPencil style={{ color: "#1c7ed6" }} />
+                </a>
+              </ActionIcon>
+            );
+          },
           rowOnClick: (row: Row<object>) => {
             const rowOriginal = row.original as OrganizationsRowItem;
             router.push(`/organizations/${rowOriginal.organization_id}`);
           },
+          rowSelectable: true,
         }}
       />
     </Container>

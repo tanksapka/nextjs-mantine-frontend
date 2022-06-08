@@ -1,6 +1,6 @@
 import { ActionIcon, Checkbox, createStyles, Grid, Group, Pagination, Select, Stack, Table } from "@mantine/core";
 import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
-import { useTable, useSortBy, usePagination, useFilters, TableOptions, Row, Hooks } from "react-table";
+import { useTable, useSortBy, usePagination, useFilters, TableOptions, Row, Hooks, useRowSelect } from "react-table";
 import { CSSProperties } from "react";
 
 type PageSizeOptions = Array<{ value: string; label: string }>;
@@ -31,7 +31,7 @@ interface DisplayOptions {
 interface InteractionOptions {
   rowSelectable?: boolean;
   rowOnClick?: (row: Row<object>) => void;
-  rowIcons?: Array<JSX.Element>;
+  rowIcons?: (row: Row<object>) => JSX.Element;
 }
 
 const defaultPageSizeOptions: PageSizeOptions = [
@@ -65,8 +65,8 @@ const selectionHook = (hook: Hooks<object>, selection: boolean) => {
     hook.visibleColumns.push((columns) => [
       {
         id: "selection",
-        Header: () => <Checkbox />,
-        Cell: () => <Checkbox />,
+        Header: ({ getToggleAllRowsSelectedProps }) => <Checkbox {...getToggleAllRowsSelectedProps()} />,
+        Cell: ({ row }) => <Checkbox {...row.getToggleRowSelectedProps()} />,
       },
       ...columns,
     ]);
@@ -90,12 +90,13 @@ function SimpleTable({
     pageCount,
     gotoPage,
     setPageSize,
-    state: { pageIndex, pageSize },
+    state: { pageIndex, pageSize, selectedRowIds },
     prepareRow,
-  } = useTable(tableOptions, useFilters, useSortBy, usePagination, (hook) =>
+  } = useTable(tableOptions, useFilters, useSortBy, usePagination, useRowSelect, (hook) =>
     selectionHook(hook, interactionOptions?.rowSelectable || false)
   );
   const { classes, cx } = useStyles({ hoverRow: displayOptions?.hover?.row, striped: displayOptions?.stripedRows });
+  console.log(selectedRowIds);
 
   return (
     <>
@@ -167,9 +168,13 @@ function SimpleTable({
               <tr
                 key={key}
                 {...restRowProps}
-                onClick={() => interactionOptions?.rowOnClick && interactionOptions.rowOnClick(row)}
+                onClick={() =>
+                  interactionOptions?.rowOnClick &&
+                  !interactionOptions.rowSelectable &&
+                  interactionOptions.rowOnClick(row)
+                }
                 style={{
-                  cursor: interactionOptions?.rowOnClick ? "pointer" : "default",
+                  cursor: interactionOptions?.rowOnClick && !interactionOptions.rowSelectable ? "pointer" : "default",
                   ...displayOptions?.styleOverrides?.body?.tr,
                 }}
               >
@@ -181,7 +186,7 @@ function SimpleTable({
                     </td>
                   );
                 })}
-                {interactionOptions?.rowIcons && <td>{interactionOptions.rowIcons[pageIndex * pageSize + rowIdx]}</td>}
+                {interactionOptions?.rowIcons && <td>{interactionOptions.rowIcons(row)}</td>}
               </tr>
             );
           })}
