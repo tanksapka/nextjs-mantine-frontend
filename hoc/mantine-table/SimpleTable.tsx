@@ -65,7 +65,13 @@ const selectionHook = (hook: Hooks<object>, selection: boolean) => {
     hook.visibleColumns.push((columns) => [
       {
         id: "selection",
-        Header: ({ getToggleAllRowsSelectedProps }) => <Checkbox {...getToggleAllRowsSelectedProps()} />,
+        Header: ({ getToggleAllRowsSelectedProps }) => (
+          // <Grid>
+          //   <Grid.Col>
+          <Checkbox {...getToggleAllRowsSelectedProps()} />
+          //   </Grid.Col>
+          // </Grid>
+        ),
         Cell: ({ row }) => <Checkbox {...row.getToggleRowSelectedProps()} />,
       },
       ...columns,
@@ -116,12 +122,12 @@ function SimpleTable({
                       className={displayOptions?.hover?.header ? classes.hoverCls : undefined}
                       style={{ ...displayOptions?.styleOverrides?.header?.th }}
                     >
-                      <Grid align="center" justify="center">
+                      <Grid align="center" justify={column.id !== "selection" ? "center" : undefined}>
                         <Grid.Col span={8} style={{ justifyContent: "center", textAlign: "center" }}>
                           {column.render("Header")}
                         </Grid.Col>
                         <Grid.Col span={2} {...column.getSortByToggleProps()}>
-                          <Stack justify="center">
+                          <Stack justify="center" sx={{ gap: "0.25rem" }}>
                             {column.canFilter && column.render("Filter")}
                             {column.isSorted ? (
                               column.isSortedDesc ? (
@@ -134,9 +140,11 @@ function SimpleTable({
                                 </ActionIcon>
                               )
                             ) : (
-                              <ActionIcon size={16}>
-                                <IconArrowsSort />
-                              </ActionIcon>
+                              column.id !== "selection" && (
+                                <ActionIcon size={16}>
+                                  <IconArrowsSort />
+                                </ActionIcon>
+                              )
                             )}
                           </Stack>
                         </Grid.Col>

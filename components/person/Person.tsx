@@ -251,7 +251,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
         </Paper>
       </Container>
       <ContactInfo
-        entityId={personData.person.id}
+        entityId={personData.person.person_id}
         entityType="person"
         form={form as unknown as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
         addressTypeData={personData.address_type}
