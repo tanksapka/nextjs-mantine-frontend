@@ -35,41 +35,51 @@ function Organization({ organizationData }: { organizationData: OrganizationData
   const form = useForm({
     schema: yupResolver(schema),
     initialValues: {
-      organization_name: organizationData.organization.organization_name,
-      parent_organization_name: organizationData.organization.parent_organization_name,
-      description: organizationData.organization.description || undefined,
-      accepts_members_flag: convertToBool(organizationData.organization.accepts_members_flag),
-      establishment_date: new Date(organizationData.organization.establishment_date),
-      termination_date: organizationData.organization.termination_date
+      organization_name: organizationData?.organization?.organization_name,
+      parent_organization_name: organizationData?.organization?.parent_organization_name,
+      description: organizationData?.organization?.description || undefined,
+      accepts_members_flag: convertToBool(organizationData?.organization?.accepts_members_flag),
+      establishment_date: organizationData?.organization?.establishment_date
+        ? new Date(organizationData.organization.establishment_date)
+        : undefined,
+      termination_date: organizationData?.organization?.termination_date
         ? new Date(organizationData.organization.termination_date)
         : undefined,
-      notes: organizationData.organization.notes || undefined,
-      address: formList(organizationData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined }))),
-      email: formList(
-        organizationData.email.map((data) => ({
-          ...data,
-          messenger: convertToBool(data.messenger),
-          skype: convertToBool(data.skype),
-        }))
-      ),
-      phone: formList(
-        organizationData.phone.map((data) => ({
-          ...data,
-          phone_extension: data.phone_extension || undefined,
-          messenger: convertToBool(data.messenger),
-          skype: convertToBool(data.skype),
-          viber: convertToBool(data.viber),
-          whatsapp: convertToBool(data.whatsapp),
-        }))
-      ),
-      membership: formList(
-        organizationData.membership.map((data) => ({
-          ...data,
-          active_flag: convertToBool(data.active_flag),
-          event_date: data.event_date ? new Date(data.event_date) : undefined,
-          notes: data.notes || undefined,
-        }))
-      ),
+      notes: organizationData?.organization?.notes || undefined,
+      address: organizationData?.address
+        ? formList(organizationData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined })))
+        : formList([{}]),
+      email: organizationData?.email
+        ? formList(
+            organizationData.email.map((data) => ({
+              ...data,
+              messenger: convertToBool(data.messenger),
+              skype: convertToBool(data.skype),
+            }))
+          )
+        : formList([{}]),
+      phone: organizationData?.phone
+        ? formList(
+            organizationData.phone.map((data) => ({
+              ...data,
+              phone_extension: data.phone_extension || undefined,
+              messenger: convertToBool(data.messenger),
+              skype: convertToBool(data.skype),
+              viber: convertToBool(data.viber),
+              whatsapp: convertToBool(data.whatsapp),
+            }))
+          )
+        : formList([{}]),
+      membership: organizationData?.membership
+        ? formList(
+            organizationData.membership.map((data) => ({
+              ...data,
+              active_flag: convertToBool(data.active_flag),
+              event_date: data.event_date ? new Date(data.event_date) : undefined,
+              notes: data.notes || undefined,
+            }))
+          )
+        : formList([{}]),
     },
   });
 
@@ -224,7 +234,7 @@ function Organization({ organizationData }: { organizationData: OrganizationData
         </Paper>
       </Container>
       <ContactInfo
-        entityId={organizationData.organization.organization_id}
+        entityId={organizationData?.organization?.organization_id}
         entityType="organization"
         form={form as unknown as UseFormReturnType<PersonDetailFormType | OrganizationDetailFormType>}
         addressTypeData={organizationData.address_type}
