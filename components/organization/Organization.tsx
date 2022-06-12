@@ -1,4 +1,15 @@
-import { Button, Checkbox, Container, Group, InputWrapper, Paper, Textarea, TextInput, Title } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  Container,
+  Group,
+  InputWrapper,
+  Paper,
+  Select,
+  Textarea,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { formList, useForm, yupResolver } from "@mantine/form";
 import { UseFormReturnType } from "@mantine/form/lib/use-form";
@@ -36,7 +47,7 @@ function Organization({ organizationData }: { organizationData: OrganizationData
     schema: yupResolver(schema),
     initialValues: {
       organization_name: organizationData?.organization?.organization_name,
-      parent_organization_name: organizationData?.organization?.parent_organization_name,
+      parent_organization_id: organizationData?.organization?.parent_organization_id,
       description: organizationData?.organization?.description || undefined,
       accepts_members_flag: convertToBool(organizationData?.organization?.accepts_members_flag),
       establishment_date: organizationData?.organization?.establishment_date
@@ -116,7 +127,6 @@ function Organization({ organizationData }: { organizationData: OrganizationData
           defaultChecked
           label="Aktív tag?"
           name="active_flag"
-          readOnly
           required
           title="Aktív tag?"
           {...form.getListInputProps("membership", idx, "active_flag")}
@@ -152,18 +162,22 @@ function Organization({ organizationData }: { organizationData: OrganizationData
               label="Szervezet név"
               name="organization_name"
               placeholder="Szervezet név..."
+              required
               title="Szervezet név"
-              readOnly
               {...form.getInputProps("organization_name")}
             />
-            <TextInput
+            <Select
+              data={organizationData.parent_organizations.map((org) => ({
+                value: org.organization_id,
+                label: org.organization_name,
+              }))}
               icon={<IconBuildingSkyscraper />}
               label="Szülő szervezet név"
               name="parent_organization_name"
               placeholder="Szülő szervezet név..."
-              readOnly
+              required
               title="Szülő szervezet név"
-              {...form.getInputProps("parent_organization_name")}
+              {...form.getInputProps("parent_organization_id")}
             />
           </Group>
           <Group grow mb="lg" align="baseline">

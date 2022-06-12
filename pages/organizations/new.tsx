@@ -19,14 +19,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
   return {
     props: {
-      // organizationData: {
-      //   organization: undefined,
-      //   address: undefined,
-      //   email: undefined,
-      //   phone: undefined,
-      //   membership: undefined,
-      //   ...mappingData,
-      // },
       organizationData: mappingData,
     },
   };

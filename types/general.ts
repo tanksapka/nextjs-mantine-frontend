@@ -11,4 +11,9 @@ interface ContactDetailType {
   phone: FormList<any>;
 }
 
-export type { ContactDetailType, SelectDataType };
+interface ParentOrganizationsType {
+  organization_id: string;
+  organization_name: string;
+}
+
+export type { ContactDetailType, SelectDataType, ParentOrganizationsType };

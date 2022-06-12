@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { OrgAddressDetailType } from "./address-detail";
 import { OrgEmailDetailType } from "./email-detail";
-import { ContactDetailType, SelectDataType } from "./general";
+import { ContactDetailType, ParentOrganizationsType, SelectDataType } from "./general";
 import { OrganziationMembershipDetailRawType, OrganziationMembershipDetailType } from "./membership-details";
 import { OrgPhoneDetailType } from "./phone-detail";
 
@@ -34,6 +34,7 @@ interface OrganizationDataType {
   email: Array<OrgEmailDetailType>;
   phone: Array<OrgPhoneDetailType>;
   membership: Array<OrganziationMembershipDetailRawType>;
+  parent_organizations: Array<ParentOrganizationsType>;
   address_type: Array<SelectDataType>;
   email_type: Array<SelectDataType>;
   phone_type: Array<SelectDataType>;
