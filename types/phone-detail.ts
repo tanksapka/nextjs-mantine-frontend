@@ -4,7 +4,7 @@ interface PhoneBaseType {
   id: string;
   phone_type_id: string;
   phone_number: string;
-  phone_extension: string;
+  phone_extension?: string;
   messenger: string;
   skype: string;
   viber: string;

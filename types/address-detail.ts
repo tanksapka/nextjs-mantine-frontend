@@ -6,7 +6,7 @@ interface AddressType {
   zip: string;
   city: string;
   address_1: string;
-  address_2: string;
+  address_2?: string;
 }
 
 interface AddressDetailType extends AddressType {
@@ -41,7 +41,7 @@ const addressValidation = Yup.array()
       zip: Yup.string().required("Irányítószám kitöltése kötelező"),
       city: Yup.string().required("Helység kitöltése kötelező"),
       address_1: Yup.string().required("Cím kitöltése kötelező"),
-      address_2: Yup.string(),
+      address_2: Yup.string().nullable(),
     })
   )
   .test("UniqueAddress", "Cím típusa nem ismétlődhet", (values, ctx) => {
