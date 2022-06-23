@@ -5,6 +5,10 @@ import { AppShell, MantineProvider } from "@mantine/core";
 import AppHeader from "../components/app-header/AppHeader";
 import AppNav from "../components/app-nav/AppNav";
 import { IconBuilding, IconCoin, IconSettings, IconUser } from "@tabler/icons";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+
+const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   const navItemsList = [
@@ -15,7 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   ];
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Head>
         <title>Membership DB</title>
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
@@ -31,7 +35,8 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         </AppShell>
       </MantineProvider>
-    </>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   );
 }
 

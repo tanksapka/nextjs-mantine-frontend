@@ -83,7 +83,7 @@ function Organizations({ organizations }: OrganizationsRawType) {
             const rowOriginal = row.original as OrganizationsRowItem;
             return (
               <ActionIcon component={Link} href={`/organizations/${rowOriginal.organization_id}`} passHref>
-                <a title="Edit...">
+                <a title="Szerkesztés...">
                   <IconPencil style={{ color: "#1c7ed6" }} />
                 </a>
               </ActionIcon>

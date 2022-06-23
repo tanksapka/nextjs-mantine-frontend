@@ -157,7 +157,7 @@ function SimpleTable({
                     className={displayOptions?.hover?.header ? classes.hoverCls : undefined}
                     style={{ ...displayOptions?.styleOverrides?.header?.th }}
                   >
-                    Actions
+                    Interakciók
                   </th>
                 )}
               </tr>
