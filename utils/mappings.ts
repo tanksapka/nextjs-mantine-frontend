@@ -1,13 +1,13 @@
-import axios from "axios";
 import { MappingDataType, MappingPropsType, MappingRawDataType } from "../types/mappings";
+import { apiClient } from "./client";
 import { convertToBool, convertToBoolString } from "./util";
 
 async function getMappings(): Promise<MappingPropsType> {
-  const resAddress = await axios.get(`${process.env.REACT_APP_API_URL}/address-types`);
-  const resEmail = await axios.get(`${process.env.REACT_APP_API_URL}/email-types`);
-  const resPhone = await axios.get(`${process.env.REACT_APP_API_URL}/phone-types`);
-  const resGender = await axios.get(`${process.env.REACT_APP_API_URL}/genders`);
-  const resMembershipFee = await axios.get(`${process.env.REACT_APP_API_URL}/membership-fee-categories`);
+  const resAddress = await apiClient.get(`/address-types`);
+  const resEmail = await apiClient.get(`/email-types`);
+  const resPhone = await apiClient.get(`/phone-types`);
+  const resGender = await apiClient.get(`/genders`);
+  const resMembershipFee = await apiClient.get(`/membership-fee-categories`);
 
   return {
     genderTypeData: await resGender.data,
@@ -19,7 +19,7 @@ async function getMappings(): Promise<MappingPropsType> {
 }
 
 async function sendMappings(mappingType: string, mappingData: Array<MappingDataType>): Promise<MappingDataType> {
-  const res = await axios.post(`http://127.0.0.1:8000/${mappingType}`, {
+  const res = await apiClient.post(`/${mappingType}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
