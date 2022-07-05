@@ -1,8 +1,9 @@
-import { Container, Paper, Tabs } from "@mantine/core";
+import { Container, LoadingOverlay, Paper, Tabs } from "@mantine/core";
 import { IconCoin, IconGenderBigender, IconHome, IconMail, IconPhone } from "@tabler/icons";
 import { GetServerSideProps } from "next";
+import { useQuery } from "react-query";
 import Mapping from "../../components/mapping/Mapping";
-import { MappingPropsType } from "../../types/mappings";
+import { MappingPropsType, MappingRawDataType } from "../../types/mappings";
 import { getMappings } from "../../utils/mappings";
 
 function SettingsPage({
@@ -13,24 +14,29 @@ function SettingsPage({
   phoneTypeData,
   userId,
 }: MappingPropsType & { userId: string }) {
+  const { isLoading, isFetching, data } = useQuery(["settings"], getMappings, {
+    initialData: { genderTypeData, membershipFeeTypeData, addressTypeData, emailTypeData, phoneTypeData },
+  });
+
   return (
     <Container>
       <Paper shadow="xs">
+        <LoadingOverlay visible={isLoading || isFetching} />
         <Tabs p={"md"}>
           <Tabs.Tab icon={<IconGenderBigender />} label="Nemek">
-            <Mapping mappingData={genderTypeData} userId={userId} />
+            <Mapping mappingData={data?.genderTypeData as MappingRawDataType[]} userId={userId} />
           </Tabs.Tab>
           <Tabs.Tab icon={<IconCoin />} label="Tagdíjak">
-            <Mapping mappingData={membershipFeeTypeData} userId={userId} />
+            <Mapping mappingData={data?.membershipFeeTypeData as MappingRawDataType[]} userId={userId} />
           </Tabs.Tab>
           <Tabs.Tab icon={<IconHome />} label="Címek">
-            <Mapping mappingData={addressTypeData} userId={userId} />
+            <Mapping mappingData={data?.addressTypeData as MappingRawDataType[]} userId={userId} />
           </Tabs.Tab>
           <Tabs.Tab icon={<IconMail />} label="Emailek">
-            <Mapping mappingData={emailTypeData} userId={userId} />
+            <Mapping mappingData={data?.emailTypeData as MappingRawDataType[]} userId={userId} />
           </Tabs.Tab>
           <Tabs.Tab icon={<IconPhone />} label="Telefonok">
-            <Mapping mappingData={phoneTypeData} userId={userId} />
+            <Mapping mappingData={data?.phoneTypeData as MappingRawDataType[]} userId={userId} />
           </Tabs.Tab>
         </Tabs>
       </Paper>
