@@ -3,18 +3,14 @@ import { apiClient } from "./client";
 import { convertToBool, convertToBoolString } from "./util";
 
 async function getMappings(): Promise<MappingPropsType> {
-  const resAddress = await apiClient.get(`/address-types`);
-  const resEmail = await apiClient.get(`/email-types`);
-  const resPhone = await apiClient.get(`/phone-types`);
-  const resGender = await apiClient.get(`/genders`);
-  const resMembershipFee = await apiClient.get(`/membership-fee-categories`);
+  const res = await apiClient.get(`/mappings`);
 
   return {
-    genderTypeData: await resGender.data,
-    membershipFeeTypeData: await resMembershipFee.data,
-    addressTypeData: await resAddress.data,
-    emailTypeData: await resEmail.data,
-    phoneTypeData: await resPhone.data,
+    genderTypeData: await res.data.gender_type,
+    membershipFeeTypeData: await res.data.membership_fee_type,
+    addressTypeData: await res.data.address_type,
+    emailTypeData: await res.data.email_type,
+    phoneTypeData: await res.data.phone_type,
   };
 }
 
