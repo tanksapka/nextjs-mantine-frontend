@@ -1,37 +1,35 @@
 import * as Yup from "yup";
-import { ActionIcon, Button, Checkbox, Container, Grid, Group, InputWrapper, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Checkbox, Container, Grid, Group, InputWrapper, TextInput } from "@mantine/core";
 import { formList, useForm, yupResolver } from "@mantine/form";
 import { IconPlus } from "@tabler/icons";
-import { useEffect, useRef } from "react";
 import { defaultMapping, MappingDataType, MappingRawDataType, mappingValidation } from "../../types/mappings";
 import { convertToBool } from "../../utils/util";
-import { sendMappings } from "../../utils/mappings";
+import { FormList } from "@mantine/form/lib/form-list/form-list";
 
 function coerceResult(item: MappingRawDataType): MappingDataType {
   return {
     ...item,
-    description: item.description || undefined,
+    description: item?.description || "",
     created_on: new Date(item.created_on),
     valid_flag: convertToBool(item.valid_flag),
   };
 }
 
-function Mapping({ mappingData, userId }: { mappingData: Array<MappingRawDataType>; userId: string }): JSX.Element {
+function Mapping({
+  mappingData,
+  fnMutate,
+  userId,
+}: {
+  mappingData: Array<MappingRawDataType>;
+  fnMutate: (values: FormList<MappingDataType>) => void;
+  userId: string;
+}): JSX.Element {
   const form = useForm({
     schema: yupResolver(Yup.object().shape({ mapping: mappingValidation })),
     initialValues: {
       mapping: formList(mappingData.map(coerceResult)),
     },
   });
-  // const mounted = useRef(false);
-
-  // useEffect(() => {
-  //   if (mounted.current) {
-  //     console.log(form.values);
-  //   } else {
-  //     mounted.current = true;
-  //   }
-  // }, [form.values]);
 
   const fields = form.values.mapping.map((_, idx) => (
     <Grid key={idx}>
@@ -77,7 +75,7 @@ function Mapping({ mappingData, userId }: { mappingData: Array<MappingRawDataTyp
   ));
 
   return (
-    <form onSubmit={form.onSubmit((values) => sendMappings("genders", values.mapping))}>
+    <form onSubmit={form.onSubmit((values) => fnMutate(values.mapping))}>
       <Container>{fields}</Container>
       <Container>
         <Group position="right" mt="xl">

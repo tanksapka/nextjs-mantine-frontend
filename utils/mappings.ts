@@ -17,9 +17,6 @@ async function getMappings(): Promise<MappingPropsType> {
 async function sendMappings(mappingType: string, mappingData: Array<MappingDataType>): Promise<MappingDataType> {
   const res = await apiClient.post(`/${mappingType}`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
     data: mappingData.map((item) => ({ ...item, valid_flag: convertToBoolString(item.valid_flag) })),
   });
   return await res.data.map((item: MappingRawDataType) => ({ ...item, valid_flag: convertToBool(item.valid_flag) }));

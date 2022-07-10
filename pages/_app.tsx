@@ -7,6 +7,7 @@ import AppNav from "../components/app-nav/AppNav";
 import { IconBuilding, IconCoin, IconSettings, IconUser } from "@tabler/icons";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { NotificationsProvider } from "@mantine/notifications";
 
 const queryClient = new QueryClient();
 
@@ -25,15 +26,17 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <MantineProvider withGlobalStyles withNormalizeCSS>
-        <AppShell
-          header={<AppHeader />}
-          navbar={<AppNav navItems={navItemsList} />}
-          styles={(theme) => ({
-            main: { backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0] },
-          })}
-        >
-          <Component {...pageProps} />
-        </AppShell>
+        <NotificationsProvider position="top-center">
+          <AppShell
+            header={<AppHeader />}
+            navbar={<AppNav navItems={navItemsList} />}
+            styles={(theme) => ({
+              main: { backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0] },
+            })}
+          >
+            <Component {...pageProps} />
+          </AppShell>
+        </NotificationsProvider>
       </MantineProvider>
       <ReactQueryDevtools />
     </QueryClientProvider>
