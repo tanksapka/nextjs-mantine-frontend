@@ -4,7 +4,7 @@ import { showNotification } from "@mantine/notifications";
 import { IconCoin, IconGenderBigender, IconHome, IconMail, IconPhone, IconX } from "@tabler/icons";
 import { AxiosError } from "axios";
 import { GetServerSideProps } from "next";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import Mapping from "../../components/mapping/Mapping";
 import { MappingDataType, MappingPropsType, MappingRawDataType } from "../../types/mappings";
 import { getMappings, sendMappings } from "../../utils/mappings";
@@ -17,12 +17,14 @@ function SettingsPage({
   phoneTypeData,
   userId,
 }: MappingPropsType & { userId: string }) {
+  const queryClient = useQueryClient();
   const { isLoading, isFetching, data } = useQuery(["settings"], getMappings, {
     initialData: { genderTypeData, membershipFeeTypeData, addressTypeData, emailTypeData, phoneTypeData },
   });
   const { mutate, isLoading: mutateIsLoading } = useMutation(
     ({ endpoint, values }: { endpoint: string; values: FormList<MappingDataType> }) => sendMappings(endpoint, values),
     {
+      onSuccess: () => queryClient.invalidateQueries(["settings"]),
       onError: (error: AxiosError) =>
         showNotification({
           autoClose: false,
