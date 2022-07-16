@@ -17,7 +17,11 @@ async function getMappings(): Promise<MappingPropsType> {
 async function sendMappings(mappingType: string, mappingData: Array<MappingDataType>): Promise<MappingDataType> {
   const res = await apiClient.post(`/${mappingType}`, {
     method: "POST",
-    data: mappingData.map((item) => ({ ...item, valid_flag: convertToBoolString(item.valid_flag) })),
+    data: mappingData.map((item) => ({
+      ...item,
+      valid_flag: convertToBoolString(item.valid_flag),
+      description: item.description === "" ? null : item.description,
+    })),
   });
   return await res.data.map((item: MappingRawDataType) => ({ ...item, valid_flag: convertToBool(item.valid_flag) }));
 }

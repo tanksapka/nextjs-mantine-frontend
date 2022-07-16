@@ -30,8 +30,8 @@ const defaultMapping: MappingDataType = {
   id: undefined,
   created_on: new Date(),
   created_by: undefined,
-  name: undefined,
-  description: undefined,
+  name: "",
+  description: "",
   valid_flag: true,
 };
 
@@ -48,7 +48,6 @@ const mappingValidation = Yup.array()
     })
   )
   .test("UniqueName", "Típus értéke nem ismétlődhet", (values, ctx) => {
-    console.log(values);
     const extracted = values ? values.map((data) => data.name) : [];
     const uniqueData = Array.from(new Set(extracted));
     const countMap = extracted.reduce((prev, current) => prev.set(current, (prev.get(current) || 0) + 1), new Map());
