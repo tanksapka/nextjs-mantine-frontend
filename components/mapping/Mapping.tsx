@@ -1,10 +1,11 @@
 import * as Yup from "yup";
 import { ActionIcon, Button, Checkbox, Container, Grid, Group, InputWrapper, TextInput } from "@mantine/core";
-import { formList, useForm, yupResolver } from "@mantine/form";
+import { formList, yupResolver } from "@mantine/form";
 import { IconPlus } from "@tabler/icons";
 import { defaultMapping, MappingDataType, MappingRawDataType, mappingValidation } from "../../types/mappings";
 import { convertToBool } from "../../utils/util";
 import { FormList } from "@mantine/form/lib/form-list/form-list";
+import { useFormCustom, useWarnIfUnsavedChanges } from "../../utils/hooks";
 
 function coerceResult(item: MappingRawDataType): MappingDataType {
   return {
@@ -24,12 +25,14 @@ function Mapping({
   fnMutate: (values: FormList<MappingDataType>) => void;
   userId: string;
 }): JSX.Element {
-  const form = useForm({
+  const form = useFormCustom({
     schema: yupResolver(Yup.object().shape({ mapping: mappingValidation })),
     initialValues: {
       mapping: formList(mappingData.map(coerceResult)),
     },
   });
+  console.log(form.isDirty);
+  useWarnIfUnsavedChanges(form.isDirty, "Lelépsz?");
 
   const fields = form.values.mapping.map((_, idx) => (
     <Grid key={idx}>

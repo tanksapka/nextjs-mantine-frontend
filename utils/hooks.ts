@@ -1,26 +1,29 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Router from "next/router";
 import { UseFormInput, UseFormReturnType } from "@mantine/form/lib/use-form";
 import { useForm } from "@mantine/form";
-import { isDeepStrictEqual } from "util";
+import { isEqual } from "lodash";
 
-export function useFormCustom<Values = Record<string, unknown>>({
-  initialValues = {} as Values,
-  initialErrors = {},
-}: // clearInputErrorOnChange = true,
-// validateInputOnChange = false,
-// validate: rules,
-UseFormInput<Values>): any {
-  const form = useForm({ initialValues, initialErrors });
+interface CustomUseFormReturnType<T> extends UseFormReturnType<T> {
+  isDirty: boolean;
+}
 
-  const isDirty = () => isDeepStrictEqual(form.values, initialValues) === false;
+function useFormCustom<
+  T extends {
+    [key: string]: any;
+  }
+>({ initialValues, initialErrors, validate: rules, schema }: UseFormInput<T>): CustomUseFormReturnType<T> {
+  const [isDirty, setIsDirty] = useState(false);
+  const form = useForm({ initialValues, initialErrors, validate: rules, schema });
+
+  useEffect(() => {
+    setIsDirty(!isEqual(form.values, initialValues));
+  }, [form.values, initialValues]);
 
   return { ...form, isDirty };
 }
 
-export function useWarnIfUnsavedChanges(unsavedChanges: boolean) {
-  const message = "Do you want to leave?";
-
+function useWarnIfUnsavedChanges(unsavedChanges: boolean, message: string) {
   useEffect(() => {
     const routeChangeStart = (url: string) => {
       if (Router.asPath !== url && unsavedChanges && !confirm(message)) {
@@ -47,3 +50,6 @@ export function useWarnIfUnsavedChanges(unsavedChanges: boolean) {
     };
   }, [unsavedChanges]);
 }
+
+export type { CustomUseFormReturnType };
+export { useFormCustom, useWarnIfUnsavedChanges };
