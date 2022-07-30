@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Router from "next/router";
-import { UseFormInput, UseFormReturnType } from "@mantine/form/lib/use-form";
 import { useForm } from "@mantine/form";
 import { isEqual } from "lodash";
+import { UseFormInput, UseFormReturnType } from "@mantine/form/lib/types";
 
 interface CustomUseFormReturnType<T> extends UseFormReturnType<T> {
   isDirty: boolean;
@@ -12,9 +12,9 @@ function useFormCustom<
   T extends {
     [key: string]: any;
   }
->({ initialValues, initialErrors, validate: rules, schema }: UseFormInput<T>): CustomUseFormReturnType<T> {
+>({ initialValues, initialErrors, validate: rules }: UseFormInput<T>): CustomUseFormReturnType<T> {
   const [isDirty, setIsDirty] = useState(false);
-  const form = useForm({ initialValues, initialErrors, validate: rules, schema });
+  const form = useForm({ initialValues, initialErrors, validate: rules });
 
   useEffect(() => {
     setIsDirty(!isEqual(form.values, initialValues));
