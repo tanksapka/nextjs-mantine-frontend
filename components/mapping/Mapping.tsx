@@ -1,10 +1,9 @@
 import * as Yup from "yup";
-import { ActionIcon, Button, Checkbox, Container, Grid, Group, InputWrapper, TextInput } from "@mantine/core";
-import { formList, yupResolver } from "@mantine/form";
+import { ActionIcon, Button, Checkbox, Container, Grid, Group, Input, TextInput } from "@mantine/core";
+import { yupResolver } from "@mantine/form";
 import { IconPlus } from "@tabler/icons";
 import { defaultMapping, MappingDataType, MappingRawDataType, mappingValidation } from "../../types/mappings";
 import { convertToBool } from "../../utils/util";
-import { FormList } from "@mantine/form/lib/form-list/form-list";
 import { useFormCustom, useWarnIfUnsavedChanges } from "../../utils/hooks";
 
 function coerceResult(item: MappingRawDataType): MappingDataType {
@@ -22,13 +21,13 @@ function Mapping({
   userId,
 }: {
   mappingData: Array<MappingRawDataType>;
-  fnMutate: (values: FormList<MappingDataType>) => void;
+  fnMutate: (values: Array<MappingDataType>) => void;
   userId: string;
 }): JSX.Element {
   const form = useFormCustom({
-    schema: yupResolver(Yup.object().shape({ mapping: mappingValidation })),
+    validate: yupResolver(Yup.object().shape({ mapping: mappingValidation })),
     initialValues: {
-      mapping: formList(mappingData.map(coerceResult)),
+      mapping: mappingData.map(coerceResult),
     },
   });
   console.log(form.isDirty);
@@ -37,42 +36,38 @@ function Mapping({
   const fields = form.values.mapping.map((_, idx) => (
     <Grid key={idx}>
       <Grid.Col span={3}>
-        <InputWrapper id="name" required label={idx === 0 && "Típus"} size="md" title="Típus">
-          <TextInput id="name" placeholder="Típus..." {...form.getListInputProps("mapping", idx, "name")} />
-        </InputWrapper>
+        <Input.Wrapper id="name" required label={idx === 0 && "Típus"} size="md" title="Típus">
+          <TextInput id="name" placeholder="Típus..." {...form.getInputProps(`mapping.${idx}.name`)} />
+        </Input.Wrapper>
       </Grid.Col>
       <Grid.Col span={3}>
-        <InputWrapper id="description" label={idx === 0 && "Leírás"} size="md" title="Leírás">
-          <TextInput
-            id="description"
-            placeholder="Leírás..."
-            {...form.getListInputProps("mapping", idx, "description")}
-          />
-        </InputWrapper>
+        <Input.Wrapper id="description" label={idx === 0 && "Leírás"} size="md" title="Leírás">
+          <TextInput id="description" placeholder="Leírás..." {...form.getInputProps(`mapping.${idx}.description`)} />
+        </Input.Wrapper>
       </Grid.Col>
       <Grid.Col span={1}>
-        <InputWrapper id="valid_flag" label={idx === 0 && "Aktív?"} size="md" title="Aktív?">
+        <Input.Wrapper id="valid_flag" label={idx === 0 && "Aktív?"} size="md" title="Aktív?">
           <Checkbox
             id="valid_flag"
             style={{ justifyContent: "center", paddingTop: 8, paddingBottom: 8 }}
-            {...form.getListInputProps("mapping", idx, "valid_flag", { type: "checkbox" })}
+            {...form.getInputProps(`mapping.${idx}.valid_flag`, { type: "checkbox" })}
           />
-        </InputWrapper>
+        </Input.Wrapper>
       </Grid.Col>
       <Grid.Col span={3}>
-        <InputWrapper
+        <Input.Wrapper
           id="created_on"
           label={idx === 0 && "Hozzáadás dátuma"}
           size="md"
           title="Hozzáadás dátuma (automatikus)"
         >
-          <TextInput id="created_on" readOnly {...form.getListInputProps("mapping", idx, "created_on")} />
-        </InputWrapper>
+          <TextInput id="created_on" readOnly {...form.getInputProps(`mapping.${idx}.created_on`)} />
+        </Input.Wrapper>
       </Grid.Col>
       <Grid.Col span={2}>
-        <InputWrapper id="created_by" label={idx === 0 && "Hozzáadó"} size="md" title="Hozzáadó (automatikus)">
-          <TextInput id="created_by" readOnly {...form.getListInputProps("mapping", idx, "created_by")} />
-        </InputWrapper>
+        <Input.Wrapper id="created_by" label={idx === 0 && "Hozzáadó"} size="md" title="Hozzáadó (automatikus)">
+          <TextInput id="created_by" readOnly {...form.getInputProps(`mapping.${idx}.created_by`)} />
+        </Input.Wrapper>
       </Grid.Col>
     </Grid>
   ));
@@ -85,7 +80,7 @@ function Mapping({
           <ActionIcon
             color="blue"
             title="Új típus hozzáadása"
-            onClick={() => form.addListItem("mapping", { ...defaultMapping, created_by: userId })}
+            onClick={() => form.insertListItem("mapping", { ...defaultMapping, created_by: userId })}
           >
             <IconPlus />
           </ActionIcon>
