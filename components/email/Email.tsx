@@ -1,6 +1,6 @@
-import { UseFormReturnType } from "@mantine/form/lib/use-form";
+import { UseFormReturnType } from "@mantine/form";
 import { SelectDataType } from "../../types/general";
-import { ActionIcon, Checkbox, Divider, Group, InputWrapper, Select, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Checkbox, Divider, Group, Input, Select, Text, TextInput } from "@mantine/core";
 import { IconAt, IconMail, IconTrash } from "@tabler/icons";
 import { removeErrors } from "../../utils/util";
 import { PersonDetailFormType } from "../../types/person-detail";
@@ -44,31 +44,31 @@ function Email({ idx, form, emailTypeData }: EmailType): JSX.Element {
           placeholder="Email cím típusa..."
           required
           title="Email cím típusa"
-          {...form.getListInputProps("email", idx, "email_type_id")}
+          {...form.getInputProps(`email.${idx}.email_type_id`)}
         />
-        <InputWrapper id="email" label="Email" required title="Email">
+        <Input.Wrapper id="email" label="Email" required title="Email">
           <TextInput
             icon={<IconAt />}
             id="email"
             name="email"
             placeholder="Email..."
             type="email"
-            {...form.getListInputProps("email", idx, "email")}
+            {...form.getInputProps(`email.${idx}.email`)}
           />
-        </InputWrapper>
+        </Input.Wrapper>
       </Group>
       <Group mb="lg" align="baseline">
         <Checkbox
           label="Messenger"
           name="messenger"
           title="Messenger"
-          {...form.getListInputProps("email", idx, "messenger", { type: "checkbox" })}
+          {...form.getInputProps(`email.${idx}.messenger`, { type: "checkbox" })}
         />
         <Checkbox
           label="Skype"
           name="skype"
           title="Skype"
-          {...form.getListInputProps("email", idx, "skype", { type: "checkbox" })}
+          {...form.getInputProps(`email.${idx}.skype`, { type: "checkbox" })}
         />
       </Group>
     </div>

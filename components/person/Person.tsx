@@ -1,18 +1,7 @@
 import * as Yup from "yup";
 import "dayjs/locale/hu";
-import { formList, useForm, yupResolver } from "@mantine/form";
-import {
-  Group,
-  TextInput,
-  Select,
-  Textarea,
-  Container,
-  Button,
-  Title,
-  Paper,
-  InputWrapper,
-  Checkbox,
-} from "@mantine/core";
+import { useForm, UseFormReturnType, yupResolver } from "@mantine/form";
+import { Group, TextInput, Select, Textarea, Container, Button, Title, Paper, Input, Checkbox } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import {
   IconBuilding,
@@ -32,7 +21,6 @@ import { PersonDataType, PersonDetailFormType, personValidation } from "../../ty
 import { addressValidation } from "../../types/address-detail";
 import { emailValidation } from "../../types/email-detail";
 import { phoneValidation } from "../../types/phone-detail";
-import { UseFormReturnType } from "@mantine/form/lib/use-form";
 import { OrganizationDetailFormType } from "../../types/organization-detail";
 import { ContactInfo } from "../contact-info/ContactInfo";
 
@@ -45,43 +33,37 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
   });
 
   const form = useForm({
-    schema: yupResolver(schema),
+    validate: yupResolver(schema),
     initialValues: {
       registration_number: personData.person.registration_number,
       membership_id: personData.person.membership_id,
       person_name: personData.person.person_name,
-      birthdate: new Date(personData.person.birthdate),
+      birthdate: personData.person.birthdate ? new Date(personData.person.birthdate) : undefined,
       mother_name: personData.person.mother_name,
       gender_id: personData.person.gender_id,
       identity_card_number: personData.person.identity_card_number,
       membership_fee_category_id: personData.person.membership_fee_category_id,
       notes: personData.person.notes || undefined,
-      address: formList(personData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined }))),
-      email: formList(
-        personData.email.map((data) => ({
-          ...data,
-          messenger: convertToBool(data.messenger),
-          skype: convertToBool(data.skype),
-        }))
-      ),
-      phone: formList(
-        personData.phone.map((data) => ({
-          ...data,
-          phone_extension: data.phone_extension || undefined,
-          messenger: convertToBool(data.messenger),
-          skype: convertToBool(data.skype),
-          viber: convertToBool(data.viber),
-          whatsapp: convertToBool(data.whatsapp),
-        }))
-      ),
-      membership: formList(
-        personData.membership.map((data) => ({
-          ...data,
-          active_flag: convertToBool(data.active_flag),
-          event_date: data.event_date ? new Date(data.event_date) : undefined,
-          notes: data.notes || undefined,
-        }))
-      ),
+      address: personData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined })),
+      email: personData.email.map((data) => ({
+        ...data,
+        messenger: convertToBool(data.messenger),
+        skype: convertToBool(data.skype),
+      })),
+      phone: personData.phone.map((data) => ({
+        ...data,
+        phone_extension: data.phone_extension || undefined,
+        messenger: convertToBool(data.messenger),
+        skype: convertToBool(data.skype),
+        viber: convertToBool(data.viber),
+        whatsapp: convertToBool(data.whatsapp),
+      })),
+      membership: personData.membership.map((data) => ({
+        ...data,
+        active_flag: convertToBool(data.active_flag),
+        event_date: data.event_date ? new Date(data.event_date) : undefined,
+        notes: data.notes || undefined,
+      })),
     },
   });
 
@@ -95,9 +77,9 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
           placeholder="Alapszervezet neve..."
           title="Alapszervezet neve"
           readOnly
-          {...form.getListInputProps("membership", idx, "organization_name")}
+          {...form.getInputProps(`membership.${idx}.organization_name`)}
         />
-        <InputWrapper id="event_date" label="Státusz dátuma" required title="Státusz dátuma">
+        <Input.Wrapper id="event_date" label="Státusz dátuma" required title="Státusz dátuma">
           <DatePicker
             // allowFreeInput
             icon={<IconCalendarEvent />}
@@ -108,9 +90,9 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
             name="event_date"
             placeholder="Státusz dátuma..."
             disabled
-            {...form.getListInputProps("membership", idx, "event_date")}
+            {...form.getInputProps(`membership.${idx}.event_date`)}
           />
-        </InputWrapper>
+        </Input.Wrapper>
       </Group>
       <Group grow mb="lg" align="baseline">
         <Checkbox
@@ -121,11 +103,11 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
           readOnly
           required
           title="Aktív tag?"
-          {...form.getListInputProps("membership", idx, "active_flag")}
+          {...form.getInputProps(`membership.${idx}.active_flag`)}
         />
       </Group>
       <Group grow mb="lg" align="baseline">
-        <InputWrapper id="notes" label="Megjegyzés" title="Megjegyzés">
+        <Input.Wrapper id="notes" label="Megjegyzés" title="Megjegyzés">
           <Textarea
             autosize
             icon={<IconNote />}
@@ -134,9 +116,9 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
             minRows={3}
             name="notes"
             placeholder="Megyjegyzés..."
-            {...form.getListInputProps("membership", idx, "notes")}
+            {...form.getInputProps(`membership.${idx}.notes`)}
           />
-        </InputWrapper>
+        </Input.Wrapper>
       </Group>
     </div>
   ));
@@ -169,7 +151,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
             />
           </Group>
           <Group grow mb="lg" align="baseline">
-            <InputWrapper id="person_name" label="Név" required title="Név">
+            <Input.Wrapper id="person_name" label="Név" required title="Név">
               <TextInput
                 icon={<IconUser />}
                 id="person_name"
@@ -177,8 +159,8 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
                 placeholder="Név..."
                 {...form.getInputProps("person_name")}
               />
-            </InputWrapper>
-            <InputWrapper id="birthdate" label="Születési dátum" required title="Születési dátum">
+            </Input.Wrapper>
+            <Input.Wrapper id="birthdate" label="Születési dátum" required title="Születési dátum">
               <DatePicker
                 allowFreeInput
                 icon={<IconCake />}
@@ -190,10 +172,10 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
                 placeholder="Születési dátum..."
                 {...form.getInputProps("birthdate")}
               />
-            </InputWrapper>
+            </Input.Wrapper>
           </Group>
           <Group grow mb="lg" align="baseline">
-            <InputWrapper id="mother_name" label="Anyja neve" required title="Anyja neve">
+            <Input.Wrapper id="mother_name" label="Anyja neve" required title="Anyja neve">
               <TextInput
                 icon={<IconWoman />}
                 id="mother_name"
@@ -201,7 +183,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
                 placeholder="Anyja neve..."
                 {...form.getInputProps("mother_name")}
               />
-            </InputWrapper>
+            </Input.Wrapper>
             <Select
               allowDeselect
               icon={<IconGenderBigender />}
@@ -214,7 +196,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
             />
           </Group>
           <Group grow mb="lg" align="baseline">
-            <InputWrapper id="identity_card_number" label="Személyi igazolvány szám" title="Személyi igazolvány szám">
+            <Input.Wrapper id="identity_card_number" label="Személyi igazolvány szám" title="Személyi igazolvány szám">
               <TextInput
                 icon={<IconId />}
                 id="identity_card_number"
@@ -222,7 +204,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
                 placeholder="Személyi igazolvány szám..."
                 {...form.getInputProps("identity_card_number")}
               />
-            </InputWrapper>
+            </Input.Wrapper>
             <Select
               icon={<IconCoin />}
               label="Tagdíj kategória"
@@ -235,7 +217,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
             />
           </Group>
           <Group grow mb="lg" align="baseline">
-            <InputWrapper id="notes" label="Megjegyzés" title="Megjegyzés">
+            <Input.Wrapper id="notes" label="Megjegyzés" title="Megjegyzés">
               <Textarea
                 autosize
                 icon={<IconNote />}
@@ -246,7 +228,7 @@ function Person({ personData }: { personData: PersonDataType }): JSX.Element {
                 placeholder="Megyjegyzés..."
                 {...form.getInputProps("notes")}
               />
-            </InputWrapper>
+            </Input.Wrapper>
           </Group>
         </Paper>
       </Container>

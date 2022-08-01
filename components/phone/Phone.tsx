@@ -1,6 +1,6 @@
-import { UseFormReturnType } from "@mantine/form/lib/use-form";
+import { UseFormReturnType } from "@mantine/form";
 import { SelectDataType } from "../../types/general";
-import { ActionIcon, Checkbox, Divider, Group, InputWrapper, Select, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Checkbox, Divider, Group, Input, Select, Text, TextInput } from "@mantine/core";
 import { IconDeviceMobile, IconNumbers, IconPhone, IconTrash } from "@tabler/icons";
 import { removeErrors } from "../../utils/util";
 import { PersonDetailFormType } from "../../types/person-detail";
@@ -44,51 +44,51 @@ function Phone({ idx, form, phoneTypeData }: PhoneType): JSX.Element {
           placeholder="Telefonszám típusa..."
           required
           title="Telefonszám típus"
-          {...form.getListInputProps("phone", idx, "phone_type_id")}
+          {...form.getInputProps(`phone.${idx}.phone_type_id`)}
         />
-        <InputWrapper id="phone_number" label="Telefonszám" required title="Telefonszám">
+        <Input.Wrapper id="phone_number" label="Telefonszám" required title="Telefonszám">
           <TextInput
             icon={<IconPhone />}
             id="phone_number"
             name="phone_number"
             placeholder="Telefonszám..."
-            {...form.getListInputProps("phone", idx, "phone_number")}
+            {...form.getInputProps(`phone.${idx}.phone_number`)}
           />
-        </InputWrapper>
-        <InputWrapper label="Mellék" title="Mellék">
+        </Input.Wrapper>
+        <Input.Wrapper label="Mellék" title="Mellék">
           <TextInput
             icon={<IconNumbers />}
             id="phone_extension"
             name="phone_extension"
             placeholder="Mellék..."
-            {...form.getListInputProps("phone", idx, "phone_extension")}
+            {...form.getInputProps(`phone.${idx}.phone_extension`)}
           />
-        </InputWrapper>
+        </Input.Wrapper>
       </Group>
       <Group mb="lg" align="baseline">
         <Checkbox
           label="Messenger"
           name="messenger"
           title="Messenger"
-          {...form.getListInputProps("phone", idx, "messenger", { type: "checkbox" })}
+          {...form.getInputProps(`phone.${idx}.messenger`, { type: "checkbox" })}
         />
         <Checkbox
           label="Skype"
           name="skype"
           title="Skype"
-          {...form.getListInputProps("phone", idx, "skype", { type: "checkbox" })}
+          {...form.getInputProps(`phone.${idx}.skype`, { type: "checkbox" })}
         />
         <Checkbox
           label="Viber"
           name="viber"
           title="Viber"
-          {...form.getListInputProps("phone", idx, "viber", { type: "checkbox" })}
+          {...form.getInputProps(`phone.${idx}.viber`, { type: "checkbox" })}
         />
         <Checkbox
           label="Whatsapp"
           name="whatsapp"
           title="Whatsapp"
-          {...form.getListInputProps("phone", idx, "whatsapp", { type: "checkbox" })}
+          {...form.getInputProps(`phone.${idx}.whatsapp`, { type: "checkbox" })}
         />
       </Group>
     </div>

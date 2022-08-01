@@ -1,6 +1,6 @@
-import { UseFormReturnType } from "@mantine/form/lib/use-form";
+import { UseFormReturnType } from "@mantine/form";
 import { SelectDataType } from "../../types/general";
-import { ActionIcon, Divider, Group, InputWrapper, Select, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Divider, Group, Input, Select, Text, TextInput } from "@mantine/core";
 import { IconBuildingCommunity, IconDirections, IconHome, IconMailbox, IconTrash } from "@tabler/icons";
 import { removeErrors } from "../../utils/util";
 import { OrganizationDetailFormType } from "../../types/organization-detail";
@@ -44,46 +44,46 @@ function Address({ idx, form, addressTypeData }: AddressType): JSX.Element {
           placeholder="Cím típusa..."
           required
           title="Cím típusa"
-          {...form.getListInputProps("address", idx, "address_type_id")}
+          {...form.getInputProps(`address.${idx}.address_type_id`)}
         />
-        <InputWrapper id="zip" label="Irányítószám" required title="Irányítószám">
+        <Input.Wrapper id="zip" label="Irányítószám" required title="Irányítószám">
           <TextInput
             icon={<IconMailbox />}
             id="zip"
             name="zip"
             placeholder="Irányítószám..."
-            {...form.getListInputProps("address", idx, "zip")}
+            {...form.getInputProps(`address.${idx}.zip`)}
           />
-        </InputWrapper>
-        <InputWrapper id="city" label="Helység" required title="Helység">
+        </Input.Wrapper>
+        <Input.Wrapper id="city" label="Helység" required title="Helység">
           <TextInput
             icon={<IconBuildingCommunity />}
             id="city"
             name="city"
             placeholder="Helység..."
-            {...form.getListInputProps("address", idx, "city")}
+            {...form.getInputProps(`address.${idx}.city`)}
           />
-        </InputWrapper>
+        </Input.Wrapper>
       </Group>
       <Group grow mb="lg" align="baseline">
-        <InputWrapper id="address_1" label="Cím 1" required title="Cím 1">
+        <Input.Wrapper id="address_1" label="Cím 1" required title="Cím 1">
           <TextInput
             icon={<IconHome />}
             id="address_1"
             name="address_1"
             placeholder="Cím 1..."
-            {...form.getListInputProps("address", idx, "address_1")}
+            {...form.getInputProps(`address.${idx}.address_1`)}
           />
-        </InputWrapper>
-        <InputWrapper id="address_2" label="Cím 2" title="Cím 2">
+        </Input.Wrapper>
+        <Input.Wrapper id="address_2" label="Cím 2" title="Cím 2">
           <TextInput
             icon={<IconHome />}
             id="address_2"
             name="address_2"
             placeholder="Cím 2..."
-            {...form.getListInputProps("address", idx, "address_2")}
+            {...form.getInputProps(`address.${idx}.address_2`)}
           />
-        </InputWrapper>
+        </Input.Wrapper>
       </Group>
     </div>
   );

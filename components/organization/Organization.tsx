@@ -1,18 +1,6 @@
-import {
-  Button,
-  Checkbox,
-  Container,
-  Group,
-  InputWrapper,
-  Paper,
-  Select,
-  Textarea,
-  TextInput,
-  Title,
-} from "@mantine/core";
+import { Button, Checkbox, Container, Group, Input, Paper, Select, Textarea, TextInput, Title } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
-import { formList, useForm, yupResolver } from "@mantine/form";
-import { UseFormReturnType } from "@mantine/form/lib/use-form";
+import { useForm, UseFormReturnType, yupResolver } from "@mantine/form";
 import {
   IconBuilding,
   IconBuildingSkyscraper,
@@ -44,7 +32,7 @@ function Organization({ organizationData }: { organizationData: OrganizationData
   });
 
   const form = useForm({
-    schema: yupResolver(schema),
+    validate: yupResolver(schema),
     initialValues: {
       organization_name: organizationData?.organization?.organization_name,
       parent_organization_id: organizationData?.organization?.parent_organization_id,
@@ -58,39 +46,33 @@ function Organization({ organizationData }: { organizationData: OrganizationData
         : undefined,
       notes: organizationData?.organization?.notes || undefined,
       address: organizationData?.address
-        ? formList(organizationData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined })))
-        : formList([{}]),
+        ? organizationData.address.map((data) => ({ ...data, address_2: data.address_2 || undefined }))
+        : [{}],
       email: organizationData?.email
-        ? formList(
-            organizationData.email.map((data) => ({
-              ...data,
-              messenger: convertToBool(data.messenger),
-              skype: convertToBool(data.skype),
-            }))
-          )
-        : formList([{}]),
+        ? organizationData.email.map((data) => ({
+            ...data,
+            messenger: convertToBool(data.messenger),
+            skype: convertToBool(data.skype),
+          }))
+        : [{}],
       phone: organizationData?.phone
-        ? formList(
-            organizationData.phone.map((data) => ({
-              ...data,
-              phone_extension: data.phone_extension || undefined,
-              messenger: convertToBool(data.messenger),
-              skype: convertToBool(data.skype),
-              viber: convertToBool(data.viber),
-              whatsapp: convertToBool(data.whatsapp),
-            }))
-          )
-        : formList([{}]),
+        ? organizationData.phone.map((data) => ({
+            ...data,
+            phone_extension: data.phone_extension || undefined,
+            messenger: convertToBool(data.messenger),
+            skype: convertToBool(data.skype),
+            viber: convertToBool(data.viber),
+            whatsapp: convertToBool(data.whatsapp),
+          }))
+        : [{}],
       membership: organizationData?.membership
-        ? formList(
-            organizationData.membership.map((data) => ({
-              ...data,
-              active_flag: convertToBool(data.active_flag),
-              event_date: data.event_date ? new Date(data.event_date) : undefined,
-              notes: data.notes || undefined,
-            }))
-          )
-        : formList([{}]),
+        ? organizationData.membership.map((data) => ({
+            ...data,
+            active_flag: convertToBool(data.active_flag),
+            event_date: data.event_date ? new Date(data.event_date) : undefined,
+            notes: data.notes || undefined,
+          }))
+        : [{ id: "0" }],
     },
   });
 
@@ -104,9 +86,9 @@ function Organization({ organizationData }: { organizationData: OrganizationData
           placeholder="Tag neve..."
           title="Tag neve"
           readOnly
-          {...form.getListInputProps("membership", idx, "person_name")}
+          {...form.getInputProps(`membership.${idx}.person_name`)}
         />
-        <InputWrapper id="event_date" label="Státusz dátuma" required title="Státusz dátuma">
+        <Input.Wrapper id="event_date" label="Státusz dátuma" required title="Státusz dátuma">
           <DatePicker
             // allowFreeInput
             icon={<IconCalendarEvent />}
@@ -117,9 +99,9 @@ function Organization({ organizationData }: { organizationData: OrganizationData
             name="event_date"
             placeholder="Státusz dátuma..."
             disabled
-            {...form.getListInputProps("membership", idx, "event_date")}
+            {...form.getInputProps(`membership.${idx}.event_date`)}
           />
-        </InputWrapper>
+        </Input.Wrapper>
       </Group>
       <Group grow mb="lg" align="baseline">
         <Checkbox
@@ -129,11 +111,11 @@ function Organization({ organizationData }: { organizationData: OrganizationData
           name="active_flag"
           required
           title="Aktív tag?"
-          {...form.getListInputProps("membership", idx, "active_flag")}
+          {...form.getInputProps(`membership.${idx}.active_flag`)}
         />
       </Group>
       <Group grow mb="lg" align="baseline">
-        <InputWrapper id="notes" label="Megjegyzés" title="Megjegyzés">
+        <Input.Wrapper id="notes" label="Megjegyzés" title="Megjegyzés">
           <Textarea
             autosize
             icon={<IconNote />}
@@ -142,9 +124,9 @@ function Organization({ organizationData }: { organizationData: OrganizationData
             minRows={3}
             name="notes"
             placeholder="Megyjegyzés..."
-            {...form.getListInputProps("membership", idx, "notes")}
+            {...form.getInputProps(`membership.${idx}.notes`)}
           />
-        </InputWrapper>
+        </Input.Wrapper>
       </Group>
     </div>
   ));
@@ -181,7 +163,7 @@ function Organization({ organizationData }: { organizationData: OrganizationData
             />
           </Group>
           <Group grow mb="lg" align="baseline">
-            <InputWrapper id="description" label="Rövid leírás" title="Rövid leírás">
+            <Input.Wrapper id="description" label="Rövid leírás" title="Rövid leírás">
               <TextInput
                 icon={<IconFileDescription />}
                 id="description"
@@ -189,7 +171,7 @@ function Organization({ organizationData }: { organizationData: OrganizationData
                 placeholder="Rövid leírás..."
                 {...form.getInputProps("description")}
               />
-            </InputWrapper>
+            </Input.Wrapper>
           </Group>
           <Group grow mb="lg">
             <Checkbox
@@ -203,7 +185,7 @@ function Organization({ organizationData }: { organizationData: OrganizationData
             />
           </Group>
           <Group grow mb="lg" align="baseline">
-            <InputWrapper id="establishment_date" label="Alapítás dátum" required title="Alapítás dátum">
+            <Input.Wrapper id="establishment_date" label="Alapítás dátum" required title="Alapítás dátum">
               <DatePicker
                 allowFreeInput
                 icon={<IconCake />}
@@ -216,8 +198,8 @@ function Organization({ organizationData }: { organizationData: OrganizationData
                 required
                 {...form.getInputProps("establishment_date")}
               />
-            </InputWrapper>
-            <InputWrapper id="termination_date" label="Megszüntetés dátum" title="Megszüntetés dátum">
+            </Input.Wrapper>
+            <Input.Wrapper id="termination_date" label="Megszüntetés dátum" title="Megszüntetés dátum">
               <DatePicker
                 allowFreeInput
                 icon={<IconWreckingBall />}
@@ -229,10 +211,10 @@ function Organization({ organizationData }: { organizationData: OrganizationData
                 placeholder="Megszüntetés dátum..."
                 {...form.getInputProps("termination_date")}
               />
-            </InputWrapper>
+            </Input.Wrapper>
           </Group>
           <Group grow mb="lg" align="baseline">
-            <InputWrapper id="notes" label="Megjegyzés" title="Megjegyzés">
+            <Input.Wrapper id="notes" label="Megjegyzés" title="Megjegyzés">
               <Textarea
                 autosize
                 icon={<IconNote />}
@@ -243,7 +225,7 @@ function Organization({ organizationData }: { organizationData: OrganizationData
                 placeholder="Megyjegyzés..."
                 {...form.getInputProps("notes")}
               />
-            </InputWrapper>
+            </Input.Wrapper>
           </Group>
         </Paper>
       </Container>

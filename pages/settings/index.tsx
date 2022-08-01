@@ -1,5 +1,4 @@
 import { Container, LoadingOverlay, Paper, Tabs } from "@mantine/core";
-import { FormList } from "@mantine/form/lib/form-list/form-list";
 import { showNotification } from "@mantine/notifications";
 import { IconCoin, IconGenderBigender, IconHome, IconMail, IconPhone, IconX } from "@tabler/icons";
 import { AxiosError } from "axios";
@@ -22,7 +21,7 @@ function SettingsPage({
     initialData: { genderTypeData, membershipFeeTypeData, addressTypeData, emailTypeData, phoneTypeData },
   });
   const { mutate, isLoading: mutateIsLoading } = useMutation(
-    ({ endpoint, values }: { endpoint: string; values: FormList<MappingDataType> }) => sendMappings(endpoint, values),
+    ({ endpoint, values }: { endpoint: string; values: Array<MappingDataType> }) => sendMappings(endpoint, values),
     {
       onSuccess: () => queryClient.invalidateQueries(["settings"]),
       onError: (error: AxiosError) =>
@@ -41,43 +40,59 @@ function SettingsPage({
       <Paper shadow="xs">
         <LoadingOverlay visible={isLoading || isFetching || mutateIsLoading} />
         <Tabs p={"md"}>
-          <Tabs.Tab icon={<IconGenderBigender />} label="Nemek">
+          <Tabs.List>
+            <Tabs.Tab value="genders" icon={<IconGenderBigender />}>
+              Nemek
+            </Tabs.Tab>
+            <Tabs.Tab value="membership-fee-categories" icon={<IconCoin />}>
+              Tagdíjak
+            </Tabs.Tab>
+            <Tabs.Tab value="address-types" icon={<IconHome />}>
+              Címek
+            </Tabs.Tab>
+            <Tabs.Tab value="email-types" icon={<IconMail />}>
+              Emailek
+            </Tabs.Tab>
+            <Tabs.Tab value="phone-types" icon={<IconPhone />}>
+              Telefonok
+            </Tabs.Tab>
+          </Tabs.List>
+
+          <Tabs.Panel value="genders">
             <Mapping
               mappingData={data?.genderTypeData as MappingRawDataType[]}
-              fnMutate={(values: FormList<MappingDataType>) => mutate({ endpoint: "genders", values })}
+              fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "genders", values })}
               userId={userId}
             />
-          </Tabs.Tab>
-          <Tabs.Tab icon={<IconCoin />} label="Tagdíjak">
+          </Tabs.Panel>
+          <Tabs.Panel value="membership-fee-categories">
             <Mapping
               mappingData={data?.membershipFeeTypeData as MappingRawDataType[]}
-              fnMutate={(values: FormList<MappingDataType>) =>
-                mutate({ endpoint: "membership-fee-categories", values })
-              }
+              fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "membership-fee-categories", values })}
               userId={userId}
             />
-          </Tabs.Tab>
-          <Tabs.Tab icon={<IconHome />} label="Címek">
+          </Tabs.Panel>
+          <Tabs.Panel value="address-types">
             <Mapping
               mappingData={data?.addressTypeData as MappingRawDataType[]}
-              fnMutate={(values: FormList<MappingDataType>) => mutate({ endpoint: "address-types", values })}
+              fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "address-types", values })}
               userId={userId}
             />
-          </Tabs.Tab>
-          <Tabs.Tab icon={<IconMail />} label="Emailek">
+          </Tabs.Panel>
+          <Tabs.Panel value="email-types">
             <Mapping
               mappingData={data?.emailTypeData as MappingRawDataType[]}
-              fnMutate={(values: FormList<MappingDataType>) => mutate({ endpoint: "email-types", values })}
+              fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "email-types", values })}
               userId={userId}
             />
-          </Tabs.Tab>
-          <Tabs.Tab icon={<IconPhone />} label="Telefonok">
+          </Tabs.Panel>
+          <Tabs.Panel value="phone-types">
             <Mapping
               mappingData={data?.phoneTypeData as MappingRawDataType[]}
-              fnMutate={(values: FormList<MappingDataType>) => mutate({ endpoint: "phone-types", values })}
+              fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "phone-types", values })}
               userId={userId}
             />
-          </Tabs.Tab>
+          </Tabs.Panel>
         </Tabs>
       </Paper>
     </Container>

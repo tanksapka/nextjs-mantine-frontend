@@ -1,4 +1,4 @@
-import { UseFormReturnType } from "@mantine/form/lib/use-form";
+import { UseFormReturnType } from "@mantine/form";
 
 function convertToBool(value: string): boolean {
   return value === "Y" ? true : false;

@@ -1,14 +1,12 @@
-import { FormList } from "@mantine/form/lib/form-list/form-list";
-
 interface SelectDataType {
   value: string;
   label: string;
 }
 
 interface ContactDetailType {
-  address: FormList<any>;
-  email: FormList<any>;
-  phone: FormList<any>;
+  address: Array<any>;
+  email: Array<any>;
+  phone: Array<any>;
 }
 
 interface ParentOrganizationsType {

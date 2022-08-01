@@ -1,5 +1,5 @@
 import { ActionIcon, Container, Group, Paper, Text, Title } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form/lib/use-form";
+import { UseFormReturnType } from "@mantine/form";
 import { IconInfoCircle, IconPlus } from "@tabler/icons";
 import { defaultAddressData, defaultOrgAddressData } from "../../types/address-detail";
 import { defaultEmailData, defaultOrgEmailData } from "../../types/email-detail";
@@ -49,7 +49,7 @@ function ContactInfo({ entityId, entityType, form, addressTypeData, emailTypeDat
             mb={"1.5rem"}
             disabled={form.values.address.length === addressTypeData.length ? true : false}
             onClick={() =>
-              form.addListItem(
+              form.insertListItem(
                 "address",
                 entityType === "person" ? defaultAddressData(entityId) : defaultOrgAddressData(entityId)
               )
@@ -77,7 +77,7 @@ function ContactInfo({ entityId, entityType, form, addressTypeData, emailTypeDat
             mb={"1.5rem"}
             disabled={form.values.email.length === emailTypeData.length ? true : false}
             onClick={() =>
-              form.addListItem(
+              form.insertListItem(
                 "email",
                 entityType === "person" ? defaultEmailData(entityId) : defaultOrgEmailData(entityId)
               )
@@ -105,7 +105,7 @@ function ContactInfo({ entityId, entityType, form, addressTypeData, emailTypeDat
             mb={"1.5rem"}
             disabled={form.values.phone.length === phoneTypeData.length ? true : false}
             onClick={() =>
-              form.addListItem(
+              form.insertListItem(
                 "phone",
                 entityType === "person" ? defaultPhoneData(entityId) : defaultOrgPhoneData(entityId)
               )
