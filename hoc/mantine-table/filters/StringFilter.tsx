@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ActionIcon, Anchor, Button, Divider, Group, Popover, Radio, RadioGroup, TextInput } from "@mantine/core";
+import { ActionIcon, Anchor, Button, Divider, Group, Popover, Radio, TextInput } from "@mantine/core";
 import { useSetState } from "@mantine/hooks";
 import { IconFilter } from "@tabler/icons";
 
@@ -28,50 +28,53 @@ function StringFilter(props: any): JSX.Element {
 
   return (
     <Popover
-      target={
+      opened={opened}
+      onClose={handleClose}
+      // onOpen={(e) => e.stopPropagation()}
+      position="bottom"
+      transition="scale-y"
+      trapFocus
+    >
+      <Popover.Target>
         <ActionIcon
           size={18}
-          variant={filterValue ? "light" : "hover"}
+          variant={filterValue ? "light" : "subtle"}
           color={filterValue ? "blue" : "gray"}
           onClick={() => setOpened((o) => !o)}
         >
           <IconFilter />
         </ActionIcon>
-      }
-      opened={opened}
-      onClose={handleClose}
-      onClick={(e) => e.stopPropagation()}
-      position="bottom"
-      transition="scale-y"
-    >
-      <RadioGroup
-        description="Select your option"
-        orientation="vertical"
-        size="sm"
-        value={state.operator}
-        onChange={(o) => setState({ operator: o })}
-      >
-        <Radio value="cont" label="Contains" />
-        <Radio value="not_cont" label="Does not contain" />
-        <Radio value="start" label="Starts with" />
-        <Radio value="end" label="Ends with" />
-        <Radio value="eq" label="Equals" />
-        <Radio value="not_eq" label="Not equal" />
-      </RadioGroup>
-      <Divider my="sm" />
-      <TextInput
-        placeholder="Enter text"
-        mb="sm"
-        data-autoFocus
-        value={state.value}
-        onChange={(e) => setState({ value: e.target.value })}
-      />
-      <Group position="apart">
-        <Anchor component="button" color="gray" onClick={handleClear}>
-          Clear
-        </Anchor>
-        <Button onClick={handleApply}>Apply</Button>
-      </Group>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <Radio.Group
+          description="Select your option"
+          orientation="vertical"
+          size="sm"
+          value={state.operator}
+          onChange={(o) => setState({ operator: o })}
+        >
+          <Radio value="cont" label="Contains" />
+          <Radio value="not_cont" label="Does not contain" />
+          <Radio value="start" label="Starts with" />
+          <Radio value="end" label="Ends with" />
+          <Radio value="eq" label="Equals" />
+          <Radio value="not_eq" label="Not equal" />
+        </Radio.Group>
+        <Divider my="sm" />
+        <TextInput
+          placeholder="Enter text"
+          mb="sm"
+          data-autoFocus
+          value={state.value}
+          onChange={(e) => setState({ value: e.target.value })}
+        />
+        <Group position="apart">
+          <Anchor component="button" color="gray" onClick={handleClear}>
+            Clear
+          </Anchor>
+          <Button onClick={handleApply}>Apply</Button>
+        </Group>
+      </Popover.Dropdown>
     </Popover>
   );
 }

@@ -131,11 +131,11 @@ function SimpleTable({
                             {column.canFilter && column.render("Filter")}
                             {column.isSorted ? (
                               column.isSortedDesc ? (
-                                <ActionIcon size={16} color="blue" variant="hover">
+                                <ActionIcon size={16} color="blue" variant="subtle">
                                   <IconSortDescending />
                                 </ActionIcon>
                               ) : (
-                                <ActionIcon size={16} color="blue" variant="hover">
+                                <ActionIcon size={16} color="blue" variant="subtle">
                                   <IconSortAscending />
                                 </ActionIcon>
                               )

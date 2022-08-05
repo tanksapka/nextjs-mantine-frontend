@@ -39,7 +39,7 @@ function SettingsPage({
     <Container>
       <Paper shadow="xs">
         <LoadingOverlay visible={isLoading || isFetching || mutateIsLoading} />
-        <Tabs p={"md"}>
+        <Tabs defaultValue="genders" p={"md"}>
           <Tabs.List>
             <Tabs.Tab value="genders" icon={<IconGenderBigender />}>
               Nemek
@@ -58,35 +58,35 @@ function SettingsPage({
             </Tabs.Tab>
           </Tabs.List>
 
-          <Tabs.Panel value="genders">
+          <Tabs.Panel value="genders" pt={"md"}>
             <Mapping
               mappingData={data?.genderTypeData as MappingRawDataType[]}
               fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "genders", values })}
               userId={userId}
             />
           </Tabs.Panel>
-          <Tabs.Panel value="membership-fee-categories">
+          <Tabs.Panel value="membership-fee-categories" pt={"md"}>
             <Mapping
               mappingData={data?.membershipFeeTypeData as MappingRawDataType[]}
               fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "membership-fee-categories", values })}
               userId={userId}
             />
           </Tabs.Panel>
-          <Tabs.Panel value="address-types">
+          <Tabs.Panel value="address-types" pt={"md"}>
             <Mapping
               mappingData={data?.addressTypeData as MappingRawDataType[]}
               fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "address-types", values })}
               userId={userId}
             />
           </Tabs.Panel>
-          <Tabs.Panel value="email-types">
+          <Tabs.Panel value="email-types" pt={"md"}>
             <Mapping
               mappingData={data?.emailTypeData as MappingRawDataType[]}
               fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "email-types", values })}
               userId={userId}
             />
           </Tabs.Panel>
-          <Tabs.Panel value="phone-types">
+          <Tabs.Panel value="phone-types" pt={"md"}>
             <Mapping
               mappingData={data?.phoneTypeData as MappingRawDataType[]}
               fnMutate={(values: Array<MappingDataType>) => mutate({ endpoint: "phone-types", values })}
