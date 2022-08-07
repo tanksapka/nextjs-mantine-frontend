@@ -126,22 +126,22 @@ function SimpleTable({
                         <Grid.Col span={8} style={{ justifyContent: "center", textAlign: "center" }}>
                           {column.render("Header")}
                         </Grid.Col>
-                        <Grid.Col span={2} {...column.getSortByToggleProps()}>
+                        <Grid.Col span={2}>
                           <Stack justify="center" sx={{ gap: "0.25rem" }}>
                             {column.canFilter && column.render("Filter")}
                             {column.isSorted ? (
                               column.isSortedDesc ? (
-                                <ActionIcon size={16} color="blue" variant="subtle">
+                                <ActionIcon size={16} color="blue" variant="subtle" {...column.getSortByToggleProps()}>
                                   <IconSortDescending />
                                 </ActionIcon>
                               ) : (
-                                <ActionIcon size={16} color="blue" variant="subtle">
+                                <ActionIcon size={16} color="blue" variant="subtle" {...column.getSortByToggleProps()}>
                                   <IconSortAscending />
                                 </ActionIcon>
                               )
                             ) : (
                               column.id !== "selection" && (
-                                <ActionIcon size={16}>
+                                <ActionIcon size={16} {...column.getSortByToggleProps()}>
                                   <IconArrowsSort />
                                 </ActionIcon>
                               )
