@@ -9,7 +9,7 @@ import filterObject from "../../hoc/mantine-table/filterTypes";
 import { SimpleTable } from "../../hoc/mantine-table/SimpleTable";
 import { OrganizationsRawType, OrganizationsRowItem } from "../../types/organizations";
 
-function Organizations({ organizations }: OrganizationsRawType) {
+function Organizations({ organizations, page_count, page_size, page }: OrganizationsRawType) {
   const columns = useMemo(
     (): Array<Column> => [
       {
@@ -71,9 +71,12 @@ function Organizations({ organizations }: OrganizationsRawType) {
           columns: columns,
           data: data,
           initialState: {
-            pageSize: 20,
+            pageIndex: page,
+            pageSize: page_size,
             hiddenColumns: ["organization_id", "parent_organization_id", "description", "notes"],
           },
+          manualPagination: true,
+          pageCount: page_count,
         }}
         displayOptions={{
           hover: { header: true, row: true },
