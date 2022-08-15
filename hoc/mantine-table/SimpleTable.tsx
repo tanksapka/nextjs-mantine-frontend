@@ -1,6 +1,17 @@
 import { ActionIcon, Checkbox, createStyles, Grid, Group, Pagination, Select, Stack, Table } from "@mantine/core";
 import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
-import { useTable, useSortBy, usePagination, useFilters, TableOptions, Row, Hooks, useRowSelect } from "react-table";
+import {
+  useReactTable,
+  useSortBy,
+  usePagination,
+  useFilters,
+  TableOptions,
+  Row,
+  Hooks,
+  useRowSelect,
+  getCoreRowModel,
+  flexRender,
+} from "@tanstack/react-table";
 import { CSSProperties } from "react";
 
 type PageSizeOptions = Array<{ value: string; label: string }>;
@@ -91,78 +102,71 @@ function SimpleTable({
   const {
     getTableProps,
     getTableBodyProps,
-    headerGroups,
+    getHeaderGroups,
     page,
     pageCount,
     gotoPage,
     setPageSize,
     state: { pageIndex, pageSize, selectedRowIds },
     prepareRow,
-  } = useTable(tableOptions, useFilters, useSortBy, usePagination, useRowSelect, (hook) =>
-    selectionHook(hook, interactionOptions?.rowSelectable || false)
-  );
+  } = useReactTable({ ...tableOptions, getCoreRowModel: getCoreRowModel() });
+  // const table = useReactTable({...tableOptions, getCoreRowModel: getCoreRowModel()});
   const { classes, cx } = useStyles({ hoverRow: displayOptions?.hover?.row, striped: displayOptions?.stripedRows });
-  console.log(selectedRowIds);
+  // console.log(selectedRowIds);
+  // const stat = table.initialState.rowSelection
 
   return (
     <>
       <Table {...getTableProps()} style={{ ...displayOptions?.styleOverrides?.table }}>
         <thead style={{ ...displayOptions?.styleOverrides?.header?.thead }}>
-          {headerGroups.map((headerGroup) => {
-            const { key, ...restHeaderGroupProps } = headerGroup.getHeaderGroupProps();
-            return (
-              <tr key={key} {...restHeaderGroupProps} style={{ ...displayOptions?.styleOverrides?.header?.tr }}>
-                {headerGroup.headers.map((column) => {
-                  const { key, ...restColumn } = column.getHeaderProps();
-                  return (
-                    <th
-                      key={key}
-                      {...restColumn}
-                      hidden={!column.isVisible}
-                      className={displayOptions?.hover?.header ? classes.hoverCls : undefined}
-                      style={{ ...displayOptions?.styleOverrides?.header?.th }}
-                    >
-                      <Grid align="center" justify={column.id !== "selection" ? "center" : undefined}>
-                        <Grid.Col span={8} style={{ justifyContent: "center", textAlign: "center" }}>
-                          {column.render("Header")}
-                        </Grid.Col>
-                        <Grid.Col span={2}>
-                          <Stack justify="center" sx={{ gap: "0.25rem" }}>
-                            {column.canFilter && column.render("Filter")}
-                            {column.isSorted ? (
-                              column.isSortedDesc ? (
-                                <ActionIcon size={16} color="blue" variant="subtle" {...column.getSortByToggleProps()}>
-                                  <IconSortDescending />
-                                </ActionIcon>
-                              ) : (
-                                <ActionIcon size={16} color="blue" variant="subtle" {...column.getSortByToggleProps()}>
-                                  <IconSortAscending />
-                                </ActionIcon>
-                              )
-                            ) : (
-                              column.id !== "selection" && (
-                                <ActionIcon size={16} {...column.getSortByToggleProps()}>
-                                  <IconArrowsSort />
-                                </ActionIcon>
-                              )
-                            )}
-                          </Stack>
-                        </Grid.Col>
-                      </Grid>
-                    </th>
-                  );
-                })}
-                {interactionOptions?.rowIcons && (
-                  <th
-                    className={displayOptions?.hover?.header ? classes.hoverCls : undefined}
-                    style={{ ...displayOptions?.styleOverrides?.header?.th }}
-                  >
-                    Interakciók
-                  </th>
-                )}
-              </tr>
-            );
-          })}
+          {getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id} style={{ ...displayOptions?.styleOverrides?.header?.tr }}>
+              {headerGroup.headers.map((column) => (
+                <th
+                  key={column.id}
+                  hidden={!column.getContext().column.getIsVisible()}
+                  className={displayOptions?.hover?.header ? classes.hoverCls : undefined}
+                  style={{ ...displayOptions?.styleOverrides?.header?.th }}
+                >
+                  <Grid align="center" justify={column.id !== "selection" ? "center" : undefined}>
+                    <Grid.Col span={8} style={{ justifyContent: "center", textAlign: "center" }}>
+                      {flexRender(column.column.columnDef.header, column.getContext())}
+                    </Grid.Col>
+                    <Grid.Col span={2}>
+                      <Stack justify="center" sx={{ gap: "0.25rem" }}>
+                        {column.getContext().column.getCanFilter() && column.render("Filter")}
+                        {column.getContext().column.getIsSorted() ? (
+                          column.getContext().column.getIsSorted() === "desc" ? (
+                            <ActionIcon size={16} color="blue" variant="subtle" {...column.getSortByToggleProps()}>
+                              <IconSortDescending />
+                            </ActionIcon>
+                          ) : (
+                            <ActionIcon size={16} color="blue" variant="subtle" {...column.getSortByToggleProps()}>
+                              <IconSortAscending />
+                            </ActionIcon>
+                          )
+                        ) : (
+                          column.id !== "selection" && (
+                            <ActionIcon size={16} {...column.getSortByToggleProps()}>
+                              <IconArrowsSort />
+                            </ActionIcon>
+                          )
+                        )}
+                      </Stack>
+                    </Grid.Col>
+                  </Grid>
+                </th>
+              ))}
+              {interactionOptions?.rowIcons && (
+                <th
+                  className={displayOptions?.hover?.header ? classes.hoverCls : undefined}
+                  style={{ ...displayOptions?.styleOverrides?.header?.th }}
+                >
+                  Interakciók
+                </th>
+              )}
+            </tr>
+          ))}
         </thead>
         <tbody
           {...getTableBodyProps}
