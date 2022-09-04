@@ -2,13 +2,13 @@ import { ActionIcon, Checkbox, createStyles, Grid, Group, Pagination, Select, St
 import { IconArrowsSort, IconSortAscending, IconSortDescending } from "@tabler/icons";
 import {
   useReactTable,
-  useSortBy,
-  usePagination,
-  useFilters,
+  // useSortBy,
+  // usePagination,
+  // useFilters,
   TableOptions,
   Row,
-  Hooks,
-  useRowSelect,
+  // Hooks,
+  // useRowSelect,
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
@@ -71,45 +71,46 @@ const useStyles = createStyles((t, { hoverRow, striped }: { hoverRow?: boolean; 
   },
 }));
 
-const selectionHook = (hook: Hooks<object>, selection: boolean) => {
-  if (selection) {
-    hook.visibleColumns.push((columns) => [
-      {
-        id: "selection",
-        Header: ({ getToggleAllRowsSelectedProps }) => (
-          // <Grid>
-          //   <Grid.Col>
-          <Checkbox {...getToggleAllRowsSelectedProps()} />
-          //   </Grid.Col>
-          // </Grid>
-        ),
-        Cell: ({ row }) => <Checkbox {...row.getToggleRowSelectedProps()} />,
-      },
-      ...columns,
-    ]);
-  }
-};
+// const selectionHook = (hook: Hooks<object>, selection: boolean) => {
+//   if (selection) {
+//     hook.visibleColumns.push((columns) => [
+//       {
+//         id: "selection",
+//         Header: ({ getToggleAllRowsSelectedProps }) => (
+//           // <Grid>
+//           //   <Grid.Col>
+//           <Checkbox {...getToggleAllRowsSelectedProps()} />
+//           //   </Grid.Col>
+//           // </Grid>
+//         ),
+//         Cell: ({ row }) => <Checkbox {...row.getToggleRowSelectedProps()} />,
+//       },
+//       ...columns,
+//     ]);
+//   }
+// };
 
 function SimpleTable({
   tableOptions,
   displayOptions,
   interactionOptions,
 }: {
-  tableOptions: TableOptions<object>;
+  tableOptions: any;
   displayOptions?: DisplayOptions;
   interactionOptions?: InteractionOptions;
 }) {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    getHeaderGroups,
-    page,
-    pageCount,
-    gotoPage,
-    setPageSize,
-    state: { pageIndex, pageSize, selectedRowIds },
-    prepareRow,
-  } = useReactTable({ ...tableOptions, getCoreRowModel: getCoreRowModel() });
+  // const {
+  // getTableProps,
+  // getTableBodyProps,
+  // getHeaderGroups,
+  // page,
+  // pageCount,
+  // gotoPage,
+  // setPageSize,
+  // state: { pageIndex, pageSize, selectedRowIds },
+  // prepareRow,
+  // } = useReactTable({ ...tableOptions, getCoreRowModel: getCoreRowModel() });
+  const table = useReactTable({ ...tableOptions, getCoreRowModel: getCoreRowModel() });
   // const table = useReactTable({...tableOptions, getCoreRowModel: getCoreRowModel()});
   const { classes, cx } = useStyles({ hoverRow: displayOptions?.hover?.row, striped: displayOptions?.stripedRows });
   // console.log(selectedRowIds);
@@ -117,9 +118,9 @@ function SimpleTable({
 
   return (
     <>
-      <Table {...getTableProps()} style={{ ...displayOptions?.styleOverrides?.table }}>
+      <Table style={{ ...displayOptions?.styleOverrides?.table }}>
         <thead style={{ ...displayOptions?.styleOverrides?.header?.thead }}>
-          {getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id} style={{ ...displayOptions?.styleOverrides?.header?.tr }}>
               {headerGroup.headers.map((column) => (
                 <th
@@ -133,7 +134,7 @@ function SimpleTable({
                       {flexRender(column.column.columnDef.header, column.getContext())}
                     </Grid.Col>
                     <Grid.Col span={2}>
-                      <Stack justify="center" sx={{ gap: "0.25rem" }}>
+                      {/* <Stack justify="center" sx={{ gap: "0.25rem" }}>
                         {column.getContext().column.getCanFilter() && column.render("Filter")}
                         {column.getContext().column.getIsSorted() ? (
                           column.getContext().column.getIsSorted() === "desc" ? (
@@ -152,7 +153,7 @@ function SimpleTable({
                             </ActionIcon>
                           )
                         )}
-                      </Stack>
+                      </Stack> */}
                     </Grid.Col>
                   </Grid>
                 </th>
@@ -168,44 +169,32 @@ function SimpleTable({
             </tr>
           ))}
         </thead>
-        <tbody
-          {...getTableBodyProps}
-          className={classes.mergedCls}
-          style={{ ...displayOptions?.styleOverrides?.body?.tbody }}
-        >
-          {page.map((row, rowIdx) => {
-            prepareRow(row);
-            const { key, ...restRowProps } = row.getRowProps();
-            return (
-              <tr
-                key={key}
-                {...restRowProps}
-                onClick={() =>
-                  interactionOptions?.rowOnClick &&
-                  !interactionOptions.rowSelectable &&
-                  interactionOptions.rowOnClick(row)
-                }
-                style={{
-                  cursor: interactionOptions?.rowOnClick && !interactionOptions.rowSelectable ? "pointer" : "default",
-                  ...displayOptions?.styleOverrides?.body?.tr,
-                }}
-              >
-                {row.cells.map((cell) => {
-                  const { key, ...restCellProps } = cell.getCellProps();
-                  return (
-                    <td key={key} {...restCellProps} style={{ ...displayOptions?.styleOverrides?.body?.td }}>
-                      {cell.render("Cell")}
-                    </td>
-                  );
-                })}
-                {interactionOptions?.rowIcons && <td>{interactionOptions.rowIcons(row)}</td>}
-              </tr>
-            );
-          })}
+        <tbody className={classes.mergedCls} style={{ ...displayOptions?.styleOverrides?.body?.tbody }}>
+          {table.getRowModel().rows.map((row) => (
+            <tr
+              key={row.id}
+              onClick={() =>
+                interactionOptions?.rowOnClick &&
+                !interactionOptions.rowSelectable &&
+                interactionOptions.rowOnClick(row as Row<object>)
+              }
+              style={{
+                cursor: interactionOptions?.rowOnClick && !interactionOptions.rowSelectable ? "pointer" : "default",
+                ...displayOptions?.styleOverrides?.body?.tr,
+              }}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} style={{ ...displayOptions?.styleOverrides?.body?.td }}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+              {interactionOptions?.rowIcons && <td>{interactionOptions.rowIcons(row as Row<object>)}</td>}
+            </tr>
+          ))}
         </tbody>
       </Table>
       <Group align="center" style={{ justifyContent: "center" }}>
-        <Pagination
+        {/* <Pagination
           onChange={(n: number) => gotoPage(n - 1)}
           mt="lg"
           page={pageIndex + 1}
@@ -220,7 +209,7 @@ function SimpleTable({
           defaultValue={pageSize.toString()}
           onChange={(value) => setPageSize(parseInt(value as string))}
           style={{ width: "6rem", ...displayOptions?.styleOverrides?.pageSize }}
-        />
+        /> */}
       </Group>
     </>
   );

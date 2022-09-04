@@ -3,43 +3,47 @@ import { IconPencil } from "@tabler/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { createColumnHelper, Column, Row } from "@tanstack/react-table";
+import { createColumnHelper, Column, Row, ColumnDef } from "@tanstack/react-table";
 import { DateFilter, StringFilter } from "../../hoc/mantine-table/filters";
 import filterObject from "../../hoc/mantine-table/filterTypes";
 import { SimpleTable } from "../../hoc/mantine-table/SimpleTable";
 import { OrganizationsRawType, OrganizationsRowItem } from "../../types/organizations";
+import { kMaxLength } from "buffer";
 
 function Organizations({ organizations, page_count, page_size, page }: OrganizationsRawType) {
   const columnHelper = createColumnHelper<OrganizationsRowItem>();
-  const columns = [
-    columnHelper.accessor("organization_id", {
-      header: "Alapszervezet azonosítója",
-    }),
-    columnHelper.accessor("organization_name", {
-      header: "Alapszervezet neve",
-    }),
-    columnHelper.accessor("parent_organization_id", {
-      header: "Szülőszervezet azonosítója",
-    }),
-    columnHelper.accessor("parent_organization_name", {
-      header: "Szülőszervezet neve",
-    }),
-    columnHelper.accessor("description", {
-      header: "Leírás",
-    }),
-    columnHelper.accessor("accepts_members_flag", {
-      header: "Fogad tagokat?",
-    }),
-    columnHelper.accessor("establishment_date", {
-      header: "Alapítás dátuma",
-    }),
-    columnHelper.accessor("termination_date", {
-      header: "Megszűnés dátuma",
-    }),
-    columnHelper.accessor("notes", {
-      header: "Jegyzetek",
-    }),
-  ];
+  const columns = useMemo<ColumnDef<OrganizationsRowItem, any>[]>(
+    () => [
+      columnHelper.accessor("organization_id", {
+        header: "Alapszervezet azonosítója",
+      }),
+      columnHelper.accessor("organization_name", {
+        header: "Alapszervezet neve",
+      }),
+      columnHelper.accessor("parent_organization_id", {
+        header: "Szülőszervezet azonosítója",
+      }),
+      columnHelper.accessor("parent_organization_name", {
+        header: "Szülőszervezet neve",
+      }),
+      columnHelper.accessor("description", {
+        header: "Leírás",
+      }),
+      columnHelper.accessor("accepts_members_flag", {
+        header: "Fogad tagokat?",
+      }),
+      columnHelper.accessor("establishment_date", {
+        header: "Alapítás dátuma",
+      }),
+      columnHelper.accessor("termination_date", {
+        header: "Megszűnés dátuma",
+      }),
+      columnHelper.accessor("notes", {
+        header: "Jegyzetek",
+      }),
+    ],
+    []
+  );
   // const columns = useMemo(
   //   (): Array<Column> => [
   //     {
@@ -98,12 +102,12 @@ function Organizations({ organizations, page_count, page_size, page }: Organizat
     <Container size="xl">
       <SimpleTable
         tableOptions={{
-          columns: columns,
-          data: data,
+          columns,
+          data,
           initialState: {
-            pageIndex: page,
-            pageSize: page_size,
-            hiddenColumns: ["organization_id", "parent_organization_id", "description", "notes"],
+            // pageIndex: page,
+            // pageSize: page_size,
+            // hiddenColumns: ["organization_id", "parent_organization_id", "description", "notes"],
           },
           manualPagination: true,
           pageCount: page_count,
