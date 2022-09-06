@@ -13,6 +13,7 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import { CSSProperties } from "react";
+import { OrganizationsRowItem } from "../../types/organizations";
 
 type PageSizeOptions = Array<{ value: string; label: string }>;
 
@@ -95,7 +96,7 @@ function SimpleTable({
   displayOptions,
   interactionOptions,
 }: {
-  tableOptions: any;
+  tableOptions: TableOptions<OrganizationsRowItem>;
   displayOptions?: DisplayOptions;
   interactionOptions?: InteractionOptions;
 }) {
@@ -110,7 +111,7 @@ function SimpleTable({
   // state: { pageIndex, pageSize, selectedRowIds },
   // prepareRow,
   // } = useReactTable({ ...tableOptions, getCoreRowModel: getCoreRowModel() });
-  const table = useReactTable({ ...tableOptions, getCoreRowModel: getCoreRowModel() });
+  const table = useReactTable(tableOptions);
   // const table = useReactTable({...tableOptions, getCoreRowModel: getCoreRowModel()});
   const { classes, cx } = useStyles({ hoverRow: displayOptions?.hover?.row, striped: displayOptions?.stripedRows });
   // console.log(selectedRowIds);
@@ -194,22 +195,22 @@ function SimpleTable({
         </tbody>
       </Table>
       <Group align="center" style={{ justifyContent: "center" }}>
-        {/* <Pagination
-          onChange={(n: number) => gotoPage(n - 1)}
+        <Pagination
+          onChange={(n: number) => table.setPageIndex(n - 1)}
           mt="lg"
-          page={pageIndex + 1}
+          page={table.getState().pagination.pageIndex + 1}
           style={{ justifyContent: "center", ...displayOptions?.styleOverrides?.pagination }}
-          total={pageCount}
+          total={table.getPageCount()}
           withEdges
         />
         <Select
           mt="lg"
           ml="sm"
           data={displayOptions?.pageSizeOptions || defaultPageSizeOptions}
-          defaultValue={pageSize.toString()}
-          onChange={(value) => setPageSize(parseInt(value as string))}
+          defaultValue={table.getState().pagination.pageSize.toString()}
+          onChange={(value) => table.setPageSize(parseInt(value as string))}
           style={{ width: "6rem", ...displayOptions?.styleOverrides?.pageSize }}
-        /> */}
+        />
       </Group>
     </>
   );

@@ -3,12 +3,11 @@ import { IconPencil } from "@tabler/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { createColumnHelper, Column, Row, ColumnDef } from "@tanstack/react-table";
+import { createColumnHelper, Column, Row, ColumnDef, getCoreRowModel } from "@tanstack/react-table";
 import { DateFilter, StringFilter } from "../../hoc/mantine-table/filters";
 import filterObject from "../../hoc/mantine-table/filterTypes";
 import { SimpleTable } from "../../hoc/mantine-table/SimpleTable";
 import { OrganizationsRawType, OrganizationsRowItem } from "../../types/organizations";
-import { kMaxLength } from "buffer";
 
 function Organizations({ organizations, page_count, page_size, page }: OrganizationsRawType) {
   const columnHelper = createColumnHelper<OrganizationsRowItem>();
@@ -105,12 +104,17 @@ function Organizations({ organizations, page_count, page_size, page }: Organizat
           columns,
           data,
           initialState: {
-            // pageIndex: page,
-            // pageSize: page_size,
-            // hiddenColumns: ["organization_id", "parent_organization_id", "description", "notes"],
+            pagination: { pageIndex: page, pageSize: page_size },
+            columnVisibility: {
+              organization_id: false,
+              parent_organization_id: false,
+              description: false,
+              notes: false,
+            },
           },
           manualPagination: true,
           pageCount: page_count,
+          getCoreRowModel: getCoreRowModel(),
         }}
         displayOptions={{
           hover: { header: true, row: true },
